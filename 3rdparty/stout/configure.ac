@@ -241,6 +241,8 @@ on this system (e.g., musl), a separate FTS package must be installed.
 # Miscellaneous checks related to (un)bundled software.
 ###############################################################################
 
+AS_IF([test "x$with_svn" != "xno"], [
+
 # On OS X, if `--with-apr` was not provided, we try to use an available
 # brew installed version.
 if test -z "`echo $with_apr`" &&
@@ -273,6 +275,7 @@ libapr-1 is required for stout tests to build.
 -------------------------------------------------------------------
 ])])
 
+])
 
 # We use "-isystem" instead of "-I" to add Boost to the include search
 # path. This disables compiler warnings inside Boost headers since we
@@ -533,6 +536,12 @@ fi
 AM_CONDITIONAL([WITH_BUNDLED_PROTOBUF],
                [test "x$with_bundled_protobuf" = "xyes"])
 
+AM_CONDITIONAL([WITH_SVN],
+               [test "x$with_svn" != "xno"])
+
+AS_IF([test "x$with_svn" != "xno"], [
+
+AC_DEFINE([MESOS_HAS_SVN], [1], [Whether subversion support is included.])
 
 # Check if libsvn-1 prefix path was provided, and if so, add it to
 # the CPPFLAGS and LDFLAGS with respective /include and /lib path
@@ -575,6 +584,8 @@ libsubversion-1 is required for stout tests to build.
 libsubversion-1 is required for stout tests to build.
 -------------------------------------------------------------------
 ])])
+
+])
 
 
 ###############################################################################

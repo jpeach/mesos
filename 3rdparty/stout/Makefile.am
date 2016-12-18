@@ -144,10 +144,13 @@ stout_tests_SOURCES =			\
   tests/some_tests.cpp			\
   tests/strings_tests.cpp		\
   tests/subcommand_tests.cpp		\
-  tests/svn_tests.cpp			\
   tests/try_tests.cpp			\
   tests/uuid_tests.cpp			\
   tests/version_tests.cpp
+
+if WITH_SVN
+  stout_tests_SOURCES += tests/svn_tests.cpp
+endif
 
 if OS_LINUX
   stout_tests_SOURCES += tests/proc_tests.cpp
@@ -173,10 +176,14 @@ stout_tests_CPPFLAGS =			\
 stout_tests_LDADD =			\
   $(LIB_GMOCK)				\
   $(LIB_GLOG)				\
-  $(LIB_PROTOBUF)			\
+  $(LIB_PROTOBUF)
+
+if WITH_SVN
+stout_tests_LDADD +=			\
   -lsvn_subr-1				\
   -lsvn_delta-1				\
   -lapr-1
+endif
 
 # FreeBSD makes the dynamic linking interface available in libc
 if !OS_FREEBSD
