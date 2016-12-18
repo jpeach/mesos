@@ -679,6 +679,7 @@ on this system (e.g., musl), a separate FTS package must be installed.
 # (--with-XXX=DIR) or asked us to attempt to detect them
 # (--disable-bundled).
 
+AS_IF([test "x$with_svn" != "xno"], [
 
 # On OS X, if `--with-apr` was not provided, we try to use an available
 # brew installed version.
@@ -712,6 +713,7 @@ libapr-1 is required for mesos to build.
 -------------------------------------------------------------------
 ])])
 
+])
 
 # We use "-isystem" instead of "-I" to add Boost to the include search
 # path. This disables compiler warnings inside Boost headers since we
@@ -1713,6 +1715,9 @@ fi
 
 AM_CONDITIONAL([WITH_BUNDLED_STOUT], [test "x$with_bundled_stout" = "xyes"])
 
+AM_CONDITIONAL([WITH_SVN], [test "x$with_svn" != "xno"])
+
+AS_IF([test "x$with_svn" != "xno"], [
 
 # Check if libsvn-1 prefix path was provided, and if so, add it to
 # the CPPFLAGS and LDFLAGS with respective /include and /lib path
@@ -1756,6 +1761,7 @@ libsubversion-1 is required for mesos to build.
 -------------------------------------------------------------------
 ])])
 
+])
 
 AC_MSG_CHECKING([whether to enable the XFS disk isolator])
 AS_IF([test "x$enable_xfs_disk_isolator" = "xyes"],

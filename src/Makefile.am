@@ -1384,11 +1384,14 @@ libmesos_la_LIBADD =							\
   $(LIB_LEVELDB)							\
   $(LIB_PROCESS)							\
   $(LIB_PROTOBUF)							\
-  $(LIB_ZOOKEEPER)							\
+  $(LIB_ZOOKEEPER)
+
+if WITH_SVN
+libmesos_la_LIBADD +=
   -lsvn_subr-1								\
   -lsvn_delta-1								\
   -lapr-1
-
+endif
 
 # Binaries.
 sbin_PROGRAMS += mesos-agent

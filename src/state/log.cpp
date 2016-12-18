@@ -43,8 +43,11 @@
 #include <stout/hashmap.hpp>
 #include <stout/nothing.hpp>
 #include <stout/option.hpp>
-#include <stout/svn.hpp>
 #include <stout/uuid.hpp>
+
+#if MESOS_HAS_SVN
+#include <stout/svn.hpp>
+#endif
 
 #include "messages/state.hpp"
 
@@ -169,9 +172,13 @@ private:
         return Error("Attempted to patch the wrong snapshot");
       }
 
+#if MESOS_HAS_SVN
       Try<string> patch = svn::patch(
           entry.value(),
           svn::Diff(diff.entry().value()));
+#else
+      Try<string> patch = Error("patch operation not supported in this build");
+#endif
 
       if (patch.isError()) {
         return Error(patch.error());
@@ -492,6 +499,9 @@ Future<bool> LogStorageProcess::__set(
 
   // Check if we should try to compute a diff.
   if (snapshot.isSome() && snapshot.get().diffs < diffsBetweenSnapshots) {
+#if !MESOS_HAS_SVN
+    return Failure("diff operation not supported in this build");
+#else
     // Keep metrics for the time to calculate diffs.
     metrics.diff.start();
 
@@ -532,6 +542,7 @@ Future<bool> LogStorageProcess::__set(
                     snapshot.get().diffs + 1,
                     lambda::_1));
     }
+#endif
   }
 
   // Write the full snapshot.
