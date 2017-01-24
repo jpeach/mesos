@@ -62,6 +62,12 @@ private:
 };
 
 
+enum QuotaPolicy {
+  QUOTA_POLICY_ENFORCING,
+  QUOTA_POLICY_ACCOUNTING,
+};
+
+
 inline bool operator==(const QuotaInfo& left, const QuotaInfo& right)
 {
   return left.limit == right.limit && left.used == right.used;
@@ -82,12 +88,14 @@ Try<bool> isQuotaEnabled(const std::string& path);
 
 Result<QuotaInfo> getProjectQuota(
     const std::string& path,
-    prid_t projectId);
+    prid_t projectId,
+    QuotaPolicy quotaPolicy);
 
 
 Try<Nothing> setProjectQuota(
     const std::string& path,
     prid_t projectId,
+    QuotaPolicy quotaPolicy,
     Bytes limit);
 
 

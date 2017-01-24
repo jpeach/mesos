@@ -131,16 +131,48 @@ static Try<string> getDeviceForPath(const string& path)
 
 
 namespace internal {
+static Try<Nothing> clearProjectQuota(
+    const string& path,
+    prid_t projectId)
+{
+  Try<string> devname = getDeviceForPath(path);
+  if (devname.isError()) {
+    return Error(devname.error());
+  }
+
+  fs_disk_quota_t quota = {0};
+
+  quota.d_version = FS_DQUOT_VERSION;
+  quota.d_id = projectId;
+  quota.d_flags = FS_PROJ_QUOTA;
+  quota.d_fieldmask = FS_DQ_BSOFT | FS_DQ_BHARD;
+
+  if (::quotactl(QCMD(Q_XSETQLIM, PRJQUOTA),
+                 devname.get().c_str(),
+                 projectId,
+                 reinterpret_cast<caddr_t>(&quota)) == -1) {
+    return ErrnoError("Failed to clear quota for project ID " +
+                      stringify(projectId));
+  }
+
+  return Nothing();
+}
+
 
 static Try<Nothing> setProjectQuota(
     const string& path,
     prid_t projectId,
+    QuotaPolicy quotaPolicy,
     Bytes limit)
 {
   Try<string> devname = getDeviceForPath(path);
   if (devname.isError()) {
     return Error(devname.error());
   }
+
+  // The caller MUST verify the limit is > 0. You should
+  // use clearProjectQuota to remove the quota.
+  CHECK_GT(limit.bytes(), 0u);
 
   fs_disk_quota_t quota = {0};
 
@@ -154,8 +186,16 @@ static Try<Nothing> setProjectQuota(
   // for consistency. Functionally all we need is the hard quota.
   quota.d_fieldmask = FS_DQ_BSOFT | FS_DQ_BHARD;
 
-  quota.d_blk_hardlimit = BasicBlocks(limit).blocks();
-  quota.d_blk_softlimit = BasicBlocks(limit).blocks();
+  switch (quotaPolicy) {
+    case QUOTA_POLICY_ENFORCING:
+      quota.d_blk_hardlimit = BasicBlocks(limit).blocks();
+      quota.d_blk_softlimit = BasicBlocks(limit).blocks();
+      break;
+    case QUOTA_POLICY_ACCOUNTING:
+      quota.d_blk_hardlimit = 0u;
+      quota.d_blk_softlimit = BasicBlocks(limit).blocks();
+      break;
+  }
 
   if (::quotactl(QCMD(Q_XSETQLIM, PRJQUOTA),
                  devname.get().c_str(),
@@ -210,7 +250,8 @@ static Try<Nothing> setProjectId(
 
 Result<QuotaInfo> getProjectQuota(
     const string& path,
-    prid_t projectId)
+    prid_t projectId,
+    QuotaPolicy quotaPolicy)
 {
   if (projectId == NON_PROJECT_ID) {
     return nonProjectError();
@@ -246,8 +287,16 @@ Result<QuotaInfo> getProjectQuota(
   }
 
   QuotaInfo info;
-  info.limit = BasicBlocks(quota.d_blk_hardlimit);
   info.used =  BasicBlocks(quota.d_bcount);
+
+  switch (quotaPolicy) {
+    case QUOTA_POLICY_ACCOUNTING:
+      info.limit = BasicBlocks(quota.d_blk_softlimit);
+      break;
+    case QUOTA_POLICY_ENFORCING:
+      info.limit = BasicBlocks(quota.d_blk_hardlimit);
+      break;
+  }
 
   return info;
 }
@@ -256,6 +305,7 @@ Result<QuotaInfo> getProjectQuota(
 Try<Nothing> setProjectQuota(
     const string& path,
     prid_t projectId,
+    QuotaPolicy quotaPolicy,
     Bytes limit)
 {
   if (projectId == NON_PROJECT_ID) {
@@ -270,7 +320,7 @@ Try<Nothing> setProjectQuota(
         stringify(BasicBlocks::block_size()));
   }
 
-  return internal::setProjectQuota(path, projectId, limit);
+  return internal::setProjectQuota(path, projectId, quotaPolicy, limit);
 }
 
 
@@ -282,7 +332,7 @@ Try<Nothing> clearProjectQuota(
     return nonProjectError();
   }
 
-  return internal::setProjectQuota(path, projectId, Bytes(0));
+  return internal::clearProjectQuota(path, projectId);
 }
 
 

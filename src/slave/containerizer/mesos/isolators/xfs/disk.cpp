@@ -156,15 +156,22 @@ Try<Isolator*> XfsDiskIsolatorProcess::create(const Flags& flags)
     return Error(status->message);
   }
 
+  xfs::QuotaPolicy quotaPolicy =
+    flags.enforce_container_disk_quota ? xfs::QUOTA_POLICY_ENFORCING
+                                       : xfs::QUOTA_POLICY_ACCOUNTING;
+
   return new MesosIsolator(Owned<MesosIsolatorProcess>(
-      new XfsDiskIsolatorProcess(flags.work_dir, totalProjectIds.get())));
+      new XfsDiskIsolatorProcess(
+          quotaPolicy, flags.work_dir, totalProjectIds.get())));
 }
 
 
 XfsDiskIsolatorProcess::XfsDiskIsolatorProcess(
+    xfs::QuotaPolicy quotaPolicy,
     const std::string& _workDir,
     const IntervalSet<prid_t>& projectIds)
   : ProcessBase(process::ID::generate("xfs-disk-isolator")),
+    quotaPolicy(quotaPolicy),
     workDir(_workDir),
     totalProjectIds(projectIds),
     freeProjectIds(projectIds)
@@ -326,8 +333,8 @@ Future<Nothing> XfsDiskIsolatorProcess::update(
 
   // Only update the disk quota if it has changed.
   if (needed.get() != info->quota) {
-    Try<Nothing> status =
-      xfs::setProjectQuota(info->directory, info->projectId, needed.get());
+    Try<Nothing> status = xfs::setProjectQuota(
+          info->directory, info->projectId, quotaPolicy, needed.get());
 
     if (status.isError()) {
       return Failure("Failed to update quota for project " +
@@ -357,7 +364,7 @@ Future<ResourceStatistics> XfsDiskIsolatorProcess::usage(
   const Owned<Info>& info = infos[containerId];
 
   Result<xfs::QuotaInfo> quota = xfs::getProjectQuota(
-      info->directory, info->projectId);
+      info->directory, info->projectId, quotaPolicy);
 
   if (quota.isError()) {
     return Failure(quota.error());

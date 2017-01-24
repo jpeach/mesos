@@ -170,6 +170,7 @@ public:
     // don't mind that other flags refer to a different temp directory.
     flags.work_dir = mountPoint.get();
     flags.isolation = "disk/xfs";
+    flags.enforce_container_disk_quota = true;
     return flags;
   }
 
@@ -254,9 +255,10 @@ TEST_F(ROOT_XFS_QuotaTest, QuotaGetSet)
 
   ASSERT_SOME(os::mkdir(root));
 
-  EXPECT_SOME(setProjectQuota(root, projectId, limit));
+  EXPECT_SOME(setProjectQuota(root, projectId, QUOTA_POLICY_ENFORCING, limit));
 
-  Result<QuotaInfo> info = getProjectQuota(root, projectId);
+  Result<QuotaInfo> info =
+    getProjectQuota(root, projectId, QUOTA_POLICY_ENFORCING);
   ASSERT_SOME(info);
 
   EXPECT_EQ(limit, info->limit);
@@ -276,7 +278,7 @@ TEST_F(ROOT_XFS_QuotaTest, QuotaLimit)
   ASSERT_SOME(os::mkdir(root));
 
   // Assign a project quota.
-  EXPECT_SOME(setProjectQuota(root, projectId, limit));
+  EXPECT_SOME(setProjectQuota(root, projectId, QUOTA_POLICY_ENFORCING, limit));
 
   // Move the directory into the project.
   EXPECT_SOME(setProjectId(root, projectId));
@@ -287,7 +289,7 @@ TEST_F(ROOT_XFS_QuotaTest, QuotaLimit)
   // And verify the quota reflects what we used.
   EXPECT_SOME_EQ(
       makeQuotaInfo(limit, used),
-      getProjectQuota(root, projectId));
+      getProjectQuota(root, projectId, QUOTA_POLICY_ENFORCING));
 
   // We have 1MB of our quota left. Verify that we get a write
   // error if we overflow that.
@@ -349,30 +351,94 @@ TEST_F(ROOT_XFS_QuotaTest, DirectoryTree)
   // verify the expected quota usage. Then verify the inverse.
 
   EXPECT_SOME(setProjectId(rootA, projectA));
-  EXPECT_SOME(setProjectQuota(rootA, projectA, limit));
+  EXPECT_SOME(setProjectQuota(rootA, projectA, QUOTA_POLICY_ENFORCING, limit));
 
   EXPECT_SOME_EQ(
       makeQuotaInfo(limit, Megabytes(2)),
-      getProjectQuota(rootA, projectA));
+      getProjectQuota(rootA, projectA, QUOTA_POLICY_ENFORCING));
 
   EXPECT_SOME(setProjectId(rootB, projectB));
-  EXPECT_SOME(setProjectQuota(rootB, projectB, limit));
+  EXPECT_SOME(setProjectQuota(rootB, projectB, QUOTA_POLICY_ENFORCING, limit));
 
   EXPECT_SOME_EQ(
       makeQuotaInfo(limit, Megabytes(1)),
-      getProjectQuota(rootB, projectB));
+      getProjectQuota(rootB, projectB, QUOTA_POLICY_ENFORCING));
 
   EXPECT_SOME(clearProjectId(rootA));
 
   EXPECT_SOME_EQ(
       makeQuotaInfo(limit, Megabytes(0)),
-      getProjectQuota(rootA, projectA));
+      getProjectQuota(rootA, projectA, QUOTA_POLICY_ENFORCING));
 
   EXPECT_SOME(clearProjectId(rootB));
 
   EXPECT_SOME_EQ(
       makeQuotaInfo(limit, Megabytes(0)),
-      getProjectQuota(rootB, projectB));
+      getProjectQuota(rootB, projectB, QUOTA_POLICY_ENFORCING));
+}
+
+
+// Verify that using the --no-enforce_container_disk_quota flag
+// allows a task to break the disk resource limit.
+TEST_F(ROOT_XFS_QuotaTest, AccountingOnly)
+{
+  Try<Owned<cluster::Master>> master = StartMaster();
+  ASSERT_SOME(master);
+
+  slave::Flags flags = CreateSlaveFlags();
+  flags.enforce_container_disk_quota = false;
+
+  Owned<MasterDetector> detector = master.get()->createDetector();
+  Try<Owned<cluster::Slave>> slave = StartSlave(detector.get(), flags);
+  ASSERT_SOME(slave);
+
+  MockScheduler sched;
+  MesosSchedulerDriver driver(
+      &sched, DEFAULT_FRAMEWORK_INFO, master.get()->pid, DEFAULT_CREDENTIAL);
+
+  EXPECT_CALL(sched, registered(&driver, _, _));
+
+  Future<vector<Offer>> offers;
+  EXPECT_CALL(sched, resourceOffers(&driver, _))
+    .WillOnce(FutureArg<1>(&offers))
+    .WillRepeatedly(Return()); // Ignore subsequent offers.
+
+  driver.start();
+
+  AWAIT_READY(offers);
+  EXPECT_FALSE(offers.get().empty());
+
+  const Offer& offer = offers.get()[0];
+
+  // Create a task which requests 1MB disk, but actually
+  // uses more than 2MB disk.
+  TaskInfo task = createTask(
+      offer.slave_id(),
+      Resources::parse("cpus:1;mem:128;disk:1").get(),
+      "dd if=/dev/zero of=file bs=1048576 count=2");
+
+  Future<TaskStatus> status1;
+  Future<TaskStatus> status2;
+  EXPECT_CALL(sched, statusUpdate(&driver, _))
+    .WillOnce(FutureArg<1>(&status1))
+    .WillOnce(FutureArg<1>(&status2));
+
+  driver.launchTasks(offer.id(), {task});
+
+  AWAIT_READY(status1);
+  EXPECT_EQ(task.task_id(), status1.get().task_id());
+  EXPECT_EQ(TASK_RUNNING, status1.get().state());
+
+  AWAIT_READY(status2);
+  EXPECT_EQ(task.task_id(), status2.get().task_id());
+  EXPECT_EQ(TASK_FINISHED, status2.get().state());
+
+  // Without disk enforcement, we expect the task to succeed.
+  EXPECT_EQ(TaskStatus::SOURCE_EXECUTOR, status2.get().source());
+  EXPECT_EQ("Command exited with status 0", status2.get().message());
+
+  driver.stop();
+  driver.join();
 }
 
 
