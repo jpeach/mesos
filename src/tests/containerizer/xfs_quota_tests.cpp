@@ -441,6 +441,59 @@ TEST_F(ROOT_XFS_QuotaTest, DiskUsageExceedsQuota)
 }
 
 
+TEST_F(ROOT_XFS_QuotaTest, ZeroDiskUsage)
+{
+  Try<Owned<cluster::Master>> master = StartMaster();
+  ASSERT_SOME(master);
+
+  Owned<MasterDetector> detector = master.get()->createDetector();
+  Try<Owned<cluster::Slave>> slave =
+    StartSlave(detector.get(), CreateSlaveFlags());
+  ASSERT_SOME(slave);
+
+  MockScheduler sched;
+  MesosSchedulerDriver driver(
+      &sched, DEFAULT_FRAMEWORK_INFO, master.get()->pid, DEFAULT_CREDENTIAL);
+
+  EXPECT_CALL(sched, registered(&driver, _, _));
+
+  Future<vector<Offer>> offers;
+  EXPECT_CALL(sched, resourceOffers(&driver, _))
+    .WillOnce(FutureArg<1>(&offers))
+    .WillRepeatedly(Return()); // Ignore subsequent offers.
+
+  driver.start();
+
+  AWAIT_READY(offers);
+  EXPECT_FALSE(offers.get().empty());
+
+  const Offer& offer = offers.get()[0];
+
+  // Create a task which requests 0MB disk and then tries to use some.
+  TaskInfo task = createTask(
+      offer.slave_id(),
+      Resources::parse("cpus:1;mem:128;disk:0").get(),
+      "dd if=/dev/zero of=file bs=1048576 count=2");
+
+  Future<TaskStatus> status;
+  EXPECT_CALL(sched, statusUpdate(&driver, _))
+    .WillOnce(FutureArg<1>(&status));
+
+  driver.launchTasks(offer.id(), {task});
+
+  AWAIT_READY(status);
+  EXPECT_EQ(task.task_id(), status.get().task_id());
+  EXPECT_EQ(TASK_FAILED, status.get().state());
+
+  // In this case we get a failure from the agent because it fails to
+  // create log files in the sandbox.
+  EXPECT_EQ(TaskStatus::SOURCE_SLAVE, status.get().source());
+
+  driver.stop();
+  driver.join();
+}
+
+
 // Verify that we can get accurate resource statistics from the XFS
 // disk isolator.
 TEST_F(ROOT_XFS_QuotaTest, ResourceStatistics)
@@ -935,6 +988,24 @@ TEST_F(ROOT_XFS_NoProjectQuota, CheckQuotaEnabled)
 TEST_F(ROOT_XFS_QuotaTest, CheckQuotaEnabled)
 {
   EXPECT_SOME_EQ(true, xfs::isQuotaEnabled(mountPoint.get()));
+}
+
+
+TEST(XFS_QuotaTest, BasicBlocks)
+{
+  EXPECT_EQ(BasicBlocks(0).bytes(), Bytes(0u))
+    << " 0 is the same for blocks and bytes";
+
+  EXPECT_EQ(BasicBlocks(1).bytes(), Bytes(512u));
+
+  EXPECT_EQ(Bytes(512u), BasicBlocks(Bytes(128)).bytes())
+    << "a partial block should round up";
+
+  EXPECT_EQ(Bytes(1024u), BasicBlocks(Bytes(513)).bytes())
+    << "a partial block should round up";
+
+  EXPECT_EQ(BasicBlocks(1), BasicBlocks(1));
+  EXPECT_EQ(BasicBlocks(1), BasicBlocks(Bytes(512u)));
 }
 
 } // namespace tests {

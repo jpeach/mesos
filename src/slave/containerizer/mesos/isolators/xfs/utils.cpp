@@ -59,10 +59,6 @@ namespace mesos {
 namespace internal {
 namespace xfs {
 
-// The quota API defines space limits in terms of in basic
-// blocks (512 bytes).
-static constexpr Bytes BASIC_BLOCK_SIZE = Bytes(512u);
-
 
 // Although XFS itself doesn't define any invalid project IDs,
 // we need a way to know whether or not a project ID was assigned
@@ -158,8 +154,8 @@ static Try<Nothing> setProjectQuota(
   // for consistency. Functionally all we need is the hard quota.
   quota.d_fieldmask = FS_DQ_BSOFT | FS_DQ_BHARD;
 
-  quota.d_blk_hardlimit = limit.bytes() / BASIC_BLOCK_SIZE.bytes();
-  quota.d_blk_softlimit = limit.bytes() / BASIC_BLOCK_SIZE.bytes();
+  quota.d_blk_hardlimit = BasicBlocks(limit).blocks();
+  quota.d_blk_softlimit = BasicBlocks(limit).blocks();
 
   if (::quotactl(QCMD(Q_XSETQLIM, PRJQUOTA),
                  devname.get().c_str(),
@@ -250,8 +246,8 @@ Result<QuotaInfo> getProjectQuota(
   }
 
   QuotaInfo info;
-  info.limit = BASIC_BLOCK_SIZE * quota.d_blk_hardlimit;
-  info.used =  BASIC_BLOCK_SIZE * quota.d_bcount;
+  info.limit = BasicBlocks(quota.d_blk_hardlimit);
+  info.used =  BasicBlocks(quota.d_bcount);
 
   return info;
 }
@@ -268,8 +264,10 @@ Try<Nothing> setProjectQuota(
 
   // A 0 limit deletes the quota record. Since the limit is in basic
   // blocks that effectively means > 512 bytes.
-  if (limit < BASIC_BLOCK_SIZE) {
-    return Error("Quota limit must be >= " + stringify(BASIC_BLOCK_SIZE));
+  if (limit < BasicBlocks::block_size()) {
+    return Error(
+        "Quota limit must be >= " +
+        stringify(BasicBlocks::block_size()));
   }
 
   return internal::setProjectQuota(path, projectId, limit);

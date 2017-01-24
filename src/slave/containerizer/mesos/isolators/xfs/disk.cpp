@@ -316,10 +316,12 @@ Future<Nothing> XfsDiskIsolatorProcess::update(
 
   Option<Bytes> needed = getDiskResource(resources);
   if (needed.isNone()) {
-    // TODO(jpeach) If there's no disk resource attached, we should set the
-    // minimum quota (1 block), since a zero quota would be unconstrained.
-    LOG(WARNING) << "Ignoring quota update with no disk resources";
-    return Nothing();
+    // The quota system regards a 0 limit as being unlimited, so if the
+    // container doesn't have any disk resource, we give it a limit of a single
+    // block to ensure it is still contained.
+    needed = xfs::BasicBlocks(1);
+    LOG(INFO) << "Rounded quota update with no disk resources up to "
+              << needed.get();
   }
 
   // Only update the disk quota if it has changed.
