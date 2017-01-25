@@ -89,11 +89,17 @@ minute. The default interval is 15 seconds.
 
 ### XFS Disk Isolator
 
-The XFS Disk isolator uses XFS project quotas to track the disk
-space used by each container sandbox and to enforce the corresponding
-disk space allocation. Write operations performed by tasks exceeding
-their disk allocation will fail with an `EDQUOT` error. The task
-will not be terminated by the containerizer.
+The XFS Disk isolator uses XFS project quotas to track the disk space
+used by each container sandbox and to enforce the corresponding disk
+space allocation. When quota enforcement is enabled, write operations
+performed by tasks exceeding their disk allocation will fail with an
+`EDQUOT` error. The task will not be terminated by the containerizer.
+
+The XFS Disk isolator implements the `--enforce_container_disk_quota`
+isolator flag by setting either soft or hard limits. If enforcement
+is enabled, the isolator will set both the hard and soft quota
+limit. Otherwise, only the soft limit will be set, which triggers disk
+usage accounting but does not prevent the task exceeding its quota.
 
 The XFS disk isolator is functionally similar to Posix Disk isolator
 but avoids the cost of repeatedly running the `du`.  Though they will
@@ -126,9 +132,8 @@ to display the `fsxattr.projid` field. For example:
 
     $ xfs_io -r -c stat /mnt/mesos/
 
-Note that the Posix Disk isolator flags `--enforce_container_disk_quota`,
-`--container_disk_watch_interval` and `--enforce_container_disk_quota` do
-not apply to the XFS Disk isolator.
+Note that the Posix Disk isolator `--container_disk_watch_interval`
+does not apply to the XFS Disk isolator.
 
 
 ### Docker Runtime Isolator
