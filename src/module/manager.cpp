@@ -67,6 +67,7 @@ void ModuleManager::initialize()
 
   kindToVersion["Allocator"] = MESOS_VERSION;
   kindToVersion["Anonymous"] = MESOS_VERSION;
+  kindToVersion["Audit"] = MESOS_VERSION;
   kindToVersion["Authenticatee"] = MESOS_VERSION;
   kindToVersion["Authenticator"] = MESOS_VERSION;
   kindToVersion["Authorizer"] = MESOS_VERSION;

@@ -2148,6 +2148,7 @@ MESOS_TEST_MODULES =		\
   libexamplemodule.la		\
   libtestallocator.la		\
   libtestanonymous.la		\
+  libtestaudit.la		\
   libtestauthentication.la	\
   libtestauthorizer.la		\
   libtestcontainer_logger.la	\
@@ -2168,6 +2169,11 @@ libexamplemodule_la_LDFLAGS = $(MESOS_TEST_MODULE_LDFLAGS)
 libtestanonymous_la_SOURCES = examples/test_anonymous_module.cpp
 libtestanonymous_la_CPPFLAGS = $(MESOS_CPPFLAGS)
 libtestanonymous_la_LDFLAGS = $(MESOS_TEST_MODULE_LDFLAGS)
+
+# Library containing the test audit modules.
+libtestaudit_la_SOURCES = examples/test_audit_module.cpp
+libtestaudit_la_CPPFLAGS = $(MESOS_CPPFLAGS)
+libtestaudit_la_LDFLAGS = $(MESOS_TEST_MODULE_LDFLAGS)
 
 # Library containing the test CRAM-MD5 authentication modules.
 # TODO(tillt): Add cyrus-sasl2 dependency while removing it from libmesos.

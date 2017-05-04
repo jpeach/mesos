@@ -256,6 +256,20 @@ static void addMasterDetectorModules(Modules* modules)
 }
 
 
+static void addAuditModules(Modules* modules)
+{
+  CHECK_NOTNULL(modules);
+
+  // Now add our test anonymous module.
+  Modules::Library* library = modules->add_libraries();
+  library->set_file(getModulePath("testaudit"));
+
+  // To add a new module from this library, create a new ModuleID enum
+  // and tie it with a module name.
+  addModule(library, TestAudit, "org_apache_mesos_TestAudit");
+}
+
+
 Try<Nothing> initModules(const Option<Modules>& modules)
 {
   // First get the user provided modules.
@@ -296,6 +310,9 @@ Try<Nothing> initModules(const Option<Modules>& modules)
 
   // Add MasterDetector module from testmasterdetector library.
   addMasterDetectorModules(&mergedModules);
+
+  // Add Audit module from testmasterdetector library.
+  addAuditModules(&mergedModules);
 
   return ModuleManager::load(mergedModules);
 }
