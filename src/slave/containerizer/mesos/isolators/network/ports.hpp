@@ -24,6 +24,7 @@
 
 #include <process/owned.hpp>
 
+#include <stout/duration.hpp>
 #include <stout/hashmap.hpp>
 #include <stout/interval.hpp>
 
@@ -36,6 +37,12 @@
 namespace mesos {
 namespace internal {
 namespace slave {
+
+constexpr Duration PORTS_WATCH_INTERVAL = Minutes(1);
+
+
+class NetworkPortsCollectorProcess;
+
 
 // The `network/ports` isolator provides isolation of TCP listener
 // ports for tasks that share the host network namespace. It ensures
@@ -50,7 +57,7 @@ public:
 
   static Try<std::vector<uint32_t>> getProcessSockets(pid_t pid);
 
-  virtual ~NetworkPortsIsolatorProcess() {}
+  virtual ~NetworkPortsIsolatorProcess();
 
   virtual bool supportsNesting();
 
@@ -72,8 +79,15 @@ public:
   virtual process::Future<Nothing> cleanup(
       const ContainerID& containerId);
 
+  // Public only for testing.
+  process::Future<Nothing> _check(
+      const hashmap<ContainerID, IntervalSet<uint16_t>>& listeners);
+
 private:
-  NetworkPortsIsolatorProcess();
+  NetworkPortsIsolatorProcess(
+      const std::string& cgroupsRoot, const std::string& freezerHierarchy);
+
+  process::Future<Nothing> check();
 
   struct Info
   {
@@ -82,6 +96,7 @@ private:
   };
 
   hashmap<ContainerID, process::Owned<Info>> infos;
+  process::Owned<NetworkPortsCollectorProcess> portsCollector;
 };
 
 } // namespace slave {
