@@ -19,10 +19,15 @@
 
 #include <stdint.h>
 
+#include <string>
+#include <vector>
+
 #include <process/owned.hpp>
 
 #include <stout/hashmap.hpp>
 #include <stout/interval.hpp>
+
+#include "linux/routing/diagnosis/diagnosis.hpp"
 
 #include "slave/flags.hpp"
 
@@ -39,6 +44,11 @@ class NetworkPortsIsolatorProcess : public MesosIsolatorProcess
 {
 public:
   static Try<mesos::slave::Isolator*> create(const Flags& flags);
+
+  static Try<hashmap<uint32_t, routing::diagnosis::socket::Info>>
+    getListeningSockets();
+
+  static Try<std::vector<uint32_t>> getProcessSockets(pid_t pid);
 
   virtual ~NetworkPortsIsolatorProcess() {}
 

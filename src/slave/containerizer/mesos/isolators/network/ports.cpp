@@ -18,6 +18,9 @@
 
 #include <process/id.hpp>
 
+#include <stout/numify.hpp>
+#include <stout/path.hpp>
+
 #include "common/protobuf_utils.hpp"
 #include "common/values.hpp"
 
@@ -36,6 +39,8 @@ using mesos::slave::ContainerState;
 using mesos::slave::Isolator;
 
 using mesos::internal::values::rangesToIntervalSet;
+
+using namespace routing::diagnosis;
 
 namespace mesos {
 namespace internal {
@@ -135,6 +140,89 @@ Future<Nothing> NetworkPortsIsolatorProcess::recover(
   }
 
   return Nothing();
+}
+
+
+Try<hashmap<uint32_t, socket::Info>>
+NetworkPortsIsolatorProcess::getListeningSockets()
+{
+  Try<vector<socket::Info>> socketInfos = socket::infos(
+      AF_INET,
+      socket::state::LISTEN);
+
+  if (socketInfos.isError()) {
+    return Error(socketInfos.error());
+  }
+
+  hashmap<uint32_t, socket::Info> inodes;
+
+  foreach (const socket::Info& info, socketInfos.get()) {
+    // The inode should never be 0. This would only happen if the kernel
+    // didn't return the inode in the sockdiag response, which would imply
+    // a very old kernel or a problem between the kernel and libnl.
+    if (info.inode != 0) {
+      inodes.emplace(info.inode, info);
+    }
+  }
+
+  return inodes;
+}
+
+
+// Extract the inode field from a /proc/$PID/fd entry. The format of
+// the socket entry is "socket:[nnnn]" where nnnn is the numberic inode
+// number of the socket.
+static uint32_t extractSocketInode(const string& sock)
+{
+  const size_t s = sizeof("socket:[]") - 1;
+  const string val = sock.substr(s - 1, sock.size() - s);
+
+  Try<uint32_t> value = numify<uint32_t>(val);
+  CHECK_SOME(value);
+
+  return value.get();
+}
+
+
+Try<vector<uint32_t>> NetworkPortsIsolatorProcess::getProcessSockets(pid_t pid)
+{
+  const string fdPath = path::join("/proc", stringify(pid), "fd");
+
+  DIR* dir = opendir(fdPath.c_str());
+  if (dir == nullptr) {
+    return ErrnoError("Failed to open directory '" + fdPath + "'");
+  }
+
+  errno = 0;
+
+  vector<uint32_t> inodes;
+  struct dirent* entry;
+  char target[NAME_MAX];
+
+  while ((entry = readdir(dir)) != nullptr) {
+    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+      continue;
+    }
+
+    ssize_t nbytes = readlinkat(
+        dirfd(dir), entry->d_name, target, sizeof(target) - 1);
+    if (nbytes == -1) {
+      int saved = errno;
+      closedir(dir);
+      return ErrnoError(
+          saved,
+          "Failed to read link '" + path::join(fdPath, entry->d_name) + "'");
+    }
+
+    target[nbytes] = '\0';
+
+    if (strings::startsWith(target, "socket:[")) {
+      inodes.push_back(extractSocketInode(target));
+    }
+  }
+
+  closedir(dir);
+  return inodes;
 }
 
 } // namespace slave {
