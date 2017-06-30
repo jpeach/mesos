@@ -38,9 +38,6 @@ namespace mesos {
 namespace internal {
 namespace slave {
 
-constexpr Duration PORTS_WATCH_INTERVAL = Minutes(1);
-
-
 class NetworkPortsCollectorProcess;
 
 
@@ -85,7 +82,9 @@ public:
 
 private:
   NetworkPortsIsolatorProcess(
-      const std::string& cgroupsRoot, const std::string& freezerHierarchy);
+      const Duration watchInterval,
+      const std::string& cgroupsRoot,
+      const std::string& freezerHierarchy);
 
   process::Future<Nothing> check();
 
