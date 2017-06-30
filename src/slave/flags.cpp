@@ -1008,6 +1008,14 @@ mesos::internal::slave::Flags::Flags()
       "Interval at which the `network/ports` isolator should check for\n"
       "containers listening on ports they don't have resources for.",
       Seconds(30));
+
+  add(&Flags::container_ports_watch_resources_only,
+      "container_ports_watch_resources_only",
+      "When this is false, the `network/ports` isolator restricts tasks\n"
+      "to only listen on ports that they have been assigned resources\n"
+      "for. Otherwise tasks may listen on additional ports provided\n"
+      "they fall outside the range published by the agent's resources.",
+      false);
 #endif // ENABLE_NETWORK_PORTS_ISOLATOR
 
   add(&Flags::network_cni_plugins_dir,

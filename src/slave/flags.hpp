@@ -147,6 +147,7 @@ public:
 
 #ifdef ENABLE_NETWORK_PORTS_ISOLATOR
   Duration container_ports_watch_interval;
+  bool container_ports_watch_resources_only;
 #endif // ENABLE_NETWORK_PORTS_ISOLATOR
 
   Option<std::string> network_cni_plugins_dir;

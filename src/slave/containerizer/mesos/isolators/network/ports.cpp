@@ -32,6 +32,8 @@
 
 #include "linux/cgroups.hpp"
 
+#include "slave/constants.hpp"
+
 #include "slave/containerizer/mesos/linux_launcher.hpp"
 
 using std::list;
@@ -69,7 +71,8 @@ class NetworkPortsCollectorProcess
 public:
   NetworkPortsCollectorProcess(
       const string& cgroupsRoot,
-      const string& freezerHierarchy);
+      const string& freezerHierarchy,
+      Option<IntervalSet<uint16_t>> agentPorts);
 
   Future<hashmap<ContainerID, IntervalSet<uint16_t>>> collect(
       const hashset<ContainerID>& containerIds);
@@ -77,15 +80,18 @@ public:
 private:
   const string cgroupsRoot;
   const string freezerHierarchy;
+  Option<IntervalSet<uint16_t>> agentPorts;
 };
 
 
 NetworkPortsCollectorProcess::NetworkPortsCollectorProcess(
     const string& _cgroupsRoot,
-    const string& _freezerHierarchy)
+    const string& _freezerHierarchy,
+    Option<IntervalSet<uint16_t>> _agentPorts)
   : ProcessBase(process::ID::generate("network-ports-collector")),
     cgroupsRoot(_cgroupsRoot),
-    freezerHierarchy(_freezerHierarchy) {}
+    freezerHierarchy(_freezerHierarchy),
+    agentPorts(_agentPorts) {}
 
 
 Future<hashmap<ContainerID, IntervalSet<uint16_t>>>
@@ -161,12 +167,31 @@ NetworkPortsCollectorProcess::collect(const hashset<ContainerID>& containerIds)
           }
         }
 
-        listeners[containerId].add(address.port);
+        // If we are filtering by agent ports, then we only collect this
+        // listen socket if it falls within the agent port range.
+        if (agentPorts.isNone() || agentPorts->contains(address.port)) {
+          listeners[containerId].add(address.port);
+        }
       }
     }
   }
 
   return listeners;
+}
+
+
+static bool havePortsResource(const Flags& flags)
+{
+  vector<Resource> resourceList = Resources::fromString(
+      flags.resources.getOrElse(""), flags.default_role).get();
+
+  foreach(const auto& resource, resourceList) {
+    if (resource.name() == "ports") {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 
@@ -187,22 +212,74 @@ Try<Isolator*> NetworkPortsIsolatorProcess::create(const Flags& flags)
         freezerHierarchy.error());
   }
 
+  Option<IntervalSet<uint16_t>> agentPorts = None();
+
+  // If we are only watching the ports in the agent resources, figure
+  // out what the agent ports will be by checking the resources flag
+  // and falling back to the default.
+  if (flags.container_ports_watch_resources_only) {
+    Try<Resources> resources = Resources::parse(
+        flags.resources.getOrElse(""),
+        flags.default_role);
+
+    if (resources.isError()) {
+      return Error(
+          "Failed to parse agent resources: " + resources.error());
+    }
+
+    // Just like Containerizer::resources(), we need to distinguish
+    // between an empty ports resource and a missing ports resource.
+    // We only default the ports if it is missing.
+    if (!havePortsResource(flags)) {
+      resources = Resources(
+          Resources::parse(
+              "ports",
+              stringify(DEFAULT_PORTS),
+              flags.default_role).get());
+
+      agentPorts = rangesToIntervalSet<uint16_t>(
+          resources->ports().get()).get();
+    } else if (resources->ports().isSome()) {
+      Try<IntervalSet<uint16_t>> ports =
+        rangesToIntervalSet<uint16_t>(resources->ports().get());
+
+      if (ports.isError()) {
+        return Error(
+            "Invalid ports resource '" +
+            stringify(resources->ports().get()) +
+            "': " + ports.error());
+      }
+
+      agentPorts = ports.get();
+    } else {
+      agentPorts = IntervalSet<uint16_t>();
+    }
+
+    // Add the libprocess listening port. It's not a ports resource,
+    // but we do want to guarantee that no tasks can take it when the
+    // agent is down.
+    agentPorts->add(process::address().port);
+  }
+
   return new MesosIsolator(process::Owned<MesosIsolatorProcess>(
       new NetworkPortsIsolatorProcess(
           flags.container_ports_watch_interval,
           flags.cgroups_root,
-          freezerHierarchy.get())));
+          freezerHierarchy.get(),
+          agentPorts)));
 }
 
 
 NetworkPortsIsolatorProcess::NetworkPortsIsolatorProcess(
     const Duration _watchInterval,
     const string& _cgroupsRoot,
-    const string& _freezerHierarchy)
+    const string& _freezerHierarchy,
+    Option<IntervalSet<uint16_t>> _agentPorts)
   : ProcessBase(process::ID::generate("network-ports-isolator")),
     portsCollector(new NetworkPortsCollectorProcess(
         _cgroupsRoot,
-        _freezerHierarchy))
+        _freezerHierarchy,
+        _agentPorts))
 {
   process::PID<NetworkPortsIsolatorProcess> _self(this);
 

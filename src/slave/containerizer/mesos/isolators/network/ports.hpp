@@ -84,7 +84,8 @@ private:
   NetworkPortsIsolatorProcess(
       const Duration watchInterval,
       const std::string& cgroupsRoot,
-      const std::string& freezerHierarchy);
+      const std::string& freezerHierarchy,
+      Option<IntervalSet<uint16_t>> agentPorts);
 
   process::Future<Nothing> check();
 
