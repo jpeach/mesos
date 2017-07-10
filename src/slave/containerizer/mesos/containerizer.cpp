@@ -235,15 +235,18 @@ Try<MesosContainerizer*> MesosContainerizer::create(
 #ifdef __linux__
   // One and only one `network` isolator is required. The network
   // isolator is responsible for preparing the network namespace for
-  // containers. If the user does not specify one, 'network/cni'
-  // isolator will be used.
+  // containers. Since the `network/ports` isolator does not configure
+  // any network namespaces, it doesn't count for the purposes of this
+  // check.
   switch (std::count_if(
       isolations->begin(),
       isolations->end(),
       [](const string& s) {
-        return strings::startsWith(s, "network/");
+        return strings::startsWith(s, "network/") && s != "network/ports";
       })) {
     case 0:
+      // If the user does not specify anything, the 'network/cni'
+      // isolator will be used.
       isolations->insert("network/cni");
       break;
 

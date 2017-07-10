@@ -36,6 +36,8 @@
 
 #include "slave/containerizer/mesos/linux_launcher.hpp"
 
+#include "slave/containerizer/mesos/isolators/network/cni/paths.hpp"
+
 using std::list;
 using std::set;
 using std::string;
@@ -266,7 +268,8 @@ Try<Isolator*> NetworkPortsIsolatorProcess::create(const Flags& flags)
           flags.container_ports_watch_interval,
           flags.cgroups_root,
           freezerHierarchy.get(),
-          agentPorts)));
+          agentPorts,
+          strings::contains(flags.isolation, "network/cni"))));
 }
 
 
@@ -274,8 +277,10 @@ NetworkPortsIsolatorProcess::NetworkPortsIsolatorProcess(
     const Duration _watchInterval,
     const string& _cgroupsRoot,
     const string& _freezerHierarchy,
-    Option<IntervalSet<uint16_t>> _agentPorts)
+    Option<IntervalSet<uint16_t>> _agentPorts,
+    bool _cniIsolatorEnabled)
   : ProcessBase(process::ID::generate("network-ports-isolator")),
+    cniIsolatorEnabled(_cniIsolatorEnabled),
     portsCollector(new NetworkPortsCollectorProcess(
         _cgroupsRoot,
         _freezerHierarchy,
@@ -319,10 +324,30 @@ Future<Option<ContainerLaunchInfo>> NetworkPortsIsolatorProcess::prepare(
     return Failure("Container has already been prepared");
   }
 
-  // TODO(jpeach) Figure out how to ignore tasks that are not going to use the
-  // host network. If they are in a network namespace (CNI network) then
-  // there's no point restricting them and we would have to implement any
-  // restructions by entering the right namespaces anyway.
+  // Ignore containers that will be network isolated by the `network/cni`
+  // plugin on the rationale that they ought to be getting a per-container
+  // IP address.
+  if (cniIsolatorEnabled && containerConfig.has_container_info()) {
+    foreach (const auto& networkInfo,
+             containerConfig.container_info().network_infos()) {
+      if (networkInfo.has_name()) {
+        return None();
+      }
+    }
+  }
+
+  // We now know that this container didn't specify a named CNI network,
+  // but it might be a nested container that implicitly joins a parent
+  // CNI network. The network configuration is always set from the top
+  // of the tree of nested containers, so we know that we should only
+  // isolate the child if we have already nested the root of the tree.
+  if (cniIsolatorEnabled && containerId.has_parent()) {
+    ContainerID rootContainerId = protobuf::getRootContainerId(containerId);
+
+    if (!infos.contains(rootContainerId)) {
+      return None();
+    }
+  }
 
   infos.emplace(containerId, Owned<Info>(new Info()));
 
@@ -391,8 +416,29 @@ Future<Nothing> NetworkPortsIsolatorProcess::recover(
     CHECK(!infos.contains(state.container_id()))
       << "Duplicate ContainerID " << state.container_id();
 
+    if (cniIsolatorEnabled) {
+      ContainerID rootContainerId = protobuf::getRootContainerId(
+          state.container_id());
+
+      string cniContainerDir = cni::paths::getContainerDir(
+          cni::paths::ROOT_DIR,
+          rootContainerId.value());
+
+      // Just like in prepare(), we ignore any containers that have
+      // joined a CNI network on the assumption that they have been
+      // allocated per-container IP addresses and therefore don't need
+      // port isolation.
+      if (os::exists(cniContainerDir)) {
+        continue;
+      }
+    }
+
     infos.emplace(state.container_id(), Owned<Info>(new Info()));
   }
+
+  // We don't need to worry about any orphans since we don't have any
+  // state to clean up and we know the containerizer will destroy them
+  // soon.
 
   return Nothing();
 }

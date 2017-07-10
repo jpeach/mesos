@@ -85,7 +85,8 @@ private:
       const Duration watchInterval,
       const std::string& cgroupsRoot,
       const std::string& freezerHierarchy,
-      Option<IntervalSet<uint16_t>> agentPorts);
+      Option<IntervalSet<uint16_t>> agentPorts,
+      bool cniIsolatorEnabled);
 
   process::Future<Nothing> check();
 
@@ -95,6 +96,7 @@ private:
     process::Promise<mesos::slave::ContainerLimitation> limitation;
   };
 
+  bool cniIsolatorEnabled;
   hashmap<ContainerID, process::Owned<Info>> infos;
   process::Owned<NetworkPortsCollectorProcess> portsCollector;
 };
