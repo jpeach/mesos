@@ -12,7 +12,7 @@ The purpose of this document is to give an introduction and overall description 
 
 # Contribution Process Overview
 
-Details of the contribution process can be obtained from the [submitting-a-patch](submitting-a-patch.md) document of the Mesos distribution along with the Getting Started Guidance section of this document.
+Details of the contribution process can be obtained from the [submitting-a-patch](submitting-a-patch.html) document of the Mesos distribution along with the Getting Started Guidance section of this document.
 
 ## Preparation and Build Environment Setup
 
@@ -42,7 +42,7 @@ Once changes are completed and tested submit the patch for review. This process 
 
 # Getting Started Guidance
 
-The following information will help provide additional guidance to execute the steps summarized in Contribution Process Overview described above as well as provide helpful hints when following the [submitting-a-patch](submitting-a-patch.md) document of the Mesos distribution.
+The following information will help provide additional guidance to execute the steps summarized in Contribution Process Overview described above as well as provide helpful hints when following the [submitting-a-patch](submitting-a-patch.html) document of the Mesos distribution.
 
 ## Apache JIRA Account Pre-Requisite
 
@@ -59,11 +59,11 @@ There is a set of tooling listed below that is required to be installed for the 
 
 ## Core Libraries
 
-There are two core libraries in Mesos: *stout* and *libprocess*. *stout* is the low level operating system abstraction tooling that should be used in place of writing your own low level tools. *libprocess* is a library used to support building compatible concurrent components (see [video](https://www.youtube.com/watch?v=5EIiU6R_6KE) for an introduction to the *libprocess* library). New contributors to Mesos should become familiar with these libraries and utilize them where appropriate.  Additional documentation can be found in the following two README files: 3rdparty/libprocess/README.md and 3rdparty/stout/README.md.
+There are two core libraries in Mesos: *stout* and *libprocess*. *stout* is the low level operating system abstraction tooling that should be used in place of writing your own low level tools. *libprocess* is a library used to support building compatible concurrent components (see [video](https://www.youtube.com/watch?v=5EIiU6R_6KE) for an introduction to the *libprocess* library). New contributors to Mesos should become familiar with these libraries and utilize them where appropriate.  Additional documentation can be found in the following two README files: 3rdparty/libprocess/README.html and 3rdparty/stout/README.md.
 
 ## Download and Build Mesos
 
-Detailed steps are provided in the [Mesos documentation](getting-started.md) to download and build Mesos. When downloading the Mesos distribution there are 2 options to obtain the Mesos source code. For contributing, ensure that the Git option is used.
+Detailed steps are provided in the [Mesos documentation](getting-started.html) to download and build Mesos. When downloading the Mesos distribution there are 2 options to obtain the Mesos source code. For contributing, ensure that the Git option is used.
 
 ## JIRA
 
@@ -84,7 +84,7 @@ When identifying a JIRA issue to work on, it is recommended to work on items tha
 
 There are a couple options to assign a work item: 1) create a new JIRA issue to work on or 2) identify an existing JIRA issue item to work on as described above. Whichever option is chosen there are several steps that should be followed when assigning yourself a JIRA ticket.
 
-It is important to identify a shepherd before you assign a ticket to yourself. Working with a shepherd will reveal its priority at the current time. To identify a shepherd look at the [maintainers](committers.md) file to get an idea who to ask to shepherd your JIRA issue.
+It is important to identify a shepherd before you assign a ticket to yourself. Working with a shepherd will reveal its priority at the current time. To identify a shepherd look at the [maintainers](committers.html) file to get an idea who to ask to shepherd your JIRA issue.
 
 
 ## JIRA Issue Solution Proposals
@@ -97,11 +97,11 @@ Once you have an assigned JIRA issue and you have identified a shepherd, it is i
 3. alert anyone interested in following the activity and progress of the ticket.
 
 
-Guidelines to consider when designing a solution can be found in the [effective-code-reviewing](effective-code-reviewing.md) document.
+Guidelines to consider when designing a solution can be found in the [effective-code-reviewing](effective-code-reviewing.html) document.
 
 ## Making Changes
 
-After completing the solution review make the source code changes, build and successfully run relevant test cases. Guidelines for these processes can be found in the [submitting-a-patch](submitting-a-patch.md) and [mesos-c++style-guide](c++-style-guide.md).
+After completing the solution review make the source code changes, build and successfully run relevant test cases. Guidelines for these processes can be found in the [submitting-a-patch](submitting-a-patch.html) and [mesos-c++style-guide](c++-style-guide.md).
 
 When creating and running test cases pay particular attention to race conditions. One recommendation is to run system tests multiple times.  Below is a sample command to repeat the test 100 times.
 
@@ -112,7 +112,7 @@ When creating and running test cases pay particular attention to race conditions
 
 Submit your patch for review after you have come to an agreement with your shepherd on the proposed solution, made the modifications and successfully ran the test cases. Make sure your shepherd is added as a "reviewer" (among others) in the review. This will ensure that your reviews get processed.
 
-When submitting a patch for review, include all testing done in the submission documentation. Follow the detailed steps found in the [submitting-a-patch](submitting-a-patch.md) document to submit a patch for review.
+When submitting a patch for review, include all testing done in the submission documentation. Follow the detailed steps found in the [submitting-a-patch](submitting-a-patch.html) document to submit a patch for review.
 
 #Advanced Level JIRA Items
 

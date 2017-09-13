@@ -6,7 +6,7 @@ layout: documentation
 # Weights
 
 In Mesos, __weights__ can be used to control the relative share of cluster
-resources that is offered to different [roles](roles.md).
+resources that is offered to different [roles](roles.html).
 
 In Mesos 0.28 and earlier, weights can only be configured by specifying
 the `--weights` command-line flag when starting the Mesos master. If a
@@ -14,7 +14,7 @@ role does not have a weight specified in the `--weights` flag, then the default
 value (1.0) will be used. Weights cannot be changed without updating the flag
 and restarting all Mesos masters.
 
-Mesos 1.0 contains a [/weights](endpoints/master/weights.md) operator endpoint
+Mesos 1.0 contains a [/weights](endpoints/master/weights.html) operator endpoint
 that allows weights to be changed at runtime. The `--weights` command-line flag
 is deprecated.
 
@@ -27,7 +27,7 @@ endpoint currently offers a REST-like interface and supports the following opera
 * [Querying](#getRequest) the currently set weights with GET.
 
 The endpoint can optionally use authentication and authorization. See the
-[authentication guide](authentication.md) for details.
+[authentication guide](authentication.html) for details.
 
 <a name="putRequest"></a>
 ## Update
@@ -54,7 +54,7 @@ for `role2`, the operator can use the following `weights.json`:
           }
         ]
 
-If the master is configured with an explicit [role whitelist](roles.md), the
+If the master is configured with an explicit [role whitelist](roles.html), the
 request is only valid if all specified roles exist in the role whitelist.
 
 Weights are now persisted in the registry on cluster bootstrap and after any

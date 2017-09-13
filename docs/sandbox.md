@@ -13,12 +13,12 @@ own sandbox and the executor's working directory is set to the sandbox.
 
 The sandbox holds:
 
-* Files [fetched by Mesos](fetcher.md), prior to starting
+* Files [fetched by Mesos](fetcher.html), prior to starting
   the executor's tasks.
 * The output of the executor and tasks (as files "stdout" and "stderr").
 * Files created by the executor and tasks, with some exceptions.
 
-**NOTE:** With the introduction of [persistent volumes](persistent-volume.md),
+**NOTE:** With the introduction of [persistent volumes](persistent-volume.html),
 executors and tasks should never create files outside of the sandbox.  However,
 some containerizers do not enforce this sandboxing.
 
@@ -168,4 +168,4 @@ After the delay, the files are deleted.
 Additionally, according to the `--disk_watch_interval` agent flag, files
 scheduled for garbage collection are pruned based on the available disk and
 the `--gc_disk_headroom` agent flag.
-See [the formula here](configuration.md#gc_disk_headroom).
+See [the formula here](configuration.html#gc_disk_headroom).

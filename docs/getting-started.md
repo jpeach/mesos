@@ -26,7 +26,7 @@ Mesos runs on Linux (64 Bit) and Mac OS X (64 Bit). To build Mesos from source, 
 
 For full support of process isolation under Linux a recent kernel >=3.10 is required.
 
-The Mesos agent also runs on Windows. To build Mesos from source, follow the instructions in the [Windows](windows.md) section.
+The Mesos agent also runs on Windows. To build Mesos from source, follow the instructions in the [Windows](windows.html) section.
 
 Make sure your hostname is resolvable via DNS or via `/etc/hosts` to allow full support of Docker's host-networking capabilities, needed for some of the Mesos tests. When in doubt, please validate that `/etc/hosts` contains your hostname.
 
@@ -212,7 +212,7 @@ Following are the instructions for stock CentOS 7.1. If you are using a differen
 
 ### Windows
 
-Follow the instructions in the [Windows](windows.md) section.
+Follow the instructions in the [Windows](windows.html) section.
 
 ## Building Mesos (Posix)
 

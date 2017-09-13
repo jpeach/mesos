@@ -15,8 +15,8 @@ consider taking the following steps to avoid a repeat scenario:
   member of the community and you should be assigned to the issue.
 * Check in with the [community](/community) and see if there is interest.
   * For bug fixes or documentation updates, you should
-    [contact the maintainer(s)](committers.md).
-  * For improvements or new features, you should [find a shepherd](submitting-a-patch.md)
+    [contact the maintainer(s)](committers.html).
+  * For improvements or new features, you should [find a shepherd](submitting-a-patch.html)
     to collaborate on your design and review.
 * Update your review.  Chances are, the codebase has changed significantly
   since you last uploaded the review.  Also make sure your review's summary

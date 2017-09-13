@@ -64,7 +64,7 @@ Use cases:
 * If Mesos agent is running inside a docker container.
 
 For more details, see
-[Docker Containerizer](docker-containerizer.md).
+[Docker Containerizer](docker-containerizer.html).
 
 <a name="Mesos"></a>
 ### Mesos containerizer
@@ -85,10 +85,10 @@ Use cases:
 * Want to add custom isolation for tasks.
 
 For more details, see
-[Mesos Containerizer](mesos-containerizer.md).
+[Mesos Containerizer](mesos-containerizer.html).
 
 
 ## References
 
-* [Containerizer Internals](containerizer-internals.md) for
+* [Containerizer Internals](containerizer-internals.html) for
   implementation details of containerizers.

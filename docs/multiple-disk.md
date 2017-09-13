@@ -6,7 +6,7 @@ layout: documentation
 # Multiple Disks
 
 Mesos provides a mechanism for operators to expose multiple disk resources. When
-creating [persistent volumes](persistent-volume.md) frameworks can decide
+creating [persistent volumes](persistent-volume.html) frameworks can decide
 whether to use specific disks by examining the `source` field on the disk
 resources offered.
 
@@ -41,7 +41,7 @@ the agent. Data is mapped into the `work_dir` of the agent.
 
 An example resources value for a root disk is shown below. Note that the
 operator could optionally specify a `role` for the disk, which would result in
-[statically reserving](reservation.md) the disk for a single [role](roles.md).
+[statically reserving](reservation.html) the disk for a single [role](roles.md).
 
         [
           {
@@ -73,7 +73,7 @@ most 10GB of disk space in total.
 
 An example resources value for a `Path` disk is shown below. Note that the
 operator could optionally specify a `role` for the disk, which would result in
-[statically reserving](reservation.md) the disk for a single [role](roles.md).
+[statically reserving](reservation.html) the disk for a single [role](roles.md).
 
         [
           {
@@ -111,7 +111,7 @@ isolation is disabled for `Mount` disks.
 
 An example resources value for a `Mount` disk is shown below. Note that the
 operator could optionally specify a `role` for the disk, which would result in
-[statically reserving](reservation.md) the disk for a single [role](roles.md).
+[statically reserving](reservation.html) the disk for a single [role](roles.md).
 
         [
           {

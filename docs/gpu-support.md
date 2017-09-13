@@ -213,7 +213,7 @@ required agent flags are set as described above, and the
 `mesos-execute` command has been told to enable the `GPU_RESOURCES`
 framework capability so it can receive offers containing GPU
 resources.  Additionally, the required flags to enable support for
-docker containers (as described [here](container-image.md)) have been
+docker containers (as described [here](container-image.html)) have been
 set up as well.
 
     $ mesos-master \

@@ -66,7 +66,7 @@ layout: documentation
 * [Magine TV](https://magine.com)
 * [Medallia](http://www.medallia.com)
 * [MediaCrossing](http://www.mediacrossing.com)
-* [Medidata Solutions](http://www.mdsol.com)
+* [Medidata Solutions](http://www.htmlsol.com)
 * [meemo](http://www.meemo.io)
 * [Mesosphere](http://www.mesosphere.io)
 * [Motus](http://www.motus.com)
@@ -128,6 +128,6 @@ layout: documentation
 
 ## Software projects built on Mesos
 
-See the [Mesos frameworks page](frameworks.md) for a list of apps built on top of Mesos, and instructions on how to use them.
+See the [Mesos frameworks page](frameworks.html) for a list of apps built on top of Mesos, and instructions on how to use them.
 
 If you're using Mesos, please add yourself to the list above, or email user@mesos.apache.org and we'll add you!

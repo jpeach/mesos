@@ -7,7 +7,7 @@ layout: documentation
 
 If the Mesos master is unavailable, existing tasks can continue to execute, but new resources cannot be allocated and new tasks cannot be launched. To reduce the chance of this situation occurring, Mesos has a high-availability mode that uses multiple Mesos masters: one active master (called the _leader_ or leading master) and several _backups_ in case it fails. The masters elect the leader, with [Apache ZooKeeper](http://zookeeper.apache.org/) both coordinating the election and handling leader detection by masters, agents, and scheduler drivers. More information regarding [how leader election works](http://zookeeper.apache.org/doc/trunk/recipes.html#sc_leaderElection) is available on the Apache Zookeeper website.
 
-This document describes how to configure Mesos to run in high-availability mode. For more information on developing highly available frameworks, see a [companion document](high-availability-framework-guide.md).
+This document describes how to configure Mesos to run in high-availability mode. For more information on developing highly available frameworks, see a [companion document](high-availability-framework-guide.html).
 
 **Note**: This document assumes you know how to start, run, and work with ZooKeeper, whose client library is included in the standard Mesos build.
 
@@ -22,15 +22,15 @@ To put Mesos into high-availability mode:
 
     * Start the mesos-agent binaries with `--master=zk://host1:port1,host2:port2,.../path`
 
-    * Start any framework schedulers using the same `zk` path as in the last two steps. The SchedulerDriver must be constructed with this path, as shown in the [Framework Development Guide](app-framework-development-guide.md).
+    * Start any framework schedulers using the same `zk` path as in the last two steps. The SchedulerDriver must be constructed with this path, as shown in the [Framework Development Guide](app-framework-development-guide.html).
 
 From now on, the Mesos masters and agents all communicate with ZooKeeper to find out which master is the current leading master. This is in addition to the usual communication between the leading master and the agents.
 
-In addition to ZooKeeper, one can get the location of the leading master by sending an HTTP request to [/redirect](endpoints/master/redirect.md) endpoint on any master.
+In addition to ZooKeeper, one can get the location of the leading master by sending an HTTP request to [/redirect](endpoints/master/redirect.html) endpoint on any master.
 
 For HTTP endpoints that only work at the leading master, requests made to endpoints at a non-leading master will result in either a `307 Temporary Redirect` (with the location of the leading master) or `503 Service Unavailable` (if the master does not know who the current leader is).
 
-Refer to the [Scheduler API](app-framework-development-guide.md) for how to deal with leadership changes.
+Refer to the [Scheduler API](app-framework-development-guide.html) for how to deal with leadership changes.
 
 ## Component Disconnection Handling
 When a network partition disconnects a component (master, agent, or scheduler driver) from ZooKeeper, the component's Master Detector induces a timeout event. This notifies the component that it has no leading master. Depending on the component, the following happens. (Note that while a component is disconnected from ZooKeeper, a master may still be in communication with agents or schedulers and vice versa.)
@@ -50,7 +50,7 @@ When a network partition disconnects an agent from the leader:
 
 * The agent fails health checks from the leader.
 
-* The leader marks the agent as deactivated and sends its tasks to the LOST state. The  [Framework Development Guide](app-framework-development-guide.md) describes these various task states.
+* The leader marks the agent as deactivated and sends its tasks to the LOST state. The  [Framework Development Guide](app-framework-development-guide.html) describes these various task states.
 
 * Deactivated agents may not re-register with the leader and are told to shut down upon any post-deactivation communication.
 

@@ -18,7 +18,7 @@ provide IP-per-container support allowing containers to be attached to
 different types of IP networks.  However, the two container run time
 engines differ in the way IP-per-container support is implemented. The
 `MesosContainerizer` uses the `network/cni` isolator to implement the
-[Container Network Interface (CNI)](https://github.com/containernetworking/cni/blob/master/SPEC.md)
+[Container Network Interface (CNI)](https://github.com/containernetworking/cni/blob/master/SPEC.html)
 to provide networking support for Mesos containers, while the
 `DockerContainerizer` relies on the Docker daemon to provide
 networking support using Docker's [Container Network
@@ -27,7 +27,7 @@ Model](https://github.com/docker/libnetwork).
 Note that while IP-per-container is one way to achieve network
 isolation between containers, there are other alternatives to
 implement network isolation within `MesosContainerizer`, e.g.,  using
-the [port-mapping network isolator](port-mapping-isolator.md).
+the [port-mapping network isolator](port-mapping-isolator.html).
 
 While the two container run-time engines use different mechanisms to
 provide networking support for containers, the interface to specify
@@ -68,14 +68,14 @@ an IP network.
 
 #### <a name="attaching-containers-mesos"></a>Mesos containerizer
 
-`MesosContainerizer` has the [`network/cni`](cni.md) isolator enabled
+`MesosContainerizer` has the [`network/cni`](cni.html) isolator enabled
 by default, which implements CNI (Container Network Interface). The
 `network/cni` isolator identifies CNI networks by using canonical
 names. When frameworks want to associate containers to a specific CNI
 network they specify a network name in the `name` field of the `
 NetworkInfo` protobuf. Details about the configuration and interaction
 of Mesos containers with CNI networks can be found in the
-documentation describing ["CNI support for Mesos containers"](cni.md).
+documentation describing ["CNI support for Mesos containers"](cni.html).
 
 
 #### <a name="attaching-containers-docker"></a>Docker containerizer

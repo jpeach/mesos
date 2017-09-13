@@ -7,7 +7,7 @@ layout: documentation
 
 [ClangFormat](http://llvm.org/releases/3.8.0/tools/clang/docs/ClangFormat.html) is an automatic source code formatting tool which helps us focus on the code rather than the formatting.
 
-> The provided configurations try to honor the [Mesos C++ Style Guide](c++-style-guide.md) as much as possible, but there are some limitations which require manual attention. Even with these limitations however, ClangFormat will be extremely useful for your workflow!
+> The provided configurations try to honor the [Mesos C++ Style Guide](c++-style-guide.html) as much as possible, but there are some limitations which require manual attention. Even with these limitations however, ClangFormat will be extremely useful for your workflow!
 
 ## Setup
 

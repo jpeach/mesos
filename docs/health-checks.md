@@ -7,7 +7,7 @@ layout: documentation
 
 Sometimes applications crash, misbehave, or become unresponsive. To detect and
 recover from such situations, some frameworks (e.g.,
-[Marathon](https://github.com/mesosphere/marathon/blob/v1.3.6/docs/docs/health-checks.md),
+[Marathon](https://github.com/mesosphere/marathon/blob/v1.3.6/docs/docs/health-checks.html),
 [Apache Aurora](https://aurora.apache.org/documentation/0.8.0/user-guide/#http-health-checking-and-graceful-shutdown))
 implement their own logic for checking the health of their tasks. This is
 typically done by having the framework scheduler send a "ping" request, e.g.,
@@ -185,7 +185,7 @@ exit code of the command.
 
 **NOTE:** Docker executor does not currently support checks. For all other
 tasks, including Docker containers launched in the
-[mesos containerizer](mesos-containerizer.md), the command will be executed from
+[mesos containerizer](mesos-containerizer.html), the command will be executed from
 the task's mount namespace.
 
 To specify a command check, set `type` to `CheckInfo::COMMAND` and populate
@@ -356,7 +356,7 @@ treated as success, any other status as failure.
 
 **NOTE:** If a task is a Docker container launched by the docker executor, it
 will be wrapped in `docker run`. For all other tasks, including Docker
-containers launched in the [mesos containerizer](mesos-containerizer.md), the
+containers launched in the [mesos containerizer](mesos-containerizer.html), the
 command will be executed from the task's mount namespace.
 
 To specify a command health check, set `type` to `HealthCheck::COMMAND` and
@@ -522,9 +522,9 @@ One of the most non-trivial things the library takes care of is entering the
 appropriate task's namespaces (`mnt`, `net`) on Linux agents. To perform a
 command check, the checker must be in the same mount namespace as the checked
 process; this is achieved by either calling `docker run` for the check command
-in case of [docker containerizer](docker-containerizer.md) or by explicitly
-calling `setns()` for `mnt` namespace in case of [mesos containerizer](mesos-containerizer.md)
-(see [containerization in Mesos](containerizers.md)). To perform an HTTP(S) or
+in case of [docker containerizer](docker-containerizer.html) or by explicitly
+calling `setns()` for `mnt` namespace in case of [mesos containerizer](mesos-containerizer.html)
+(see [containerization in Mesos](containerizers.html)). To perform an HTTP(S) or
 TCP check, the most reliable solution is to share the same network namespace
 with the checked process; in case of docker containerizer `setns()` for `net`
 namespace is explicitly called, while mesos containerizer guarantees an executor

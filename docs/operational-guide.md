@@ -6,12 +6,12 @@ layout: documentation
 # Operational Guide
 
 ## Using a process supervisor
-Mesos uses a "[fail-fast](https://en.wikipedia.org/wiki/Fail-fast)" approach to error handling: if a serious error occurs, Mesos will typically exit rather than trying to continue running in a possibly erroneous state. For example, when Mesos is configured for [high availability](high-availability.md), the leading master will abort itself when it discovers it has been partitioned away from the Zookeeper quorum. This is a safety precaution to ensure the previous leader doesn't continue communicating in an unsafe state.
+Mesos uses a "[fail-fast](https://en.wikipedia.org/wiki/Fail-fast)" approach to error handling: if a serious error occurs, Mesos will typically exit rather than trying to continue running in a possibly erroneous state. For example, when Mesos is configured for [high availability](high-availability.html), the leading master will abort itself when it discovers it has been partitioned away from the Zookeeper quorum. This is a safety precaution to ensure the previous leader doesn't continue communicating in an unsafe state.
 
 To ensure that such failures are handled appropriately, production deployments of Mesos typically use a _process supervisor_ (such as systemd or supervisord) to detect when Mesos processes exit. The supervisor can be configured to restart the failed process automatically and/or to notify the cluster operator to investigate the situation.
 
 ## Changing the master quorum
-The master leverages a [Paxos-based replicated log](replicated-log-internals.md) as its storage backend (`--registry=replicated_log` is the only storage backend currently supported). Each master participates in the ensemble as a log replica. The `--quorum` flag determines a majority of the masters.
+The master leverages a [Paxos-based replicated log](replicated-log-internals.html) as its storage backend (`--registry=replicated_log` is the only storage backend currently supported). Each master participates in the ensemble as a log replica. The `--quorum` flag determines a majority of the masters.
 
 The following table shows the tolerance to master failures for each quorum size:
 
@@ -66,4 +66,4 @@ Please see the NOTE section above. So long as the failed master is guaranteed to
 If the default IP (or the command line arg `--ip`) is an internal IP, then external entities such as framework schedulers will be unable to reach the master. To address that scenario, an externally accessible IP:port can be setup via the `--advertise_ip` and `--advertise_port` command line arguments of `mesos-master`. If configured, external entities such as framework schedulers interact with the advertise_ip:advertise_port from where the request needs to be proxied to the internal IP:port on which the Mesos master is listening.
 
 ## HTTP requests to non-leading master
-HTTP requests to some master endpoints (e.g., [/state](endpoints/master/state.md), [/machine/down](endpoints/master/machine/down.md)) can only be answered by the leading master. Such requests made to a non-leading master will result in either a `307 Temporary Redirect` (with the location of the leading master) or `503 Service Unavailable` (if the master does not know who the current leader is).
+HTTP requests to some master endpoints (e.g., [/state](endpoints/master/state.html), [/machine/down](endpoints/master/machine/down.md)) can only be answered by the leading master. Such requests made to a non-leading master will result in either a `307 Temporary Redirect` (with the location of the leading master) or `503 Service Unavailable` (if the master does not know who the current leader is).

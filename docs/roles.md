@@ -30,19 +30,19 @@ schedule work on behalf of the resource consumer(s) they are servicing.
 Some examples of resource allocation guarantees that Mesos provides:
 
 * Guaranteeing that a role is allocated a specified amount of resources
-  (via [quota](quota.md)).
+  (via [quota](quota.html)).
 * Ensuring that some (or all) of the resources on a particular agent
-  are allocated to a particular role (via [reservations](reservation.md)).
+  are allocated to a particular role (via [reservations](reservation.html)).
 * Ensuring that resources are fairly shared between roles
   (via [DRF](https://www.cs.berkeley.edu/~alig/papers/drf.pdf)).
 * Expressing that some roles should receive a higher relative share of the
-  cluster (via [weights](weights.md)).
+  cluster (via [weights](weights.html)).
 
 ## Roles and access control
 
 There are two ways to control which roles a framework is allowed to subscribe
 to. First, ACLs can be used to specify which framework principals can subscribe
-to which roles. For more information, see the [authorization](authorization.md)
+to which roles. For more information, see the [authorization](authorization.html)
 documentation.
 
 Second, a _role whitelist_ can be configured by passing the `--roles` flag to
@@ -116,7 +116,7 @@ A resource is assigned to a role using a _reservation_. Resources can either be
 reserved _statically_ (when the agent that hosts the resource is started) or
 _dynamically_: frameworks and operators can specify that a certain resource
 should subsequently be reserved for use by a given role. For more information,
-see the [reservation](reservation.md) documentation.
+see the [reservation](reservation.html) documentation.
 
 ## Default role
 
@@ -149,20 +149,20 @@ Each of the frameworks subscribed to that role are then offered additional
 resources in turn.
 
 The resource allocation process can be customized by assigning
-_[weights](weights.md)_ to roles: a role with a weight of 2 will be allocated
+_[weights](weights.html)_ to roles: a role with a weight of 2 will be allocated
 twice the fair share of a role with a weight of 1. By default, every role has a
 weight of 1. Weights can be configured using the
-[/weights](endpoints/master/weights.md) operator endpoint, or else using the
+[/weights](endpoints/master/weights.html) operator endpoint, or else using the
 deprecated `--weights` command-line flag when starting the Mesos master.
 
 ## Roles and quota
 
 In order to guarantee that a role is allocated a specific amount of resources,
-quota can be specified via the [/quota](endpoints/master/quota.md) endpoint.
+quota can be specified via the [/quota](endpoints/master/quota.html) endpoint.
 
 The resource allocator will first attempt to satisfy the quota requirements,
 before fairly sharing the remaining resources. For more information, see the
-[quota](quota.md) documentation.
+[quota](quota.html) documentation.
 
 ## Role vs. Principal
 
@@ -170,10 +170,10 @@ A principal identifies an entity that interacts with Mesos; principals are
 similar to user names. For example, frameworks supply a principal when they
 register with the Mesos master, and operators provide a principal when using the
 operator HTTP endpoints. An entity may be required to
-[authenticate](authentication.md) with its principal in order to prove its
-identity, and the principal may be used to [authorize](authorization.md) actions
-performed by an entity, such as [resource reservation](reservation.md) and
-[persistent volume](persistent-volume.md) creation/destruction.
+[authenticate](authentication.html) with its principal in order to prove its
+identity, and the principal may be used to [authorize](authorization.html) actions
+performed by an entity, such as [resource reservation](reservation.html) and
+[persistent volume](persistent-volume.html) creation/destruction.
 
 Roles, on the other hand, are used exclusively for resource allocation, as
 covered above.

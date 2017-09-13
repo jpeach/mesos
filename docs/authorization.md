@@ -15,9 +15,9 @@ A reference implementation _local authorizer_ provides basic security for most
 use cases. This authorizer is configured using Access Control Lists (ACLs).
 Alternative implementations could express their authorization rules in
 different ways. The local authorizer is used if the
-[`--authorizers`](configuration.md) flag is not specified (or manually set to
+[`--authorizers`](configuration.html) flag is not specified (or manually set to
 the default value `local`) and ACLs are specified via the
-[`--acls`](configuration.md) flag.
+[`--acls`](configuration.html) flag.
 
 This document is divided into two main sections. The first section explores the
 concepts necessary to successfully configure the local authorizer. The second
@@ -35,7 +35,7 @@ executor's authenticated principal must contain claims with keys `fid`, `eid`,
 and `cid`, with values equal to the currently-running executor's framework ID,
 executor ID, and container ID, respectively. By default, an authentication token
 containing these claims is injected into the executor's environment (see the
-[authentication documentation](authentication.md) for more information).
+[authentication documentation](authentication.html) for more information).
 
 Similarly, when the agent's `--authenticate_http_readwrite` flag is set, HTTP
 executor's are required to authenticate with the HTTP operator API when making
@@ -54,7 +54,7 @@ interacts with Mesos. A role, on the other hand, is used to associate resources
 with frameworks in various ways. A useful analogy can be made with user
 management in the Unix world: principals correspond to usernames, while roles
 approximately correspond to groups. For more information about roles, see the
-[roles documentation](roles.md).
+[roles documentation](roles.html).
 
 In a real-world organization, principals and roles might be used to represent
 various individuals or groups; for example, principals could correspond to
@@ -78,9 +78,9 @@ launches a Mesos framework and then attempts to destroy a persistent volume:
   to see if it has a `RegisterFramework` ACL which authorizes the principal
   `payroll-framework` to register with the `accounting` role. It does find such
   an ACL, the framework registers successfully. Now that the framework is
-  subscribed to the `accounting` role, any [weights](weights.md),
-  [reservations](reservation.md), [persistent volumes](persistent-volume.md),
-  or [quota](quota.md) associated with the accounting department's role will
+  subscribed to the `accounting` role, any [weights](weights.html),
+  [reservations](reservation.html), [persistent volumes](persistent-volume.md),
+  or [quota](quota.html) associated with the accounting department's role will
   apply when allocating resources to this role within the framework. This
   allows operators to control the resource consumption of this department.
 * Suppose the framework has created a persistent volume on an agent which it
@@ -101,7 +101,7 @@ When authorizing an action, the local authorizer proceeds through a list of
 relevant rules until it finds one that can either grant or deny permission to
 the subject making the request. These rules are configured with Access Control
 Lists (ACLs) in the case of the local authorizer. The ACLs are defined with a
-JSON-based language via the [`--acls`](configuration.md) flag.
+JSON-based language via the [`--acls`](configuration.html) flag.
 
 Each ACL consist of an array of JSON objects. Each of these objects has two
 entries. The first, `principals`, is common to all actions and describes the
@@ -163,7 +163,7 @@ entries, each representing an authorizable action:
 <tr>
   <td><code>register_frameworks</code></td>
   <td>Framework principal.</td>
-  <td>Resource <a href="roles.md">roles</a> of
+  <td>Resource <a href="roles.html">roles</a> of
       the framework.
   </td>
   <td>(Re-)registering of frameworks.</td>
@@ -184,20 +184,20 @@ entries, each representing an authorizable action:
   <td><code>reserve_resources</code></td>
   <td>Framework principal or Operator username.</td>
   <td>Resource role of the reservation.</td>
-  <td><a href="reservation.md">Reserving</a> resources.</td>
+  <td><a href="reservation.html">Reserving</a> resources.</td>
 </tr>
 <tr>
   <td><code>unreserve_resources</code></td>
   <td>Framework principal or Operator username.</td>
   <td>Principals whose resources can be unreserved by the operator.</td>
-  <td><a href="reservation.md">Unreserving</a> resources.</td>
+  <td><a href="reservation.html">Unreserving</a> resources.</td>
 </tr>
 <tr>
   <td><code>create_volumes</code></td>
   <td>Framework principal or Operator username.</td>
   <td>Resource role of the volume.</td>
   <td>Creating
-      <a href="persistent-volume.md">volumes</a>.
+      <a href="persistent-volume.html">volumes</a>.
   </td>
 </tr>
 <tr>
@@ -205,27 +205,27 @@ entries, each representing an authorizable action:
   <td>Framework principal or Operator username.</td>
   <td>Principals whose volumes can be destroyed by the operator.</td>
   <td>Destroying
-      <a href="persistent-volume.md">volumes</a>.
+      <a href="persistent-volume.html">volumes</a>.
   </td>
 </tr>
 <tr>
   <td><code>get_quotas</code></td>
   <td>Operator username.</td>
   <td>Resource role whose quota status will be queried.</td>
-  <td>Querying <a href="quota.md">quota</a> status.</td>
+  <td>Querying <a href="quota.html">quota</a> status.</td>
 </tr>
 <tr>
   <td><code>update_quotas</code></td>
   <td>Operator username.</td>
   <td>Resource role whose quota will be updated.</td>
-  <td>Modifying <a href="quota.md">quotas</a>.</td>
+  <td>Modifying <a href="quota.html">quotas</a>.</td>
 </tr>
 <tr>
   <td><code>view_roles</code></td>
   <td>Operator username.</td>
   <td>Resource roles whose information can be viewed by the operator.</td>
-  <td>Querying <a href="roles.md">roles</a>
-      and <a href="weights.md">weights</a>.
+  <td>Querying <a href="roles.html">roles</a>
+      and <a href="weights.html">weights</a>.
   </td>
 </tr>
 <tr>
@@ -239,7 +239,7 @@ entries, each representing an authorizable action:
   <td><code>update_weights</code></td>
   <td>Operator username.</td>
   <td>Resource roles whose weights can be updated by the operator.</td>
-  <td>Updating <a href="weights.md">weights</a>.</td>
+  <td>Updating <a href="weights.html">weights</a>.</td>
 </tr>
 <tr>
   <td><code>view_frameworks</code></td>
@@ -542,7 +542,7 @@ The previous ACL can be fixed as follows:
 ```
 
 The `ops` principal can teardown any framework using the
-[/teardown](endpoints/master/teardown.md) HTTP endpoint. No other principal can
+[/teardown](endpoints/master/teardown.html) HTTP endpoint. No other principal can
 teardown any frameworks.
 
 ```json
@@ -818,7 +818,7 @@ principals can use _GET_ on any endpoints.
 
 ## Implementing an Authorizer
 
-In case you plan to implement your own authorizer [module](modules.md), the
+In case you plan to implement your own authorizer [module](modules.html), the
 authorization interface consists of three parts:
 
 First, the `authorization::Request` protobuf message represents a request to be

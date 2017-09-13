@@ -175,7 +175,7 @@ stout, libprocess, master, agent, containerizer, allocator, and others
 should have an overview page in markdown format that explains their
 purpose, overall structure, and general use. This can even be a complete developer guide.
 
-This page must be located in the top directory of the library/component and named "README.md".
+This page must be located in the top directory of the library/component and named "README.html".
 
 The first line in such a document must be a section heading bearing the title which will appear in the generated Doxygen index.
 Example: "# Libprocess Developer Guide"

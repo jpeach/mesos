@@ -6,7 +6,7 @@ layout: documentation
 # Agent Recovery
 
 If the `mesos-agent` process on a host exits (perhaps due to a Mesos bug or
-because the operator kills the process while [upgrading Mesos](upgrades.md)),
+because the operator kills the process while [upgrading Mesos](upgrades.html)),
 any executors/tasks that were being managed by the `mesos-agent` process will
 continue to run. When `mesos-agent` is restarted, the operator can control how
 those old executors/tasks are handled:
@@ -41,7 +41,7 @@ A framework can control whether its executors will be recovered by setting the `
 
 ## Agent Configuration
 
-Three [configuration flags](configuration.md) control the recovery behavior of a Mesos agent:
+Three [configuration flags](configuration.html) control the recovery behavior of a Mesos agent:
 
 * `strict`: Whether to do agent recovery in strict mode [Default: true].
     - If strict=true, all recovery errors are considered fatal.
@@ -62,7 +62,7 @@ Three [configuration flags](configuration.md) control the recovery behavior of a
 > the executors and tasks running at an agent die when the agent dies
 > and are not recovered.
 
-A restarted agent should re-register with master within a timeout (75 seconds by default: see the `--max_agent_ping_timeouts` and `--agent_ping_timeout` [configuration flags](configuration.md)). If the agent takes longer than this timeout to re-register, the master shuts down the agent, which in turn will shutdown any live executors/tasks. Therefore, it is highly recommended to automate the process of restarting an agent (e.g., using a process supervisor such as [monit](http://mmonit.com/monit/) or `systemd`).
+A restarted agent should re-register with master within a timeout (75 seconds by default: see the `--max_agent_ping_timeouts` and `--agent_ping_timeout` [configuration flags](configuration.html)). If the agent takes longer than this timeout to re-register, the master shuts down the agent, which in turn will shutdown any live executors/tasks. Therefore, it is highly recommended to automate the process of restarting an agent (e.g., using a process supervisor such as [monit](http://mmonit.com/monit/) or `systemd`).
 
 ## Known issues with `systemd` and process lifetime
 

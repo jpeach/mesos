@@ -136,7 +136,7 @@ The secret can then be referenced in the `Image` protobuf as follows:
 ```
 
 ## SecretResolver Module
-The SecretResolver module is called from Mesos agent to fetch/resolve any image-pull, environment-based, or file-based secrets. (See [Mesos Modules](modules.md) for more information on using Mesos modules).
+The SecretResolver module is called from Mesos agent to fetch/resolve any image-pull, environment-based, or file-based secrets. (See [Mesos Modules](modules.html) for more information on using Mesos modules).
 
 ```
 class SecretResolver

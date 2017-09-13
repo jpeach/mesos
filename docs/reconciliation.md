@@ -78,7 +78,7 @@ Similarly, frameworks should initiate reconciliation after both framework
 failovers and master failovers. Note that the scheduler driver notifies
 frameworks when master failover has occurred (via the `reregistered()`
 callback). For more information, see the
-[guide to designing highly available frameworks](high-availability-framework-guide.md).
+[guide to designing highly available frameworks](high-availability-framework-guide.html).
 
 ## Algorithm
 

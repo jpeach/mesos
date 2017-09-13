@@ -10,26 +10,26 @@ A problem when running multiple frameworks on Mesos is that the default
 resources to frameworks even though they are beyond their fair share (e.g., when
 no other framework currently accepts these resources). There is no mechanism to
 lay away resources for future consumption in an entire cluster. Even though
-[dynamic reservations](reservation.md) allow both operators and frameworks
+[dynamic reservations](reservation.html) allow both operators and frameworks
 to dynamically reserve resources on particular Mesos agents, it does not solve
 the above problem because any individual agents might fail.
 
 Mesos 0.27 introduced support for _quotas_, which are a mechanism for
-guaranteeing that a [role](roles.md) will receive a certain minimum amount of
+guaranteeing that a [role](roles.html) will receive a certain minimum amount of
 resources. A quota specifies a _minimum_ amount of resources that the role is
 guaranteed to receive (unless the total resources in the cluster are less than
 the configured quota resources, which often indicates a misconfiguration). Of
 course, the role might receive offers for more resources than its configured
 quota, as dictated by the default Mesos DRF allocation scheme.
 
-Quotas are somewhat similar to [reserved resources](reservation.md), but they
+Quotas are somewhat similar to [reserved resources](reservation.html), but they
 have several differences. Most importantly, quota resources are not tied to a
 particular agent---that is, a quota ensures that a role will receive a certain
 amount of resources somewhere in the cluster, whereas reservations can be used
 to assign specific resources at a particular agent to a given role. Quotas can
 only be configured by operators, via the HTTP endpoint described below; dynamic
 reservations can be made by frameworks, provided the framework's principal is
-[authorized](authorization.md) to make reservations.
+[authorized](authorization.html) to make reservations.
 
 Note that reserved resources are considered to satisfy a role's quota. For
 example, if a role has been assigned a quota of 4 CPUs and also has 2 reserved
@@ -84,7 +84,7 @@ introducing preemption for running tasks.
 
 ## Operator HTTP Endpoint
 
-The master [/quota](endpoints/master/quota.md) HTTP endpoint enables operators
+The master [/quota](endpoints/master/quota.html) HTTP endpoint enables operators
 to configure quotas. The endpoint currently offers a REST-like interface and
 supports the following operations:
 
@@ -97,7 +97,7 @@ in order to update a quota for a given role, the operator has to remove the
 existing quota and then set a new one.
 
 The endpoint can optionally use authentication and authorization. See
-[authentication guide](authentication.md) for details.
+[authentication guide](authentication.html) for details.
 
 
 <a name="setRequest"></a>
@@ -132,7 +132,7 @@ can use the following `quota.json`:
 
 A set request is only valid for roles for which no quota is currently set.
 However if the master is configured without an explicit
-[role whitelist](roles.md), a set request can introduce new roles.
+[role whitelist](roles.html), a set request can introduce new roles.
 
 In order to bypass the [capacity heuristic](#capacityHeuristic) check the
 operator should set an optional `force` field:
@@ -240,10 +240,10 @@ possible to set quota for port resources).
 When an operator submits a quota set request via the master `/quota` HTTP
 endpoint, the following steps are triggered:
 
-1. [Authenticate](authentication.md) the HTTP request.
+1. [Authenticate](authentication.html) the HTTP request.
 2. Parse and validate the request.
    See [description of possible error codes](#setRequest).
-3. [Authorize](authentication.md) the HTTP request if authorization is enabled.
+3. [Authorize](authentication.html) the HTTP request if authorization is enabled.
 4. Run the [capacity heuristic](#capacityHeuristic) if not disabled by
    [the `force` flag](#setRequest).
 5. Reliably store quota. See [details on failover recovery](#failover).
@@ -252,10 +252,10 @@ endpoint, the following steps are triggered:
 <a name="removeProcessing"></a>
 The quota remove request processing is simpler and triggers the following steps:
 
-1. [Authenticate](authentication.md) the HTTP request.
+1. [Authenticate](authentication.html) the HTTP request.
 2. Validate the request.
    See [description of potential error codes](#removeRequest).
-3. [Authorize](authentication.md) the HTTP request if authorization is enabled.
+3. [Authorize](authentication.html) the HTTP request if authorization is enabled.
 4. Reliably remove quota.
 
 

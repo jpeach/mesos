@@ -6,7 +6,7 @@ layout: documentation
 # Docker Volume Support in Mesos Containerizer
 
 Mesos 1.0 adds Docker volume support to the
-[MesosContainerizer](mesos-containerizer.md) (a.k.a., the universal
+[MesosContainerizer](mesos-containerizer.html) (a.k.a., the universal
 containerizer) by introducing the new `docker/volume` isolator.
 
 This document describes the motivation, overall architecture, configuration
@@ -27,7 +27,7 @@ steps for enabling Docker volume isolator, and required framework changes.
 ## <a name="motivation"></a>Motivation
 
 The integration of external storage in Mesos is an attractive feature.  The
-Mesos [persistent volume](persistent-volume.md) primitives allow stateful
+Mesos [persistent volume](persistent-volume.html) primitives allow stateful
 services to persist data on an agent's local storage. However, the amount of
 storage capacity that can be directly attached to a single agent is
 limited---certain applications (e.g., databases) would like to access more data
@@ -36,7 +36,7 @@ also simplify data migration between agents/containers, and can make backups and
 disaster recovery easier.
 
 The [Docker Volume Driver
-API](https://github.com/Docker/Docker/blob/master/docs/extend/plugins_volume.md)
+API](https://github.com/Docker/Docker/blob/master/docs/extend/plugins_volume.html)
 defines an interface between the container runtime and external storage systems.
 It has been widely adopted. There are Docker volume plugins for a variety of
 storage drivers, such as [Convoy](https://github.com/rancher/convoy),
@@ -103,7 +103,7 @@ framework developers to specify the Docker volumes.
   [0.1.0](https://github.com/emccode/dvdcli/releases/tag/v0.1.0) on each agent.
 
 - Install the [Docker volume
-  plugin](https://github.com/Docker/Docker/blob/master/docs/extend/plugins.md#volume-plugins)
+  plugin](https://github.com/Docker/Docker/blob/master/docs/extend/plugins.html#volume-plugins)
 on each agent.
 
 - Explicitly create the Docker volumes that are going to be accessed by Mesos
@@ -288,7 +288,7 @@ volumes with the same `driver` and `name`.
 ## <a name="limitations"></a>Limitations
 
 Using the same Docker volume in both the
-[DockerContainerizer](docker-containerizer.md) and the MesosContainerizer
+[DockerContainerizer](docker-containerizer.html) and the MesosContainerizer
 simultaneously is **strongly discouraged**, because the MesosContainerizer has its
 own reference counting to decide when to unmount a Docker volume. Otherwise, it
 would be problematic if a Docker volume is unmounted by MesosContainerizer but
@@ -365,7 +365,7 @@ Create another task to verify the file `myfile` was created successfully.
     --volumes=<path>/myvolume.json
 ```
 
-Check the [sandbox](sandbox.md#where-is-it)
+Check the [sandbox](sandbox.html#where-is-it)
 for the second task to check the file `myfile` was created successfully.
 
 ```console

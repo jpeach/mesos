@@ -79,7 +79,7 @@ specify `--enforce_container_disk_quota` when starting the agent.
 
 The Posix Disk isolator reports disk usage for each sandbox by
 periodically running the `du` command. The disk usage can be retrieved
-from the resource statistics endpoint ([/monitor/statistics](endpoints/slave/monitor/statistics.md)).
+from the resource statistics endpoint ([/monitor/statistics](endpoints/slave/monitor/statistics.html)).
 
 The interval between two `du`s can be controlled by the agent flag
 `--container_disk_watch_interval`. For example,
@@ -270,12 +270,12 @@ secondary handle to the net_cls cgroup associated with the container
 by writing to `net_cls.classid`. The cgroups/net_cls isolator exposes
 the assigned net_cls handle to operators by exposing the handle as
 part of the `ContainerStatus` &mdash;associated with any task running within
-the container&mdash; in the agent's [/state](endpoints/slave/state.md) endpoint.
+the container&mdash; in the agent's [/state](endpoints/slave/state.html) endpoint.
 
 
 ### The `docker/volume` Isolator
 
-This is described in a [separate document](docker-volume.md).
+This is described in a [separate document](docker-volume.html).
 
 
 ### The `namespaces/ipc` Isolator
@@ -289,14 +289,14 @@ destroyed.
 
 ### The `network/cni` Isolator
 
-This is described in a [separate document](cni.md).
+This is described in a [separate document](cni.html).
 
 
 ### The `linux/capabilities` Isolator
 
-This is described in a [separate document](linux_capabilities.md).
+This is described in a [separate document](linux_capabilities.html).
 
 
 ### The `posix/rlimits` Isolator
 
-This is described in a [separate document](posix_rlimits.md).
+This is described in a [separate document](posix_rlimits.html).

@@ -9,13 +9,13 @@ Documentation is an integral part of every good feature. It describes the intend
 
 We have three different kinds of documentation:
 
-1. [MarkDown User Guides](markdown-style-guide.md)
+1. [MarkDown User Guides](markdown-style-guide.html)
 
   User guides and non-code technical documentation are stored in markdown files in the `docs/` folder. These files get rendered for the [online documentation](http://mesos.apache.org/documentation/latest/).
 
   We will accept small documentation changes on [Github via a pull request](https://github.com/apache/mesos). Larger documentation changes should go through the [reviewboard](https://reviews.apache.org/groups/mesos/).
 
-2. [Doxygen API Documentation and Developer Guides as part of source code](doxygen-style-guide.md)
+2. [Doxygen API Documentation and Developer Guides as part of source code](doxygen-style-guide.html)
 
   Doxygen API documentation needs only to be applied to source code parts that
   constitute an interface for which we want to generate Mesos API documentation

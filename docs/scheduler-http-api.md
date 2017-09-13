@@ -22,7 +22,7 @@ interacts with the Mesos master via HTTP requests, as described below. Although
 it is theoretically possible to use the HTTP scheduler API "directly" (e.g., by
 using a generic HTTP library), most scheduler developers should use a library for
 their language of choice that manages the details of the HTTP API; see the
-document on [HTTP API client libraries](api-client-libraries.md) for a list.
+document on [HTTP API client libraries](api-client-libraries.html) for a list.
 
 The v1 Scheduler HTTP API was introduced in Mesos 0.24.0. As of Mesos 1.0, it is
 considered stable and is the recommended way to develop new Mesos schedulers.
@@ -30,7 +30,7 @@ considered stable and is the recommended way to develop new Mesos schedulers.
 
 ## Overview
 
-The scheduler interacts with Mesos via the [/api/v1/scheduler](endpoints/master/api/v1/scheduler.md) master endpoint. We refer to this endpoint with its suffix "/scheduler" in the rest of this document. This endpoint accepts HTTP POST requests with data encoded as JSON (Content-Type: application/json) or binary Protobuf (Content-Type: application/x-protobuf). The first request that a scheduler sends to "/scheduler" endpoint is called SUBSCRIBE and results in a streaming response ("200 OK" status code with Transfer-Encoding: chunked).
+The scheduler interacts with Mesos via the [/api/v1/scheduler](endpoints/master/api/v1/scheduler.html) master endpoint. We refer to this endpoint with its suffix "/scheduler" in the rest of this document. This endpoint accepts HTTP POST requests with data encoded as JSON (Content-Type: application/json) or binary Protobuf (Content-Type: application/x-protobuf). The first request that a scheduler sends to "/scheduler" endpoint is called SUBSCRIBE and results in a streaming response ("200 OK" status code with Transfer-Encoding: chunked).
 
 **Schedulers are expected to keep the subscription connection open as long as possible (barring errors in network, software, hardware, etc.) and incrementally process the response.** HTTP client libraries that can only parse the response after the connection is closed cannot be used. For the encoding used, please refer to **Events** section below.
 
@@ -593,7 +593,7 @@ Master considers a scheduler disconnected if the persistent subscription connect
 
 If master realizes that the subscription connection is broken, it marks the scheduler as "disconnected" and starts a failover timeout (failover timeout is part of FrameworkInfo). It also drops any pending events in its queue. Additionally, it rejects subsequent non-subscribe HTTP requests to "/scheduler" with "403 Forbidden", until the scheduler subscribes again with "/scheduler". If the scheduler *does not* re-subscribe within the failover timeout, the master considers the scheduler gone forever and shuts down all its executors, thus killing all its tasks. Therefore, all production schedulers are recommended to use a high value (e.g., 4 weeks) for the failover timeout.
 
-NOTE: To force shutdown of a framework before the failover timeout elapses (e.g., during framework development and testing), either the framework can send the `TEARDOWN` call (part of the Scheduler API) or an operator can use the [/teardown](endpoints/master/teardown.md) master endpoint (part of the Operator API).
+NOTE: To force shutdown of a framework before the failover timeout elapses (e.g., during framework development and testing), either the framework can send the `TEARDOWN` call (part of the Scheduler API) or an operator can use the [/teardown](endpoints/master/teardown.html) master endpoint (part of the Operator API).
 
 If the scheduler realizes that its subscription connection to "/scheduler" is broken or the master has changed (e.g., via ZooKeeper), it should resubscribe (using a backoff strategy). This is done by sending a `SUBSCRIBE` request (with framework ID set) on a **new** persistent connection to the "/scheduler" endpoint on the (possibly new) master. It should not send new non-subscribe HTTP requests to "/scheduler" unless it receives a `SUBSCRIBED` event; such requests will result in "403 Forbidden".
 
@@ -608,7 +608,7 @@ In the case of a network partition, the subscription connection between the sche
 
 ## Master detection
 
-Mesos has a high-availability mode that uses multiple Mesos masters; one active master (called the leader or leading master) and several standbys in case it fails. The masters elect the leader, with ZooKeeper coordinating the election. For more details please refer to the [documentation](high-availability.md).
+Mesos has a high-availability mode that uses multiple Mesos masters; one active master (called the leader or leading master) and several standbys in case it fails. The masters elect the leader, with ZooKeeper coordinating the election. For more details please refer to the [documentation](high-availability.html).
 
 Schedulers are expected to make HTTP requests to the leading master. If requests are made to a non-leading master a "HTTP 307 Temporary Redirect" will be received with the "Location" header pointing to the leading master.
 
