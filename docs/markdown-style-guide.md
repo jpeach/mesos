@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Markdown Style Guide
-layout: documentation
----
 
 # Mesos Markdown Style Guide
 

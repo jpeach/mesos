@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Windows
-layout: documentation
----
 
 # Windows
 

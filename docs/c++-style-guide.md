@@ -1,7 +1,3 @@
----
-title: Apache Mesos - C++ Style Guide
-layout: documentation
----
 
 # Mesos C++ Style Guide
 

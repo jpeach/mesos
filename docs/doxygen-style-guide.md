@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Doxygen Style Guide
-layout: documentation
----
 
 # Apache Mesos Doxygen Style Guide
 

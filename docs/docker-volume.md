@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Docker Volume Support in Mesos Containerizer
-layout: documentation
----
 
 # Docker Volume Support in Mesos Containerizer
 

@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Tools
-layout: documentation
----
 
 # Tools
 

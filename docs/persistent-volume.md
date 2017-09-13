@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Persistent Volumes
-layout: documentation
----
 
 # Persistent Volumes
 

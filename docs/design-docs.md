@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Design docs
-layout: documentation
----
 
 # Design docs
 

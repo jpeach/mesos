@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Port Mapping Network Isolator
-layout: documentation
----
 
 # Port Mapping Network Isolator
 

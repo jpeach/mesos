@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Attributes and Resources
-layout: documentation
----
 
 # Mesos Attributes & Resources
 

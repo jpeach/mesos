@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Framework Rate Limiting
-layout: documentation
----
 
 # Framework Rate Limiting
 Framework rate limiting is a feature introduced in Mesos 0.20.0.

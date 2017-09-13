@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Roadmap
-layout: documentation
----
 
 # Mesos Roadmap
 

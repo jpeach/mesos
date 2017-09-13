@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Allocation Modules
-layout: documentation
----
 
 # Mesos Allocation Modules
 

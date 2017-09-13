@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Agent Recovery
-layout: documentation
----
 
 # Agent Recovery
 

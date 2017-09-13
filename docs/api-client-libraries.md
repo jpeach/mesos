@@ -1,7 +1,3 @@
----
-title: Apache Mesos - HTTP API client libraries
-layout: documentation
----
 
 ## Scheduler API
 

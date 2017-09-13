@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Networking for Mesos-Managed Containers
-layout: documentation
----
 
 # Networking for Mesos-Managed Containers
 

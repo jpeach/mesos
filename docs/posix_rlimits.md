@@ -1,7 +1,3 @@
----
-title: Apache Mesos - POSIX Resource Limits Support in Mesos Containerizer
-layout: documentation
----
 
 # POSIX Resource Limits Support in Mesos Containerizer
 

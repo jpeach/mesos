@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Multiple Disks
-layout: documentation
----
 
 # Multiple Disks
 

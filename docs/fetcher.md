@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Fetcher
-layout: documentation
----
 
 # Mesos Fetcher
 

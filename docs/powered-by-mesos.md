@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Powered By Mesos
-layout: documentation
----
 
 # Powered By Mesos
 

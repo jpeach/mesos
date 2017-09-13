@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Committer Candidate Checklist
-layout: documentation
----
 
 # Apache Mesos Committer Candidate Checklist
 

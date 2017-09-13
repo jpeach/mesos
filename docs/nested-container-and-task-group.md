@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Mesos Nested Container and Task Group
-layout: documentation
----
 
 # Overview
 

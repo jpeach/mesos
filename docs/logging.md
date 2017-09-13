@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Logging
-layout: documentation
----
 
 # Logging
 

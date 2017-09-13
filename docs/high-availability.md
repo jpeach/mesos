@@ -1,7 +1,3 @@
----
-title: Apache Mesos - High-Availability Mode
-layout: documentation
----
 
 # Mesos High-Availability Mode
 

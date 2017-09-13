@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Reopening Reviews
-layout: documentation
----
 
 # Reopening Reviews
 

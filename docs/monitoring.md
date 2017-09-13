@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Observability Metrics
-layout: documentation
----
 
 
 # Mesos Observability Metrics

@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Quota
-layout: documentation
----
 
 # Quota
 

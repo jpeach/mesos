@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Configuration
-layout: documentation
----
 
 
 # Mesos Configuration

@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Oversubscription
-layout: documentation
----
 
 # Oversubscription
 

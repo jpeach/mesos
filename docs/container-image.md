@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Supporting Container Images in Mesos Containerizer
-layout: documentation
----
 
 # Supporting Container Images in [Mesos Containerizer](mesos-containerizer.md)
 

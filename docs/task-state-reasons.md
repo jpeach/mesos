@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Task State Reasons
-layout: documentation
----
 
 # Task State Reasons
 

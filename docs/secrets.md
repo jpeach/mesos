@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Secrets Handling
-layout: documentation
----
 
 # Secrets
 Starting 1.4.0 release, Mesos allows tasks to populate environment variables and

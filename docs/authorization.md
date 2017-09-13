@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Authorization
-layout: documentation
----
 
 # Authorization
 

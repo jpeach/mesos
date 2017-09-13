@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Reporting An Issue
-layout: documentation
----
 
 # Reporting an Issue
 

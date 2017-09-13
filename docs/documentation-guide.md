@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Documentation Guide
-layout: documentation
----
 
 # Mesos Documentation Guide
 

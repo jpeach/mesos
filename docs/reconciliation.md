@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Reconciliation
-layout: documentation
----
 
 # Task Reconciliation
 

@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Authentication
-layout: documentation
----
 
 # Authentication
 

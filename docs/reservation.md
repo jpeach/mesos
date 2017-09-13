@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Reservation
-layout: documentation
----
 
 # Reservation
 

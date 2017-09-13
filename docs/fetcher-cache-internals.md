@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Fetcher Cache Internals
-layout: documentation
----
 
 # Mesos Fetcher Cache Internals
 

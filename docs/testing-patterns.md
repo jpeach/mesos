@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Testing Patterns
-layout: documentation
----
 
 # Mesos Testing Patterns
 

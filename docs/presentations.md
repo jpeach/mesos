@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Video and Slides of Mesos Presentations
-layout: documentation
----
 
 # Video and Slides of Mesos Presentations
 _(Listed in date descending order)_

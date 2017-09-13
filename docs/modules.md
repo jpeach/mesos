@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Modules
-layout: documentation
----
 
 # Mesos Modules
 

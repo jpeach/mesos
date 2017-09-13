@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Software Projects Built on Mesos
-layout: documentation
----
 # Software Projects Built on Mesos
 
 ## DevOps tooling

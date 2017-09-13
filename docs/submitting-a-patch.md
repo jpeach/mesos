@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Submitting a Patch
-layout: documentation
----
 
 # Submitting a Patch
 

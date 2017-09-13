@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Sandbox
-layout: documentation
----
 
 # Mesos "Sandbox"
 

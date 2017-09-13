@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Deployment Scripts
-layout: documentation
----
 
 # Deployment Scripts
 

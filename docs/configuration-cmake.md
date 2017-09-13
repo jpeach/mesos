@@ -1,7 +1,3 @@
----
-title: Apache Mesos - CMake Configuration
-layout: documentation
----
 
 # Mesos CMake Build Configuration Options
 

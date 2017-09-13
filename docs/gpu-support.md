@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Nvidia GPU Support
-layout: documentation
----
 
 # Nvidia GPU Support
 

@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Upgrading Mesos
-layout: documentation
----
 
 # Upgrading Mesos
 

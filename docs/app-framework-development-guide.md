@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Framework Development Guide
-layout: documentation
----
 
 # Framework Development Guide
 

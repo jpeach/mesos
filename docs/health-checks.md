@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Task Health Checking and Generalized Checks
-layout: documentation
----
 
 # Task Health Checking and Generalized Checks
 

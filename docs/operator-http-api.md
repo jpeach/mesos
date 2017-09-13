@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Operator HTTP API
-layout: documentation
----
 
 # Operator HTTP API
 

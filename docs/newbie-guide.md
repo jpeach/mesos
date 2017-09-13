@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Newbie Guide
-layout: documentation
----
 
 
 # Newbie Guide

@@ -1,7 +1,3 @@
----
-title: Apache Mesos - Docker Containerizer
-layout: documentation
----
 
 # Docker Containerizer
 
