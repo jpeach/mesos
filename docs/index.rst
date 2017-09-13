@@ -7,11 +7,9 @@ Welcome to mesos's documentation!
 =================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-   newbie-guide
+   :maxdepth: 3
 
-
+   understanding
 
 Indices and tables
 ==================

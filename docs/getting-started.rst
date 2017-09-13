@@ -1,38 +1,57 @@
----
-title: Apache Mesos - Getting Started
-layout: documentation
----
+Getting Started
+===============
 
-# Getting Started
-
-## Downloading Mesos
+Downloading Mesos
+-----------------
 
 There are different ways you can get Mesos:
 
-1\. Download the latest stable release from [Apache](http://mesos.apache.org/downloads/) (***Recommended***)
+1. Download the latest stable release from
+`Apache <http://mesos.apache.org/downloads/>`__ (***Recommended***)
+
+.. code-block:: sh
 
     $ wget http://www.apache.org/dist/mesos/1.3.0/mesos-1.3.0.tar.gz
     $ tar -zxf mesos-1.3.0.tar.gz
 
-2\. Clone the Mesos git [repository](https://git-wip-us.apache.org/repos/asf/mesos.git) (***Advanced Users Only***)
+2. Clone the Mesos git
+`repository <https://git-wip-us.apache.org/repos/asf/mesos.git>`__
+(***Advanced Users Only***)
+
+.. code-block:: sh
 
     $ git clone https://git-wip-us.apache.org/repos/asf/mesos.git
 
-*NOTE: If you have problems running the above commands, you may need to first run through the ***System Requirements*** section below to install the `wget`, `tar`, and `git` utilities for your system.*
+.. note::
 
-## System Requirements
+    If you have problems running the above commands, you may need to
+    first run through the `System Requirements`_ section below to install
+    the ``wget``, ``tar``, and ``git`` utilities for your system.
 
-Mesos runs on Linux (64 Bit) and Mac OS X (64 Bit). To build Mesos from source, GCC 4.8.1+ or Clang 3.5+ is required.
+System Requirements
+-------------------
 
-For full support of process isolation under Linux a recent kernel >=3.10 is required.
+Mesos runs on Linux (64 Bit) and Mac OS X (64 Bit). To build Mesos from
+source, GCC 4.8.1+ or Clang 3.5+ is required.
 
-The Mesos agent also runs on Windows. To build Mesos from source, follow the instructions in the [Windows](windows.md) section.
+For full support of process isolation under Linux a recent kernel >=3.10
+is required.
 
-Make sure your hostname is resolvable via DNS or via `/etc/hosts` to allow full support of Docker's host-networking capabilities, needed for some of the Mesos tests. When in doubt, please validate that `/etc/hosts` contains your hostname.
+The Mesos agent also runs on Windows. To build Mesos from source, follow
+the instructions in the `Windows <windows.md>`__ section.
 
-### Ubuntu 14.04
+Make sure your hostname is resolvable via DNS or via ``/etc/hosts`` to
+allow full support of Docker's host-networking capabilities, needed for
+some of the Mesos tests. When in doubt, please validate that
+``/etc/hosts`` contains your hostname.
 
-Following are the instructions for stock Ubuntu 14.04. If you are using a different OS, please install the packages accordingly.
+Ubuntu 14.04
+~~~~~~~~~~~~
+
+Following are the instructions for stock Ubuntu 14.04. If you are using
+a different OS, please install the packages accordingly.
+
+.. code-block:: sh
 
     # Update the packages.
     $ sudo apt-get update
@@ -49,9 +68,13 @@ Following are the instructions for stock Ubuntu 14.04. If you are using a differ
     # Install other Mesos dependencies.
     $ sudo apt-get -y install build-essential python-dev python-six python-virtualenv libcurl4-nss-dev libsasl2-dev libsasl2-modules maven libapr1-dev libsvn-dev
 
-### Ubuntu 16.04
+Ubuntu 16.04
+~~~~~~~~~~~~
 
-Following are the instructions for stock Ubuntu 16.04. If you are using a different OS, please install the packages accordingly.
+Following are the instructions for stock Ubuntu 16.04. If you are using
+a different OS, please install the packages accordingly.
+
+.. code-block:: sh
 
     # Update the packages.
     $ sudo apt-get update
@@ -68,9 +91,14 @@ Following are the instructions for stock Ubuntu 16.04. If you are using a differ
     # Install other Mesos dependencies.
     $ sudo apt-get -y install build-essential python-dev python-six python-virtualenv libcurl4-nss-dev libsasl2-dev libsasl2-modules maven libapr1-dev libsvn-dev zlib1g-dev
 
-### Mac OS X 10.11 (El Capitan), macOS 10.12 (Sierra)
+Mac OS X 10.11 (El Capitan), macOS 10.12 (Sierra)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Following are the instructions for Mac OS X El Capitan. When building Mesos with the Apple-provided toolchain, the Command Line Tools from XCode >= 8.0 are required; XCode 8 requires Mac OS X 10.11.5 or newer.
+Following are the instructions for Mac OS X El Capitan. When building
+Mesos with the Apple-provided toolchain, the Command Line Tools from
+XCode >= 8.0 are required; XCode 8 requires Mac OS X 10.11.5 or newer.
+
+.. code-block:: sh
 
     # Install Command Line Tools. The Command Line Tools from XCode >= 8.0 are required.
     $ xcode-select --install
@@ -90,6 +118,8 @@ Following are the instructions for Mac OS X El Capitan. When building Mesos with
 
 When compiling on macOS 10.12, the following is needed:
 
+.. code-block:: sh
+
     # There is an incompatiblity with the system installed svn and apr headers.
     # We need the svn and apr headers from a brew installation of subversion.
     # You may need to unlink the existing version of subversion installed via
@@ -108,11 +138,18 @@ When compiling on macOS 10.12, the following is needed:
 
     # If so, turn on 'Remote Login' within System Preferences > Sharing to resolve the issue.
 
-*NOTE: When upgrading from Yosemite to El Capitan, make sure to rerun `xcode-select --install` after the upgrade.*
+.. note::
 
-### CentOS 6.6
+    When upgrading from Yosemite to El Capitan, make sure to rerun
+    ``xcode-select --install`` after the upgrade.
 
-Following are the instructions for stock CentOS 6.6. If you are using a different OS, please install the packages accordingly.
+CentOS 6.6
+~~~~~~~~~~
+
+Following are the instructions for stock CentOS 6.6. If you are using a
+different OS, please install the packages accordingly.
+
+.. code-block:: sh
 
     # Install a recent kernel for full support of process isolation.
     $ sudo rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
@@ -170,9 +207,13 @@ Following are the instructions for stock CentOS 6.6. If you are using a differen
     $ sudo yum install -y libcgroup
     $ sudo service cgconfig start
 
-### CentOS 7.1
+CentOS 7.1
+~~~~~~~~~~
 
-Following are the instructions for stock CentOS 7.1. If you are using a different OS, please install the packages accordingly.
+Following are the instructions for stock CentOS 7.1. If you are using a
+different OS, please install the packages accordingly.
+
+.. code-block:: sh
 
     # Install a few utility tools
     $ sudo yum install -y tar wget git
@@ -210,11 +251,15 @@ Following are the instructions for stock CentOS 7.1. If you are using a differen
     # Install other Mesos dependencies.
     $ sudo yum install -y apache-maven python-devel python-six python-virtualenv java-1.8.0-openjdk-devel zlib-devel libcurl-devel openssl-devel cyrus-sasl-devel cyrus-sasl-md5 apr-devel subversion-devel apr-util-devel
 
-### Windows
+Windows
+~~~~~~~
 
-Follow the instructions in the [Windows](windows.md) section.
+Follow the instructions in the `Windows <windows.md>`__ section.
 
-## Building Mesos (Posix)
+Building Mesos (Posix)
+----------------------
+
+.. code-block:: sh
 
     # Change working directory.
     $ cd mesos
@@ -228,7 +273,10 @@ Follow the instructions in the [Windows](windows.md) section.
     $ ../configure
     $ make
 
-In order to speed up the build and reduce verbosity of the logs, you can append `-j <number of cores> V=0` to `make`.
+In order to speed up the build and reduce verbosity of the logs, you can
+append ``-j <number of cores> V=0`` to ``make``.
+
+.. code-block:: sh
 
     # Run test suite.
     $ make check
@@ -236,11 +284,14 @@ In order to speed up the build and reduce verbosity of the logs, you can append 
     # Install (Optional).
     $ make install
 
-## Examples
+Examples
+--------
 
-Mesos comes bundled with example frameworks written in C++, Java and Python.
-The framework binaries will only be available after running `make check`, as
-described in the ***Building Mesos*** section above.
+Mesos comes bundled with example frameworks written in C++, Java and
+Python. The framework binaries will only be available after running
+``make check``, as described in the ***Building Mesos*** section above.
+
+.. code-block:: sh
 
     # Change into build directory.
     $ cd build
@@ -263,8 +314,11 @@ described in the ***Building Mesos*** section above.
     # Run Python framework (exits after successfully running some tasks).
     $ ./src/examples/python/test-framework 127.0.0.1:5050
 
-*Note: These examples assume you are running Mesos on your local machine.
-Following them will not allow you to access the Mesos web page in a production
-environment (e.g. on AWS). For that you will need to specify the actual IP of
-your host when launching the Mesos master and ensure your firewall settings
-allow access to port 5050 from the outside world.*
+.. note::
+
+    These examples assume you are running Mesos on your local
+    machine. Following them will not allow you to access the Mesos web page
+    in a production environment (e.g. on AWS). For that you will need to
+    specify the actual IP of your host when launching the Mesos master and
+    ensure your firewall settings allow access to port 5050 from the outside
+    world.
