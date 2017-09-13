@@ -8,7 +8,7 @@ should consider include:
 
 * The Mesos master that a framework scheduler is connected to might fail, for
   example by crashing or by losing network connectivity. If the master has been
-  configured to use [high-availability mode](high-availability.md), this will
+  configured to use [high-availability mode](high-availability.html), this will
   result in promoting another Mesos master replica to become the current
   leader. In this situation, the scheduler should re-register with the new
   master and ensure that task state is consistent.
@@ -43,7 +43,7 @@ availability:
   due to a transient network failure). To address this, the framework scheduler
   should set a timeout after attempting to launch a new task. If the scheduler
   hasn't seen a status update for the new task before the timeout fires, it
-  should take corrective action---for example, by performing [task state reconciliation](reconciliation.md),
+  should take corrective action---for example, by performing [task state reconciliation](reconciliation.html),
   and then launching a new copy of the task if necessary.
 
   * In general, distributed systems cannot distinguish between "lost" messages
@@ -142,7 +142,7 @@ Highly available framework designs typically follow a few common patterns:
    and pending tasks. In fact, the same coordination service that is used for
    leader election (such as ZooKeeper or etcd) can often be used for this
    purpose. Some Mesos frameworks (such as Apache Aurora) use the Mesos
-   [replicated log](replicated-log-internals.md) for this purpose.
+   [replicated log](replicated-log-internals.html) for this purpose.
 
    * The data store should be used to record the actions that the scheduler
      _intends_ to take, before it takes them. For example, if a scheduler
@@ -183,7 +183,7 @@ initial state and several possible terminal states:
 * A task begins in the `TASK_STAGING` state. A task is in this state when the
   master has received the framework's request to launch the task but the task
   has not yet started to run. In this state, the task's dependencies are
-  fetched---for example, using the [Mesos fetcher cache](fetcher.md).
+  fetched---for example, using the [Mesos fetcher cache](fetcher.html).
 
 * The `TASK_STARTING` state is optional and intended primarily for use by
   custom executors. It can be used to describe the fact that a custom executor
@@ -196,7 +196,7 @@ initial state and several possible terminal states:
 
   * If a framework attempts to launch a task but does not receive a status
     update for it within a timeout, the framework should perform
-    [reconciliation](reconciliation.md). That is, it should ask the master for
+    [reconciliation](reconciliation.html). That is, it should ask the master for
     the current state of the task. The master will reply with `TASK_LOST` status
     updates for unknown tasks. The framework can then use this to distinguish
     between tasks that are slow to launch and tasks that the master has never
@@ -251,7 +251,7 @@ it from the cluster. Specifically:
   semantics when a registered agent gets disconnected are as follows for each
   framework running on that agent:
 
-  * If the framework is [checkpointing](agent-recovery.md): no immediate action
+  * If the framework is [checkpointing](agent-recovery.html): no immediate action
     is taken. The agent is given a chance to reconnect until health checks time
     out.
 
@@ -278,7 +278,7 @@ it from the cluster. Specifically:
   to avoid removing a slew of agents at once (e.g., during a network partition).
 
 * When it is time to remove an agent, the master removes the agent from the list
-  of registered agents in the master's [durable state](replicated-log-internals.md)
+  of registered agents in the master's [durable state](replicated-log-internals.html)
   (this will survive master failover). The master sends a `slaveLost` callback
   to every registered scheduler driver; it also sends `TASK_LOST` status updates
   for every task that was running on the removed agent.

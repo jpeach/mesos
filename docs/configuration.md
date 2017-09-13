@@ -317,7 +317,7 @@ ZooKeeper session timeout. (default: 10secs)
 </table>
 
 *These logging options can also be supplied to both masters and agents.*
-For more about logging, see the [logging documentation](logging.md).
+For more about logging, see the [logging documentation](logging.html).
 
 <table class="table table-striped">
   <thead>
@@ -734,7 +734,7 @@ Currently there is no support for multiple HTTP authenticators.
     --[no-]log_auto_initialize
   </td>
   <td>
-Whether to automatically initialize the [replicated log](replicated-log-internals.md)
+Whether to automatically initialize the [replicated log](replicated-log-internals.html)
 used for the registry. If this is set to false, the log has to be manually
 initialized when used for the very first time. (default: true)
   </td>

@@ -64,4 +64,4 @@ mesos::modules::Module<Allocator> ExternalAllocatorModule(
     createExternalAllocator);
 ~~~
 
-Refer to the [Mesos Modules documentation](modules.md) for instructions on how to compile and load a module in Mesos master.
+Refer to the [Mesos Modules documentation](modules.html) for instructions on how to compile and load a module in Mesos master.

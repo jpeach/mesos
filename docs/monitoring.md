@@ -42,7 +42,7 @@ The tables in this document indicate the type of each available metric.
 ## Master Nodes
 
 Metrics from each master node are available via the
-[/metrics/snapshot](endpoints/metrics/snapshot.md) master endpoint.  The response
+[/metrics/snapshot](endpoints/metrics/snapshot.html) master endpoint.  The response
 is a JSON object that contains metrics names and values as key-value pairs.
 
 ### Observability metrics
@@ -1232,7 +1232,7 @@ No master is currently elected.
 ## Agent Nodes
 
 Metrics from each agent node are available via the
-[/metrics/snapshot](endpoints/metrics/snapshot.md) agent endpoint.  The response
+[/metrics/snapshot](endpoints/metrics/snapshot.html) agent endpoint.  The response
 is a JSON object that contains metrics names and values as key-value pairs.
 
 ### Observability Metrics

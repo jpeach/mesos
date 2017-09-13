@@ -5,7 +5,7 @@ Authentication permits only trusted entities to interact with a Mesos cluster. A
 
 1. To require that frameworks be authenticated in order to register with the master.
 2. To require that agents be authenticated in order to register with the master.
-3. To require that operators be authenticated to use many [HTTP endpoints](endpoints/index.md).
+3. To require that operators be authenticated to use many [HTTP endpoints](endpoints/index.html).
 
 Authentication is disabled by default. When authentication is enabled, operators
 can configure Mesos to either use the default authentication module or to use a
@@ -27,16 +27,16 @@ identity. Principals are similar to user names, while secrets are similar to
 passwords.
 
 Principals are used primarily for authentication and
-[authorization](authorization.md); note that a principal is different from a
+[authorization](authorization.html); note that a principal is different from a
 framework's *user*, which is the operating system account used by the agent to
-run executors, and the framework's *[roles](roles.md)*, which are used to
+run executors, and the framework's *[roles](roles.html)*, which are used to
 determine which resources a framework can use.
 
 ## Configuration
 
 Authentication is configured by specifying command-line flags when starting the
 Mesos master and agent processes. For more information, refer to the
-[configuration](configuration.md) documentation.
+[configuration](configuration.html) documentation.
 
 ### Master
 
@@ -174,7 +174,7 @@ documentation for more information.
 
 As a framework developer, supporting authentication is straightforward: the
 scheduler driver handles the details of authentication when a `Credential`
-object is passed to its constructor. To enable [authorization](authorization.md)
+object is passed to its constructor. To enable [authorization](authorization.html)
 based on the authenticated principal, the framework developer should also copy
 the `Credential.principal` into `FrameworkInfo.principal` when registering.
 

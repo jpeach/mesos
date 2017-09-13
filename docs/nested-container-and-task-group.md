@@ -98,7 +98,7 @@ to create nested containers.
     }
 
 By using the TaskGroup Framework API, frameworks can launch a task
-group with the [default executor](app-framework-development-guide.md)
+group with the [default executor](app-framework-development-guide.html)
 or a custom executor. The group of tasks can be specified through an
 offer operation `LaunchGroup` when accepting an offer. The
 `ExecutorInfo` indicates the executor to launch the task group, while

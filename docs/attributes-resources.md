@@ -84,7 +84,7 @@ As a list of key-value pairs:
 
     resourceRole : text | "*"
 
-Note that `resourceRole` must be a valid role name; see the [roles](roles.md) documentation for details.
+Note that `resourceRole` must be a valid role name; see the [roles](roles.html) documentation for details.
 
 ## Predefined Uses & Conventions
 

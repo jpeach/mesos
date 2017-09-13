@@ -52,7 +52,7 @@ This means users should be able to upgrade (as long as they are not depending on
 
 The deprecation period for any given feature will be **6 months**. Having a set period allows Mesos developers to not indefinitely accrue technical debt and allows users time to plan for upgrades.
 
-The detailed information about upgrading to a particular Mesos version would be posted [here](upgrades.md).
+The detailed information about upgrading to a particular Mesos version would be posted [here](upgrades.html).
 
 
 ## API versioning

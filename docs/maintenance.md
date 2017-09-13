@@ -68,7 +68,7 @@ the maintenance schedule.
 A machine is transitioned from Up mode to Draining mode as soon as it is
 scheduled for maintenance.  To transition a machine into Draining mode, an
 operator constructs a maintenance schedule as a JSON document and posts it to
-the [/maintenance/schedule](endpoints/master/maintenance/schedule.md) HTTP
+the [/maintenance/schedule](endpoints/master/maintenance/schedule.html) HTTP
 endpoint on the Mesos master. Each Mesos cluster has a single maintenance
 schedule; posting a new schedule replaces the previous schedule, if any.
 
@@ -113,7 +113,7 @@ The schedule might look like:
 ```
 
 The operator can then post the schedule to the master's
-[/maintenance/schedule](endpoints/master/maintenance/schedule.md) endpoint:
+[/maintenance/schedule](endpoints/master/maintenance/schedule.html) endpoint:
 
 ```
 curl http://localhost:5050/maintenance/schedule \
@@ -162,7 +162,7 @@ To cancel the maintenance schedule, the operator should post an empty schedule.
 
 As soon as a schedule is posted to the Mesos master, the following things occur:
 
-* The schedule is stored in the [replicated log](replicated-log-internals.md).
+* The schedule is stored in the [replicated log](replicated-log-internals.html).
   This means the schedule is persisted in case of master failover.
 * All machines in the schedule are immediately transitioned into Draining
   mode.  The mode of each machine is also persisted in the replicated log.
@@ -216,7 +216,7 @@ into account.
 ### Starting maintenance
 
 The operator starts maintenance by posting a list of machines to the
-[/machine/down](endpoints/master/machine/down.md) HTTP endpoint. The list of
+[/machine/down](endpoints/master/machine/down.html) HTTP endpoint. The list of
 machines is specified in JSON format; each element of the list is a
 [MachineID](https://github.com/apache/mesos/blob/016b02d7ed5a65bcad9261a133c8237c2df66e6e/include/mesos/v1/mesos.proto#L157-L167).
 
@@ -279,7 +279,7 @@ is completed and the machine is brought back up).
 When maintenance is complete or if maintenance needs to be cancelled,
 the operator can stop maintenance.  The process is very similar
 to starting maintenance (same validation criteria as the previous section).
-The operator posts a list of machines to the master's [/machine/up](endpoints/master/machine/up.md) endpoint:
+The operator posts a list of machines to the master's [/machine/up](endpoints/master/machine/up.html) endpoint:
 
 ```
 [
@@ -313,7 +313,7 @@ register with the Mesos master.
 
 The current maintenance status (Up, Draining, or Down) of each machine in the
 cluster can be viewed by accessing the master's
-[/maintenance/status](endpoints/master/maintenance/status.md) HTTP endpoint. For
+[/maintenance/status](endpoints/master/maintenance/status.html) HTTP endpoint. For
 each machine that is Draining, this endpoint also includes the frameworks' responses to
 inverse offers for resources on that machine. For more information, see the
 format of the [ClusterStatus message](https://github.com/apache/mesos/blob/fa36917dd142f66924c5f7ed689b87d5ceabbf79/include/mesos/maintenance/maintenance.proto#L73-L84).

@@ -19,7 +19,7 @@ to consider before sending review requests:
    change clear in the review request, so the reviewer is not left
    guessing. It is highly recommended to attach a JIRA issue with your
    review for additional context.
-4. **Follow the [style guide](c++-style-guide.md)
+4. **Follow the [style guide](c++-style-guide.html)
    and the style of code around you**.
 5. **Do a self-review of your changes before publishing**: Approach it
    from the perspective of a reviewer with no context. Is it easy to figure

@@ -3,7 +3,7 @@
 
 ## Overview
 
-By default, [persistent volumes](persistent-volume.md) provide
+By default, [persistent volumes](persistent-volume.html) provide
 _exclusive_ access: once a task is launched using a persistent volume,
 no other tasks can use that volume, and the volume will not appear in
 any resource offers until the task that is using it has finished.
@@ -16,9 +16,9 @@ efficiently share a large data set between multiple data analysis tasks.
 
 Shared persistent volumes are created using the same workflow as normal
 persistent volumes: by starting with a
-[reserved resource](reservation.md) and applying a `CREATE` operation,
+[reserved resource](reservation.html) and applying a `CREATE` operation,
 either via the framework scheduler API or the
-[/create-volumes](endpoints/master/create-volumes.md) HTTP endpoint. To
+[/create-volumes](endpoints/master/create-volumes.html) HTTP endpoint. To
 create a shared volume, set the `shared` field during volume creation.
 
 For example, suppose a framework subscribed to the `"engineering"` role
@@ -105,7 +105,7 @@ ensure that tasks that access the same volume do not conflict with one
 another. This can be done via careful application-level concurrency
 control, or by ensuring that the tasks access the volume in a read-only
 manner. Mesos provides support for read-only access to volumes: as
-described in the [persistent volume](persistent-volume.md)
+described in the [persistent volume](persistent-volume.html)
 documentation, tasks that are launched on a volume can specify a `mode`
 of `"RO"` to use the volume in read-only mode.
 

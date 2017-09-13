@@ -17,7 +17,7 @@ If the link between source code and documentation is not obvious, consider inser
 
 When changing code consider whether you need to update the documentation.
 This is especially relevant when introducing new or updating existing command line flags.
-These should be reflected in `configuration.md`!
+These should be reflected in `configuration.html`!
 
 
 ## Section Headings

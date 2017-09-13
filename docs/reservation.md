@@ -7,7 +7,7 @@ which enabled operators to specify the reserved resources on slave startup.
 This was extended with __dynamic reservation__ in 0.23.0 which enabled operators
 and authorized __frameworks__ to dynamically reserve resources in the cluster.
 
-In both types of reservations, resources are reserved for a [__role__](roles.md).
+In both types of reservations, resources are reserved for a [__role__](roles.html).
 
 
 <a name="static-reservation"></a>
@@ -45,13 +45,13 @@ to reserve and unreserve resources after slave-startup.
 
 By default, frameworks and operators are authorized to reserve resources for
 any role and to unreserve dynamically reserved resources.
-[Authorization](authorization.md) allows this behavior to be limited so that
+[Authorization](authorization.html) allows this behavior to be limited so that
 only particular roles can be reserved for, and only particular resources can
 be unreserved. For these operations to be authorized, the framework or operator
 should provide a `principal` to identify itself. To use authorization with
 reserve/unreserve operations, the Mesos master must be configured with the
 appropriate ACLs. For more information, see the
-[authorization documentation](authorization.md).
+[authorization documentation](authorization.html).
 
 * `Offer::Operation::Reserve` and `Offer::Operation::Unreserve` messages are
   available for __frameworks__ to send back via the `acceptOffers` API as a
@@ -72,7 +72,7 @@ resources will be subtracted from the previous reservation and any remaining
 resources will still be reserved.
 
 Dynamic reservations cannot be unreserved if they are still being used by a
-running task or if a [persistent volume](persistent-volume.md) has been created
+running task or if a [persistent volume](persistent-volume.html) has been created
 using the reserved resources. In the latter case, the volume should be destroyed
 before unreserving the resources.
 
@@ -131,7 +131,7 @@ the resources' `principal` field must be equal to the framework's principal.
 If no principal was provided during registration, then the resources'
 `principal` field can take any value, or can be left unset. Note that the
 `principal` field determines the "reserver principal" when
-[authorization](authorization.md) is enabled, even if authentication is
+[authorization](authorization.html) is enabled, even if authentication is
 disabled.
 
         {
@@ -289,11 +289,11 @@ authentication is enabled, then the principal in the reservation should match
 the authenticated principal provided in the request's HTTP headers. If HTTP
 authentication is disabled, then the principal in the reservation can take any
 value, or can be left unset. Note that the `principal` field determines the
-"reserver principal" when [authorization](authorization.md) is enabled, even if
+"reserver principal" when [authorization](authorization.html) is enabled, even if
 HTTP authentication is disabled.
 
 We send an HTTP POST request to the master's
-[/reserve](endpoints/master/reserve.md) endpoint like so:
+[/reserve](endpoints/master/reserve.html) endpoint like so:
 
         $ curl -i \
           -u <operator_principal>:<password> \
@@ -335,13 +335,13 @@ resources are located. That asynchronous message may not be delivered or
 reserving resources at the slave might fail, in which case no resources will be
 reserved. To determine if a reserve operation has succeeded, the user can
 examine the state of the appropriate Mesos slave (e.g., via the slave's
-[/state](endpoints/slave/state.md) HTTP endpoint).
+[/state](endpoints/slave/state.html) HTTP endpoint).
 
 #### `/unreserve` (since 0.25.0)
 
 Suppose we want to unreserve the resources that we dynamically reserved above.
 We can send an HTTP POST request to the master's
-[/unreserve](endpoints/master/unreserve.md) endpoint like so:
+[/unreserve](endpoints/master/unreserve.html) endpoint like so:
 
         $ curl -i \
           -u <operator_principal>:<password> \
@@ -371,7 +371,7 @@ We can send an HTTP POST request to the master's
 Note that `reserver_principal` is the principal that was used to make the
 reservation, while `operator_principal` is the principal that is attempting to
 perform the unreserve operation---in some cases, these principals might be the
-same. The `operator_principal` must be [authorized](authorization.md) to
+same. The `operator_principal` must be [authorized](authorization.html) to
 unreserve reservations made by `reserver_principal`.
 
 The user receives one of the following HTTP responses:
@@ -389,15 +389,15 @@ resources are located. That asynchronous message may not be delivered or
 unreserving resources at the slave might fail, in which case no resources will
 be unreserved. To determine if an unreserve operation has succeeded, the user
 can examine the state of the appropriate Mesos slave (e.g., via the slave's
-[/state](endpoints/slave/state.md) HTTP endpoint).
+[/state](endpoints/slave/state.html) HTTP endpoint).
 
 ### Listing Reservations
 
 Information about the reserved resources at each slave in the cluster can be
-found by querying the [/slaves](endpoints/master/slaves.md) master endpoint
+found by querying the [/slaves](endpoints/master/slaves.html) master endpoint
 (under the `reserved_resources_full` key).
 
-The same information can also be found in the [/state](endpoints/slave/state.md)
+The same information can also be found in the [/state](endpoints/slave/state.html)
 endpoint on the agent (under the `reserved_resources_full` key). The agent
 endpoint is useful to confirm if a reservation has been propagated to the
 agent (which can fail in the event of network partition or master/agent

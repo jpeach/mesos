@@ -333,4 +333,4 @@ be above 6, or for 15 minutes will be above 4 then agent will evict all the
 seconds.
 
 To install a custom resource estimator and QoS controller, please refer to the
-[modules documentation](modules.md).
+[modules documentation](modules.html).

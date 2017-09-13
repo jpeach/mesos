@@ -90,7 +90,7 @@ isolation using new data structures in the TaskInfo message.
 
 6. NIM then "decorates" the TaskStatus with the IP information.
    * The IP address(es) from TaskStatus are made available at Master's
-     [/state](endpoints/master/state.md) endpoint.
+     [/state](endpoints/master/state.html) endpoint.
    * The TaskStatus is also forwarded to the framework to inform it of the IP
      addresses.
    * When a task is killed or lost, NIM communicates with IPAM client to release
@@ -110,7 +110,7 @@ The network isolator module is not part of standard Mesos distribution. However,
 there is an example implementation at https://github.com/mesosphere/net-modules.
 
 Once the network isolation module has been built into a shared dynamic library,
-we can load it into Mesos Agent (see [modules documentation](modules.md) on
+we can load it into Mesos Agent (see [modules documentation](modules.html) on
 instructions for building and loading a module).
 
 ## Enabling frameworks for IP-per-container capability

@@ -24,11 +24,11 @@ volume containing sensitive data being offered to other frameworks in the
 cluster. Similarly, a persistent volume cannot be destroyed if there is an
 active task that is still using the volume.
 
-Please refer to the [Reservation](reservation.md) documentation for details
+Please refer to the [Reservation](reservation.html) documentation for details
 regarding reservation mechanisms available in Mesos.
 
 Persistent volumes can also be created on isolated and auxiliary disks by
-reserving [multiple disk resources](multiple-disk.md).
+reserving [multiple disk resources](multiple-disk.html).
 
 By default, a persistent volume cannot be shared between tasks running
 under different executors: that is, once a task is launched using a
@@ -36,18 +36,18 @@ persistent volume, that volume will not appear in any resource offers
 until the task has finished running. _Shared_ volumes are a type of
 persistent volumes that can be accessed by multiple tasks at the same
 agent simultaneously; see the documentation on [shared
-volumes](shared-resources.md) for more information.
+volumes](shared-resources.html) for more information.
 
 Persistent volumes can be created by __operators__ and __frameworks__.
 By default, frameworks and operators can create volumes for _any_
-role and destroy _any_ persistent volume. [Authorization](authorization.md)
+role and destroy _any_ persistent volume. [Authorization](authorization.html)
 allows this behavior to be limited so that volumes can only be created for
 particular roles and only particular volumes can be destroyed. For these
 operations to be authorized, the framework or operator should provide a
 `principal` to identify itself. To use authorization with reserve, unreserve,
 create, and destroy operations, the Mesos master must be configured with the
 appropriate ACLs. For more information, see the
-[authorization documentation](authorization.md).
+[authorization documentation](authorization.html).
 
 * `Offer::Operation::Create` and `Offer::Operation::Destroy` messages are
   available for __frameworks__ to send back via the `acceptOffers` API as a
@@ -102,7 +102,7 @@ volume information. We need to specify the following:
    framework did not provide a principal when registering, then the
    `disk.persistence.principal` field can take any value, or can be left unset.
    Note that the `principal` field determines the "creator principal" when
-   [authorization](authorization.md) is enabled, even if authentication is
+   [authorization](authorization.html) is enabled, even if authentication is
    disabled.
 
         {
@@ -257,15 +257,15 @@ create another persistent volume or can be unreserved.
 
 As described above, persistent volumes can be created by a framework scheduler
 as part of the resource offer cycle. Persistent volumes can also be created and
-destroyed using the [/create-volumes](endpoints/master/create-volumes.md) and
-[/destroy-volumes](endpoints/master/destroy-volumes.md) endpoints, respectively.
+destroyed using the [/create-volumes](endpoints/master/create-volumes.html) and
+[/destroy-volumes](endpoints/master/destroy-volumes.html) endpoints, respectively.
 This capability is intended for use by operators and administrative tools.
 
 ### `/create-volumes`
 
 To use this endpoint, the operator should first ensure that a reservation for
 the necessary resources has been made on the appropriate agent (e.g., by using
-the [/reserve](endpoints/master/reserve.md) HTTP endpoint or by configuring a
+the [/reserve](endpoints/master/reserve.html) HTTP endpoint or by configuring a
 static reservation). The information that must be included in a request to this
 endpoint is similar to that of the `CREATE` offer operation. One difference is
 the required value of the `disk.persistence.principal` field: when HTTP
@@ -273,12 +273,12 @@ authentication is enabled on the master, the field must be set to the same
 principal that is provided in the request's HTTP headers. When HTTP
 authentication is disabled, the `disk.persistence.principal` field can take any
 value, or can be left unset. Note that the `principal` field determines the
-"creator principal" when [authorization](authorization.md) is enabled, even if
+"creator principal" when [authorization](authorization.html) is enabled, even if
 HTTP authentication is disabled.
 
 To create a 512MB persistent volume for the `ads` role on a dynamically reserved
 disk resource, we can send an HTTP POST request to the master's
-[/create-volumes](endpoints/master/create-volumes.md) endpoint like so:
+[/create-volumes](endpoints/master/create-volumes.html) endpoint like so:
 
     curl -i \
          -u <operator_principal>:<password> \
@@ -324,12 +324,12 @@ resources are located. That asynchronous message may not be delivered or
 creating the volumes at the agent might fail, in which case no volumes will be
 created. To determine if a create operation has succeeded, the user can examine
 the state of the appropriate Mesos agent (e.g., via the agent's
-[/state](endpoints/slave/state.md) HTTP endpoint).
+[/state](endpoints/slave/state.html) HTTP endpoint).
 
 ### `/destroy-volumes`
 
 To destroy the volume created above, we can send an HTTP POST to the master's
-[/destroy-volumes](endpoints/master/destroy-volumes.md) endpoint like so:
+[/destroy-volumes](endpoints/master/destroy-volumes.html) endpoint like so:
 
     curl -i \
          -u <operator_principal>:<password> \
@@ -359,7 +359,7 @@ To destroy the volume created above, we can send an HTTP POST to the master's
 Note that the `volume` JSON in the `/destroy-volumes` request must
 _exactly_ match the definition of the volume. The JSON definition of a
 volume can be found via the `reserved_resources_full` key in the
-master's [/slaves](endpoints/master/slaves.md) endpoint (see below).
+master's [/slaves](endpoints/master/slaves.html) endpoint (see below).
 
 The user receives one of the following HTTP responses:
 
@@ -379,15 +379,15 @@ volumes are located. That asynchronous message may not be delivered or
 destroying the volumes at the agent might fail, in which case no volumes will
 be destroyed. To determine if a destroy operation has succeeded, the user can
 examine the state of the appropriate Mesos agent (e.g., via the agent's
-[/state](endpoints/slave/state.md) HTTP endpoint).
+[/state](endpoints/slave/state.html) HTTP endpoint).
 
 ## Listing Persistent Volumes
 
 Information about the persistent volumes at each agent in the cluster can be
-found by querying the [/slaves](endpoints/master/slaves.md) master endpoint,
+found by querying the [/slaves](endpoints/master/slaves.html) master endpoint,
 under the `reserved_resources_full` key.
 
-The same information can also be found in the [/state](endpoints/slave/state.md)
+The same information can also be found in the [/state](endpoints/slave/state.html)
 agent endpoint (under the `reserved_resources_full` key). The agent
 endpoint is useful to confirm if changes to persistent volumes have been
 propagated to the agent (which can fail in the event of network partition or
@@ -489,15 +489,15 @@ volumes:
   same role, the operator should ensure that those frameworks are configured
   to collaborate with one another when using role-specific resources. For
   more information, see the discussion of
-  [multiple frameworks in the same role](roles.md#roles-multiple-frameworks).
+  [multiple frameworks in the same role](roles.html#roles-multiple-frameworks).
 
 ## Version History
 
 Persistent volumes were introduced in Mesos 0.23. Mesos 0.27 introduced HTTP
 endpoints for creating and destroying volumes. Mesos 0.28 introduced support for
-[multiple disk resources](multiple-disk.md), and also enhanced the `/slaves`
+[multiple disk resources](multiple-disk.html), and also enhanced the `/slaves`
 master endpoint to include detailed information about persistent volumes and
 dynamic reservations. Mesos 1.0 changed the semantics of destroying a volume:
 in previous releases, destroying a volume would remove the Mesos-level metadata
 but would not remove the volume's data from the agent's filesystem. Mesos 1.1
-introduced support for [shared persistent volumes](shared-resources.md).
+introduced support for [shared persistent volumes](shared-resources.html).

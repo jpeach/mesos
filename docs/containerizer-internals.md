@@ -27,8 +27,8 @@ events (e.g., statistics).
 Mesos currently supports the following containerizers:
 
 * Composing
-* [Docker](docker-containerizer.md)
-* [Mesos](mesos-containerizer.md)
+* [Docker](docker-containerizer.html)
+* [Mesos](mesos-containerizer.html)
 
 #### Composing Containerizer
 

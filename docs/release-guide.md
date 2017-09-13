@@ -118,11 +118,11 @@ This guide describes the process of doing an official release of Mesos.
 5. Run `make && support/generate-endpoint-help.py` and commit any resulting
    changes.
 
-6. Update and commit `docs/configuration.md` to reflect the current state of
+6. Update and commit `docs/configuration.html` to reflect the current state of
    the master, agent, and configure flags. If this is a patch release, update
    it on master branch and then cherry pick onto the release branch.
 
-7. If this is a regular release, update and commit `docs/upgrades.md` with
+7. If this is a regular release, update and commit `docs/upgrades.html` with
    instructions about how to upgrade a live cluster from the previous release
    version to this release version.
 
@@ -244,14 +244,14 @@ This guide describes the process of doing an official release of Mesos.
    in `site/data/releases.yml`. It is used to generate the release information
    on the website.
 
-2. Update the [Getting Started](getting-started.md) guide to use the latest
+2. Update the [Getting Started](getting-started.html) guide to use the latest
    release link.
 
 3. Check out the website from svn.
 
         $ svn co https://svn.apache.org/repos/asf/mesos/site mesos-site
 
-   See our [website README](https://github.com/apache/mesos/blob/master/site/README.md/)
+   See our [website README](https://github.com/apache/mesos/blob/master/site/README.html/)
    for details on how to build the website. See the general
    [Apache project website guide](https://www.apache.org/dev/project-site.html)
    for details on how to publish the website.

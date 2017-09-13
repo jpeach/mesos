@@ -9,7 +9,7 @@ Roughly, these categories are:
 * [Internal](#Internal) - Master and Agent.
 * [Containers](#Containers) - Executors and Tasks.
 * External - Components launched outside of Mesos, like
-  Frameworks and [ZooKeeper](high-availability.md).  These are expected to
+  Frameworks and [ZooKeeper](high-availability.html).  These are expected to
   implement their own logging solution.
 
 ## <a name="Internal"></a>Internal
@@ -17,11 +17,11 @@ Roughly, these categories are:
 The Mesos Master and Agent use the
 [Google's logging library](https://github.com/google/glog).
 For information regarding the command-line options used to configure this
-library, see the [configuration documentation](configuration.md).
+library, see the [configuration documentation](configuration.html).
 Google logging options that are not explicitly mentioned there can be
 configured via environment variables.
 
-Both Master and Agent also expose a [/logging/toggle](endpoints/logging/toggle.md)
+Both Master and Agent also expose a [/logging/toggle](endpoints/logging/toggle.html)
 HTTP endpoint which temporarily toggles verbose logging:
 
 ```
@@ -34,12 +34,12 @@ original level after the given duration.
 
 ## <a name="Containers"></a>Containers
 
-For background, see [the containerizer documentation](containerizers.md).
+For background, see [the containerizer documentation](containerizers.html).
 
 Mesos does not assume any structured logging for entities running inside
 containers.  Instead, Mesos will store the stdout and stderr of containers
 into plain files ("stdout" and "stderr") located inside
-[the sandbox](sandbox.md#where-is-it).
+[the sandbox](sandbox.html#where-is-it).
 
 In some cases, the default Container logger behavior of Mesos is not ideal:
 
@@ -76,7 +76,7 @@ specified maximum number of files is reached.
 
 The `LogrotateContainerLogger` can be loaded by specifying the library
 `liblogrotate_container_logger.so` in the
-[`--modules` flag](modules.md#Invoking) when starting the Agent and by
+[`--modules` flag](modules.html#Invoking) when starting the Agent and by
 setting the `--container_logger` Agent flag to
 `org_apache_mesos_LogrotateContainerLogger`.
 
@@ -192,7 +192,7 @@ will continue to run.
 
 ### Writing a Custom `ContainerLogger`
 
-For basics on module writing, see [the modules documentation](modules.md).
+For basics on module writing, see [the modules documentation](modules.html).
 
 There are several caveats to consider when designing a new `ContainerLogger`:
 
@@ -206,7 +206,7 @@ There are several caveats to consider when designing a new `ContainerLogger`:
 * The `ContainerLogger` should not assume that containers have been launched
   with any specific `ContainerLogger`.  The Agent may be restarted with a
   different `ContainerLogger`.
-* Each [containerizer](containerizers.md) running on an Agent uses its own
+* Each [containerizer](containerizers.html) running on an Agent uses its own
   instance of the `ContainerLogger`.  This means more than one `ContainerLogger`
   may be running in a single Agent.  However, each Agent will only run a single
   type of `ContainerLogger`.

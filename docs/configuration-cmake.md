@@ -2,7 +2,7 @@
 # Mesos CMake Build Configuration Options
 
 Mesos currently exposes two build systems, one written in
-[autotools](configuration.md), and one written in CMake.
+[autotools](configuration.html), and one written in CMake.
 This document describes the configuration flags available in
 the CMake build system.
 

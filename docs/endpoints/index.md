@@ -14,7 +14,7 @@ endpoint will be available that displays help similar to what you see
 below.
 
 ** NOTE: ** If you are using Mesos 1.1 or later, we recommend using the
-new [v1 Operator HTTP API](../operator-http-api.md) instead of the
+new [v1 Operator HTTP API](../operator-http-api.html) instead of the
 unversioned REST endpoints listed below. These endpoints will be
 deprecated in the future.
 
@@ -30,60 +30,60 @@ endpoints are reachable at the address `http://ip:port/endpoint`.
 For example, `http://master.com:5050/files/browse`.
 
 ### files ###
-* [/files/browse](files/browse.md)
-* [/files/browse.json](files/browse.json.md)
-* [/files/debug](files/debug.md)
-* [/files/debug.json](files/debug.json.md)
-* [/files/download](files/download.md)
-* [/files/download.json](files/download.json.md)
-* [/files/read](files/read.md)
-* [/files/read.json](files/read.json.md)
+* [/files/browse](files/browse.html)
+* [/files/browse.json](files/browse.json.html)
+* [/files/debug](files/debug.html)
+* [/files/debug.json](files/debug.json.html)
+* [/files/download](files/download.html)
+* [/files/download.json](files/download.json.html)
+* [/files/read](files/read.html)
+* [/files/read.json](files/read.json.html)
 
 ### logging ###
-* [/logging/toggle](logging/toggle.md)
+* [/logging/toggle](logging/toggle.html)
 
 ### master ###
-* [/api/v1](master/api/v1.md)
-* [/api/v1/scheduler](master/api/v1/scheduler.md)
-* [/create-volumes](master/create-volumes.md)
-* [/destroy-volumes](master/destroy-volumes.md)
-* [/flags](master/flags.md)
-* [/frameworks](master/frameworks.md)
-* [/health](master/health.md)
-* [/machine/down](master/machine/down.md)
-* [/machine/up](master/machine/up.md)
-* [/maintenance/schedule](master/maintenance/schedule.md)
-* [/maintenance/status](master/maintenance/status.md)
-* [/quota](master/quota.md)
-* [/redirect](master/redirect.md)
-* [/reserve](master/reserve.md)
-* [/roles](master/roles.md)
-* [/roles.json](master/roles.json.md)
-* [/slaves](master/slaves.md)
-* [/state](master/state.md)
-* [/state-summary](master/state-summary.md)
-* [/state.json](master/state.json.md)
-* [/tasks](master/tasks.md)
-* [/tasks.json](master/tasks.json.md)
-* [/teardown](master/teardown.md)
-* [/unreserve](master/unreserve.md)
-* [/weights](master/weights.md)
+* [/api/v1](master/api/v1.html)
+* [/api/v1/scheduler](master/api/v1/scheduler.html)
+* [/create-volumes](master/create-volumes.html)
+* [/destroy-volumes](master/destroy-volumes.html)
+* [/flags](master/flags.html)
+* [/frameworks](master/frameworks.html)
+* [/health](master/health.html)
+* [/machine/down](master/machine/down.html)
+* [/machine/up](master/machine/up.html)
+* [/maintenance/schedule](master/maintenance/schedule.html)
+* [/maintenance/status](master/maintenance/status.html)
+* [/quota](master/quota.html)
+* [/redirect](master/redirect.html)
+* [/reserve](master/reserve.html)
+* [/roles](master/roles.html)
+* [/roles.json](master/roles.json.html)
+* [/slaves](master/slaves.html)
+* [/state](master/state.html)
+* [/state-summary](master/state-summary.html)
+* [/state.json](master/state.json.html)
+* [/tasks](master/tasks.html)
+* [/tasks.json](master/tasks.json.html)
+* [/teardown](master/teardown.html)
+* [/unreserve](master/unreserve.html)
+* [/weights](master/weights.html)
 
 ### metrics ###
-* [/metrics/snapshot](metrics/snapshot.md)
+* [/metrics/snapshot](metrics/snapshot.html)
 
 ### profiler ###
-* [/profiler/start](profiler/start.md)
-* [/profiler/stop](profiler/stop.md)
+* [/profiler/start](profiler/start.html)
+* [/profiler/stop](profiler/stop.html)
 
 ### registrar(id) ###
-* [/registrar(id)/registry](registrar/registry.md)
+* [/registrar(id)/registry](registrar/registry.html)
 
 ### system ###
-* [/system/stats.json](system/stats.json.md)
+* [/system/stats.json](system/stats.json.html)
 
 ### version ###
-* [/version](version.md)
+* [/version](version.html)
 
 ## Agent Endpoints ##
 
@@ -93,39 +93,39 @@ endpoints are reachable at the address `http://ip:port/endpoint`.
 For example, `http://agent.com:5051/files/browse`.
 
 ### files ###
-* [/files/browse](files/browse.md)
-* [/files/browse.json](files/browse.json.md)
-* [/files/debug](files/debug.md)
-* [/files/debug.json](files/debug.json.md)
-* [/files/download](files/download.md)
-* [/files/download.json](files/download.json.md)
-* [/files/read](files/read.md)
-* [/files/read.json](files/read.json.md)
+* [/files/browse](files/browse.html)
+* [/files/browse.json](files/browse.json.html)
+* [/files/debug](files/debug.html)
+* [/files/debug.json](files/debug.json.html)
+* [/files/download](files/download.html)
+* [/files/download.json](files/download.json.html)
+* [/files/read](files/read.html)
+* [/files/read.json](files/read.json.html)
 
 ### logging ###
-* [/logging/toggle](logging/toggle.md)
+* [/logging/toggle](logging/toggle.html)
 
 ### metrics ###
-* [/metrics/snapshot](metrics/snapshot.md)
+* [/metrics/snapshot](metrics/snapshot.html)
 
 ### profiler ###
-* [/profiler/start](profiler/start.md)
-* [/profiler/stop](profiler/stop.md)
+* [/profiler/start](profiler/start.html)
+* [/profiler/stop](profiler/stop.html)
 
 ### slave(id) ###
-* [/api/v1](slave/api/v1.md)
-* [/api/v1/executor](slave/api/v1/executor.md)
-* [/api/v1/resource_provider](slave/api/v1/resource_provider.md)
-* [/containers](slave/containers.md)
-* [/flags](slave/flags.md)
-* [/health](slave/health.md)
-* [/monitor/statistics](slave/monitor/statistics.md)
-* [/monitor/statistics.json](slave/monitor/statistics.json.md)
-* [/state](slave/state.md)
-* [/state.json](slave/state.json.md)
+* [/api/v1](slave/api/v1.html)
+* [/api/v1/executor](slave/api/v1/executor.html)
+* [/api/v1/resource_provider](slave/api/v1/resource_provider.html)
+* [/containers](slave/containers.html)
+* [/flags](slave/flags.html)
+* [/health](slave/health.html)
+* [/monitor/statistics](slave/monitor/statistics.html)
+* [/monitor/statistics.json](slave/monitor/statistics.json.html)
+* [/state](slave/state.html)
+* [/state.json](slave/state.json.html)
 
 ### system ###
-* [/system/stats.json](system/stats.json.md)
+* [/system/stats.json](system/stats.json.html)
 
 ### version ###
-* [/version](version.md)
+* [/version](version.html)

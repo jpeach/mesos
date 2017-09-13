@@ -1,10 +1,10 @@
 
-# Supporting Container Images in [Mesos Containerizer](mesos-containerizer.md)
+# Supporting Container Images in [Mesos Containerizer](mesos-containerizer.html)
 
 
 ## Motivation
 
-Mesos currently supports several [containerizers](containerizers.md),
+Mesos currently supports several [containerizers](containerizers.html),
 notably the Mesos containerizer and the Docker containerizer. Mesos
 containerizer uses native OS features directly to provide isolation
 between containers, while Docker containerizer delegates container
@@ -37,8 +37,8 @@ images which will then be passed to the corresponding isolators for
 proper isolation.
 
 There are a few container image specifications, notably
-[Docker](https://github.com/docker/docker/blob/master/image/spec/v1.md),
-[Appc](https://github.com/appc/spec/blob/master/SPEC.md), and
+[Docker](https://github.com/docker/docker/blob/master/image/spec/v1.html),
+[Appc](https://github.com/appc/spec/blob/master/SPEC.html), and
 [OCI](https://github.com/opencontainers/specs) (future). Currently, we
 support Docker and Appc images. More details about what features are
 supported or not can be found in the following sections.
@@ -68,7 +68,7 @@ permission.
 * `docker/runtime`: This is used to provide support for runtime
 configurations specified in Docker images (e.g., Entrypoint/Cmd,
 environment variables, etc.). See more details about this isolator in
-[Mesos containerizer doc](mesos-containerizer.md). Note that if this
+[Mesos containerizer doc](mesos-containerizer.html). Note that if this
 isolator is not specified and `--image_providers` contains `docker`,
 the agent will refuse to start.
 
@@ -88,7 +88,7 @@ now: `APPC` and `DOCKER`, representing Appc and Docker images
 respectively.
 
 For Appc images, the `name` and `labels` are what described in the
-[spec](https://github.com/appc/spec/blob/master/spec/aci.md#image-manifest-schema).
+[spec](https://github.com/appc/spec/blob/master/spec/aci.html#image-manifest-schema).
 
 For Docker images, the `name` is the Docker image reference in the
 following form (the same format expected by `docker pull`):
@@ -191,7 +191,7 @@ Operators can either specify the flag as an absolute path pointing to
 the docker config file (need to manually configure
 `.docker/config.json` or `.dockercfg` on each agent), or specify the
 flag as a JSON-formatted string. See [configuration
-documentation](configuration.md) for detail. For example:
+documentation](configuration.html) for detail. For example:
 
     --docker_config=file:///home/vagrant/.docker/config.json
 
@@ -232,14 +232,14 @@ user is not specified, `root` will be used by default. The operator or
 the framework can limit the
 [capabilities](http://man7.org/linux/man-pages/man7/capabilities.7.html)
 of the container by using the
-[linux/capabilities](linux_capabilities.md) isolator.
+[linux/capabilities](linux_capabilities.html) isolator.
 
 Currently, we support `host`, `bridge` and user defined networks
 ([reference](https://docs.docker.com/engine/userguide/networking/)).
 `none` is not supported yet. We support the above networking modes in
-[Mesos Containerizer](mesos-containerizer.md) using the
+[Mesos Containerizer](mesos-containerizer.html) using the
 [CNI](https://github.com/containernetworking/cni) (Container Network
-Interface) standard. Please refer to the [network/cni](cni.md)
+Interface) standard. Please refer to the [network/cni](cni.html)
 isolator document for more details about how to configure the network
 for the container.
 
@@ -391,6 +391,6 @@ filesystem.
 
 For more information on the Mesos containerizer filesystem, namespace,
 and isolator features, visit [Mesos
-Containerizer](mesos-containerizer.md).  For more information on
+Containerizer](mesos-containerizer.html).  For more information on
 launching Docker containers through the Docker containerizer, visit
-[Docker Containerizer](docker-containerizer.md).
+[Docker Containerizer](docker-containerizer.html).

@@ -1,7 +1,7 @@
 ## Container Network Interface (CNI) for Mesos Containers
 
 This document describes the `network/cni` isolator, a network isolator
-for the [MesosContainerizer](mesos-containerizer.md) that implements
+for the [MesosContainerizer](mesos-containerizer.html) that implements
 the [Container Network Interface
 (CNI)](https://github.com/containernetworking/cni) specification.  The
 `network/cni` isolator allows containers launched using the
@@ -170,7 +170,7 @@ bridge/macvlan) that, in turn, is attached to the host network.
 When invoking CNI plugins (e.g., with command ADD), the isolator will
 pass on some Mesos meta-data to the plugins by specifying the `args`
 field in the [network configuration
-JSON](https://github.com/containernetworking/cni/blob/master/SPEC.md#network-configuration)
+JSON](https://github.com/containernetworking/cni/blob/master/SPEC.html#network-configuration)
 according to the CNI spec. Currently, the isolator only passes on
 `NetworkInfo` of the corresponding network to the plugin. This is
 simply the JSON representation of the `NetworkInfo` protobuf. For
@@ -288,7 +288,7 @@ the `mesos-execute` framework in your Mesos installation directory at
 #### <a name="a-bridge-network"></a>A bridge network
 
 The
-[bridge](https://github.com/containernetworking/cni/blob/master/Documentation/bridge.md)
+[bridge](https://github.com/containernetworking/cni/blob/master/Documentation/bridge.html)
 plugin attaches containers to a Linux bridge. Linux bridges could be
 configured to attach to VLANs and VxLAN allowing containers to be
 plugged into existing layer 2 networks. We present an example below,
@@ -296,7 +296,7 @@ where the CNI configuration instructs the `MesosContainerizer` to
 invoke a bridge plugin to connect a container to a Linux bridge. The
 configuration also instructs the bridge plugin to assign an IP address
 to the container by invoking a
-[host-local](https://github.com/containernetworking/cni/blob/master/Documentation/host-local.md)
+[host-local](https://github.com/containernetworking/cni/blob/master/Documentation/host-local.html)
 IPAM.
 
 First, build the CNI plugin according to the instructions in the [CNI
@@ -485,7 +485,7 @@ constraints.
 
 For information on setting up and using Calico-CNI, see [Calico's
 guide on adding Calico-CNI to
-Mesos](https://github.com/projectcalico/calico-containers/blob/master/docs/mesos/ManualInstallCalicoCNI.md).
+Mesos](https://github.com/projectcalico/calico-containers/blob/master/docs/mesos/ManualInstallCalicoCNI.html).
 
 #### <a name="a-cilium-network">A Cilium network</a>
 

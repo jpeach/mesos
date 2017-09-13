@@ -12,7 +12,7 @@ and Scala.
 ## Create your Framework Scheduler
 
 If you are writing a scheduler against Mesos 1.0 or newer, it is recommended
-to use the new [HTTP API](scheduler-http-api.md) to talk to Mesos.
+to use the new [HTTP API](scheduler-http-api.html) to talk to Mesos.
 
 If your framework needs to talk to Mesos 0.28.0 or older, you can write the
 scheduler in C++, Java/Scala, or Python. Your framework scheduler should inherit
@@ -282,7 +282,7 @@ virtual Status reconcileTasks(const std::vector<TaskStatus>& statuses);
 
 ### Handling Failures
 How to build Mesos frameworks that remain available in the face of failures is
-discussed in a [separate document](high-availability-framework-guide.md).
+discussed in a [separate document](high-availability-framework-guide.html).
 
 ## Working with Executors
 
@@ -441,7 +441,7 @@ After creating your custom executor, you need to make it available to all slaves
 in the cluster.
 
 One way to distribute your framework executor is to let the
-[Mesos fetcher](fetcher.md) download it on-demand when your scheduler launches
+[Mesos fetcher](fetcher.html) download it on-demand when your scheduler launches
 tasks on that slave. `ExecutorInfo` is a Protocol Buffer Message class (defined
 in `include/mesos/mesos.proto`), and it contains a field of type `CommandInfo`.
 `CommandInfo` allows schedulers to specify, among other things, a number of
