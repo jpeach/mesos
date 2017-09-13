@@ -1,8 +1,3 @@
----
-title: Apache Mesos - Getting Started
-layout: documentation
----
-
 # Getting Started
 
 ## Downloading Mesos

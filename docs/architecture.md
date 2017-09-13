@@ -1,8 +1,3 @@
----
-title: Apache Mesos - Architecture
-layout: documentation
----
-
 # Mesos Architecture
 
 ![Mesos Architecture](images/architecture3.jpg)
