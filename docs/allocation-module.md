@@ -36,7 +36,7 @@ Once a custom allocator has been written, the next step is to override the built
 
 An allocator module is a factory function and a module description, as defined in `mesos/module/allocator.hpp`. Assuming the allocation logic is implemented by the `ExternalAllocator` class declared in `external_allocator.hpp`, the following snippet describes the implementation of an allocator module named `ExternalAllocatorModule`:
 
-~~~{.cpp}
+~~~cpp
 #include <mesos/allocator/allocator.hpp>
 #include <mesos/module/allocator.hpp>
 #include <stout/try.hpp>

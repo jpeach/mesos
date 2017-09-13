@@ -20,7 +20,7 @@ The Mesos codebase follows the [Google C++ Style Guide](https://google.github.io
 * We use [snake_case](https://en.wikipedia.org/wiki/Snake_case) for variable names in the libprocess and stout libraries.
 * We prepend constructor and function arguments with a leading underscore to avoid ambiguity and / or shadowing:
 
-~~~{.cpp}
+~~~cpp
 Try(State _state, T* _t = nullptr, const std::string& _message = "")
   : state(_state), t(_t), message(_message) {}
 ~~~
@@ -29,7 +29,7 @@ Try(State _state, T* _t = nullptr, const std::string& _message = "")
 
 * If you find yourself creating a copy of an argument passed by const reference, consider passing it by value instead (if you don't want to use a leading underscore and copy in the body of the function):
 
-~~~{.cpp}
+~~~cpp
 // You can pass-by-value in ProtobufProcess::install() handlers.
 void Slave::statusUpdate(StatusUpdate update, const UPID& pid)
 {
@@ -59,7 +59,7 @@ void Slave::statusUpdate(StatusUpdate update, const UPID& pid)
 * For trailing comments, leave one space.
 * Use backticks when quoting code excerpts or object/variable/function names. For example:
 
-~~~{.cpp}
+~~~cpp
 // Use `SchedulerDriver::acceptOffers()` to send several offer
 // operations. This makes use of the `RESERVE()` and `UNRESERVE()`
 // helpers, which take a `Resources` object as input and produce
@@ -88,7 +88,7 @@ driver.acceptOffers({offer.id()},
 * Newline when calling or defining a function: indent with four spaces.
 * We do not follow Google's style of wrapping on the open parenthesis, the general goal is to reduce visual "jaggedness" in the code. Prefer (1), (4), (5), sometimes (3), never (2):
 
-~~~{.cpp}
+~~~cpp
 // 1: OK.
 allocator->resourcesRecovered(frameworkId, agentId, resources, filters);
 
@@ -122,7 +122,7 @@ allocator->resourcesRecovered(
 ### Continuation
 * Newline for an assignment statement: indent with two spaces.
 
-~~~{.cpp}
+~~~cpp
 Try<Duration> failoverTimeout =
   Duration::create(FrameworkInfo().failover_timeout());
 ~~~
@@ -131,7 +131,7 @@ Try<Duration> failoverTimeout =
 * One empty line at the end of the file.
 * Inside a code block, every multi-line statement should be followed by one empty line.
 
-~~~{.cpp}
+~~~cpp
 Try<very_very_long_type> long_name =
   ::protobuf::parse<very_very_long_type>(
       request);
@@ -149,7 +149,7 @@ for (int i = 0; i < very_very_long_expression();
 
 We disallow capturing **temporaries** by reference. See [MESOS-2629](https://issues.apache.org/jira/browse/MESOS-2629) for the rationale.
 
-~~~{.cpp}
+~~~cpp
 Future<Nothing> f() { return Nothing(); }
 Future<bool> g() { return false; }
 
@@ -197,7 +197,7 @@ The goal is to make code more concise and improve readability. Use this if an ex
 * Would benefit from a concise name to provide context for readability.
 * Will **not** be invalidated during the lifetime of the alias. Otherwise document this explicitly.
 
-~~~{.cpp}
+~~~cpp
 hashmap<string, hashset<int>> index;
 
 // 1: Ok.
@@ -267,7 +267,7 @@ Header in `src` directories are included afterwards, using the same rules but wi
 
 Example for `src/common/foo.cpp`:
 
-~~~{.cpp}
+~~~cpp
 #include "common/foo.hpp"
 
 #include <stdint.h>
@@ -305,7 +305,7 @@ We support C++11 and require GCC 4.8+ or Clang 3.5+ compilers. The whitelist of 
 * Multiple right angle brackets.
 * Type inference (`auto` and `decltype`). The main goal is to increase code readability. This is safely the case if the exact same type omitted on the left is already fully stated on the right. Here are several examples:
 
-~~~{.cpp}
+~~~cpp
 // 1: OK.
 const auto i = values.find(keys.front());
 // Compare with
@@ -339,7 +339,7 @@ Try<Owned<LocalAuthorizer>> authorizer = LocalAuthorizer::create();
 * Lambdas!
   * Don't put a space between the capture list and the parameter list:
 
-~~~{.cpp}
+~~~cpp
 // 1: OK.
 []() { ...; };
 
@@ -349,14 +349,14 @@ Try<Owned<LocalAuthorizer>> authorizer = LocalAuthorizer::create();
 
   * Use `mutable` only when absolutely necessary.
 
-~~~{.cpp}
+~~~cpp
 // 1: OK.
 []() mutable { ...; };
 ~~~
 
   * Feel free to ignore the return type by default, adding it as necessary to appease the compiler or be more explicit for the reader.
 
-~~~{.cpp}
+~~~cpp
 // 1: OK.
 []() { return true; };
 []() -> bool { return ambiguous(); };
@@ -364,14 +364,14 @@ Try<Owned<LocalAuthorizer>> authorizer = LocalAuthorizer::create();
 
   * Feel free to use `auto` when naming a lambda expression:
 
-~~~{.cpp}
+~~~cpp
 // 1: OK.
 auto lambda = []() { ...; };
 ~~~
 
   * Format lambdas similar to how we format functions and methods. Feel free to let lambdas be one-liners:
 
-~~~{.cpp}
+~~~cpp
 // 1: OK.
 auto lambda = []() {
   ...;
@@ -383,7 +383,7 @@ auto lambda = []() { ...; };
 
   * Feel free to inline lambdas within function arguments:
 
-~~~{.cpp}
+~~~cpp
 instance.method([]() {
   ...;
 });
@@ -391,7 +391,7 @@ instance.method([]() {
 
   * Chain function calls on a newline after the closing brace of the lambda and the closing parenthesis of function call:
 
-~~~{.cpp}
+~~~cpp
 // 1: OK.
 instance
   .method([]() {
@@ -428,7 +428,7 @@ instance.method([]() {
 
   * Wrap capture lists independently of parameters, *use the same formatting as if the capture list were template parameters*:
 
-~~~{.cpp}
+~~~cpp
 // 1: OK.
 function([&capture1, &capture2, &capture3](
     const T1& p1, const T2& p2, const T3& p3) {
@@ -596,7 +596,7 @@ auto lambda = [
 
   Prefer `constexpr` to `const` for all constant POD declarations, `constexpr` `char` arrays are preferred to `const` `string` literals.
 
-~~~{.cpp}
+~~~cpp
   // OK
   constexpr char LITERAL[] = "value";
 
@@ -611,7 +611,7 @@ auto lambda = [
 
   `constexpr` functions are evaluated at compile time if all their arguments are constant expressions. Otherwise they default to initialization at runtime. However `constexpr` functions are limited in that they cannot perform dynamic casts, memory allocation or calls to non-constexpr functions.  Prefer `constexpr` over const inline functions.
 
-~~~{.cpp}
+~~~cpp
   constexpr size_t MIN = 200;
   constexpr size_t MAX = 1000;
   constexpr size_t SPAN() { return MAX-MIN; }
@@ -620,7 +620,7 @@ auto lambda = [
 
 Const expression constructors allow object initialization at compile time provided that all the constructor arguments are `constexpr` and the constructor body is empty, i.e. all initialization is performed in the initialization list.  Classes which provide `constexpr` constructors should normally also provide `constexpr` copy constructors to allow the class to be used in the return value from a `constexpr` function.
 
-~~~{.cpp}
+~~~cpp
   class C
   {
   public:

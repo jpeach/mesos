@@ -26,7 +26,7 @@ unknown to the master. To cope with such situations, Mesos frameworks should use
 Frameworks can use the scheduler driver's `reconcileTasks` method to send a
 reconciliation request to the master:
 
-~~~{.cpp}
+~~~cpp
 // Allows the framework to query the status for non-terminal tasks.
 // This causes the master to send back the latest task status for
 // each task in 'statuses', if possible. Tasks that are no longer

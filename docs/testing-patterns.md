@@ -16,7 +16,7 @@ If an event is triggered by an act of processing a message from an actor's mailb
 
 Below is an example of this pattern. To avoid master backlogging, Mesos frameworks usually wait for some time (backoff) before retrying registration. In the test below we simulate the loss of a registration request, but avoid blocking the test for the backoff duration.
 
-~~~{.cpp}
+~~~cpp
 TEST_F(FaultToleranceTest, FrameworkReliableRegistration)
 {
   Try<PID<Master>> master = StartMaster();
@@ -76,7 +76,7 @@ Scheduling a sequence of events in an asynchronous environment is not easy: a fu
 
 Every message enqueued in a libprocess process' (or actor's, to avoid ambiguity with OS processes) mailbox is processed by `ProcessManager` (right now there is a single instance of `ProcessManager` per OS process, but this may change in the future). `ProcessManager` fetches actors from the runnable actors list and services all events from the actor's mailbox. Using `Clock::settle()` call we can block the calling thread until `ProcessManager` empties mailboxes of all actors. Here is the example of this pattern:
 
-~~~{.cpp}
+~~~cpp
 // As Master::killTask isn't doing anything, we shouldn't get a status update.
 EXPECT_CALL(sched, statusUpdate(&driver, _))
   .Times(0);
@@ -108,7 +108,7 @@ Clock::resume();
 ## Intercepting a message sent to a different OS process
 Intercepting messages sent between libprocess processes (let's call them actors to avoid ambiguity with OS processes) that live in the same OS process is easy, e.g.:
 
-~~~{.cpp}
+~~~cpp
 Future<SlaveReregisteredMessage> slaveReregisteredMessage =
   FUTURE_PROTOBUF(SlaveReregisteredMessage(), _, _);
 ...
@@ -117,7 +117,7 @@ AWAIT_READY(slaveReregisteredMessage);
 
 However, this won't work if we want to intercept a message sent to an actor (technically a `UPID`) that lives in another OS process. For example, `CommandExecutor` spawned by an agent will live in a separate OS process, though master and agent instances live in the same OS process together with our test (see `mesos/src/tests/cluster.hpp`). The wait in this code will fail:
 
-~~~{.cpp}
+~~~cpp
 Future<ExecutorRegisteredMessage> executorRegisteredMessage =
   FUTURE_PROTOBUF(ExecutorRegisteredMessage(), _, _);
 ...
@@ -134,7 +134,7 @@ Consider setting expectations on corresponding incoming messages ensuring they a
 
 For the aforementioned example, instead of intercepting `ExecutorRegisteredMessage`, we can intercept `RegisterExecutorMessage` and wait until its processed, which includes sending `ExecutorRegisteredMessage` (see `Slave::registerExecutor()`):
 
-~~~{.cpp}
+~~~cpp
 Future<RegisterExecutorMessage> registerExecutorMessage =
   FUTURE_PROTOBUF(RegisterExecutorMessage(), _, _);
 ...

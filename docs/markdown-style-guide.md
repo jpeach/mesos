@@ -48,7 +48,7 @@ lowercased in any heading, as long as they aren't the first word.
 
 Code examples should be specified as follows:
 
-    ~~~{.cpp}
+    ~~~cpp
     int main(int argc, char** argv)
     {
       ....
@@ -62,14 +62,14 @@ Code examples should be specified as follows:
 
 Notes are used to highlight important parts of the text and should be specified as follows.
 
-~~~{.txt}
+~~~txt
 **NOTE:**  Short note.
 Continued longer note.
 ~~~
 
 We use single backticks to highlight individual words in a sentence such as certain identifiers:
 
-~~~{.txt}
+~~~txt
 Use the default `HierarchicalDRF` allocator....
 ~~~
 
@@ -78,7 +78,7 @@ Use the default `HierarchicalDRF` allocator....
 
 We use single backticks to highlight sample commands as follows:
 
-~~~{.txt}
+~~~txt
 `mesos-master --help`
 ~~~
 
@@ -87,7 +87,7 @@ We use single backticks to highlight sample commands as follows:
 
 Files and path references should be specified as follows:
 
-~~~{.txt}
+~~~txt
 Remember you can also use the `file:///path/to/file` or `/path/to/file`
 ~~~
 
@@ -131,7 +131,7 @@ We use no extra indentation in markdown files.
 We have one new line after section headings and two blank lines
 in between sections.
 
-~~~{.txt}
+~~~txt
 ... end of previous section.
 
 

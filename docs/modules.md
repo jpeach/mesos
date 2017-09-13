@@ -260,7 +260,7 @@ And this one runs Mesos slave with `org_apache_mesos_TestMasterDetector`:
 The following snippet describes the implementation of a module named
 "org_apache_mesos_bar" of "TestModule" kind:
 
-~~~{.cpp}
+~~~cpp
 #include <iostream>
 #include "test_module.hpp"
 

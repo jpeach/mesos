@@ -191,7 +191,7 @@ the task's mount namespace.
 To specify a command check, set `type` to `CheckInfo::COMMAND` and populate
 `CheckInfo.Command.CommandInfo`, for example:
 
-~~~{.cpp}
+~~~cpp
 TaskInfo task = [...];
 
 CheckInfo check;
@@ -223,7 +223,7 @@ the `curl` command.
 To specify an HTTP check, set `type` to `CheckInfo::HTTP` and populate
 `CheckInfo.Http`, for example:
 
-~~~{.cpp}
+~~~cpp
 TaskInfo task = [...];
 
 CheckInfo check;
@@ -255,7 +255,7 @@ the `mesos-tcp-connect` command.
 To specify a TCP check, set `type` to `CheckInfo::TCP` and populate
 `CheckInfo.Tcp`, for example:
 
-~~~{.cpp}
+~~~cpp
 TaskInfo task = [...];
 
 CheckInfo check;
@@ -291,7 +291,7 @@ a simple HTTP server listening on port `8080` and an HTTP check that should be
 performed every `5` seconds starting from the task launch and response time
 under `1` second.
 
-~~~{.cpp}
+~~~cpp
 TaskInfo task = createTask(...);
 
 // Use Netcat to emulate an HTTP server.
@@ -362,7 +362,7 @@ command will be executed from the task's mount namespace.
 To specify a command health check, set `type` to `HealthCheck::COMMAND` and
 populate `CommandInfo`, for example:
 
-~~~{.cpp}
+~~~cpp
 TaskInfo task = [...];
 
 HealthCheck healthCheck;
@@ -399,7 +399,7 @@ the `curl` command.
 To specify an HTTP health check, set `type` to `HealthCheck::HTTP` and populate
 `HTTPCheckInfo`, for example:
 
-~~~{.cpp}
+~~~cpp
 TaskInfo task = [...];
 
 HealthCheck healthCheck;
@@ -433,7 +433,7 @@ the `mesos-tcp-connect` command.
 To specify a TCP health check, set `type` to `HealthCheck::TCP` and populate
 `TCPCheckInfo`, for example:
 
-~~~{.cpp}
+~~~cpp
 TaskInfo task = [...];
 
 HealthCheck healthCheck;
@@ -473,7 +473,7 @@ should be performed every `5` seconds starting from the task launch and allows
 consecutive failures during the first `15` seconds and response time under `1`
 second.
 
-~~~{.cpp}
+~~~cpp
 TaskInfo task = createTask(...);
 
 // Use Netcat to emulate an HTTP server.

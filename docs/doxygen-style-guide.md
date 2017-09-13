@@ -25,7 +25,7 @@ These have the general form:
 
 <!-- NOTE: In order to show the comments as part of the code blocks in
 this we must use indentation instead of fenced code blocks (i.e.,
-~~~{.cpp}) because doxygen will remove all of the comments and just
+~~~cpp) because doxygen will remove all of the comments and just
 render the code. -->
 
 
@@ -182,11 +182,11 @@ Example: "# Libprocess Developer Guide"
 
 ### Example Code
 
-C++ code examples should be enclosed by '~~~{.cpp}'.
+C++ code examples should be enclosed by '~~~cpp'.
 
 Example:
 
-~~~{.cpp}
+~~~cpp
 int main(int argc, char** argv)
 {
   ...

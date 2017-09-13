@@ -38,7 +38,7 @@ The `NetworkInfo` protobuf, described below, is the interface provided
 by Mesos to specify network related information for a container and to
 learn network information associated with a container.
 
-```{.proto}
+```proto
 message NetworkInfo {
   enum Protocol {
     IPv4 = 1;
@@ -89,7 +89,7 @@ Docker. To connect a docker container using a specific mode the
 framework needs to specify the network mode in the `DockerInfo`
 protobuf.
 
-```{.proto}
+```proto
 message DockerInfo {
   // The docker image that is going to be passed to the registry.
   required string image = 1;

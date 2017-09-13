@@ -35,7 +35,7 @@ This isolator permits setting per-task resource limits. This isolator interprets
 rlimits specified as part of a task's `ContainerInfo` for the Mesos
 containerizer, e.g.,
 
-~~~{.json}
+~~~json
 {
   "container": {
     "type": "MESOS",
@@ -58,7 +58,7 @@ containerizer, e.g.,
 To enable interpretation of rlimits, agents need to
 be started with `posix/rlimits` in its `--isolation` flag, e.g.,
 
-~~~{.console}
+~~~console
 mesos-agent --master=<master ip> --ip=<agent ip>
   --work_dir=/var/lib/mesos
   --isolation=posix/rlimits[,other isolation flags]
