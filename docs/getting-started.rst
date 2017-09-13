@@ -25,8 +25,8 @@ There are different ways you can get Mesos:
 .. note::
 
     If you have problems running the above commands, you may need to
-    first run through the *\ **System Requirements**\ \* section below to
-    install the ``wget``, ``tar``, and ``git`` utilities for your system.\*
+    first run through the `System Requirements`_ section below to install
+    the ``wget``, ``tar``, and ``git`` utilities for your system.
 
 System Requirements
 -------------------
@@ -321,4 +321,4 @@ Python. The framework binaries will only be available after running
     in a production environment (e.g. on AWS). For that you will need to
     specify the actual IP of your host when launching the Mesos master and
     ensure your firewall settings allow access to port 5050 from the outside
-    world.*
+    world.
