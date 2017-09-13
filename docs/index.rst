@@ -134,9 +134,10 @@ More Info About Mesos
 ---------------------
 
 .. toctree::
-  :maxdepth:
-  
+  :maxdepth: 1
 
+  design-docs
+  powered-by-mesos
 
 Indices and tables
 ==================
