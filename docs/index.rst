@@ -32,7 +32,7 @@ Running Mesos
     framework-rate-limiting
     task-state-reasons
     high-availability
-    endpoints
+    endpoints/index
     logging
     maintenance
     monitoring

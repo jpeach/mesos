@@ -2,6 +2,7 @@
 title: Apache Mesos - HTTP API client libraries
 layout: documentation
 ---
+# HTTP API Client Libraries
 
 ## Scheduler API
 
