@@ -24,6 +24,7 @@ missing
 
 # Recommended build directory.
 /build/
+docs/_build/
 
 # Intermediate build artifacts
 *.la

@@ -48,7 +48,7 @@ that all capabilities are allowed.
 
 A possible agent startup invocation could be
 
-```{.console}
+```console
 sudo mesos-agent --master=<master ip> --ip=<agent ip>
   --work_dir=/var/lib/mesos
   --isolation=linux/capabilities[,other isolation flags]

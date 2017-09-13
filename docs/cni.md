@@ -88,7 +88,7 @@ frameworks to attach containers to a CNI network.
 In order to configure the `network/cni` isolator the operator
 specifies two flags at Agent startup as follows:
 
-```{.console}
+```console
 sudo mesos-slave --master=<master IP> --ip=<Agent IP>
   --work_dir=/var/lib/mesos
   --network_cni_config_dir=<location of CNI configs>
@@ -176,7 +176,7 @@ according to the CNI spec. Currently, the isolator only passes on
 simply the JSON representation of the `NetworkInfo` protobuf. For
 instance:
 
-```{.json}
+```json
 {
   "name" : "mynet",
   "type" : "bridge",
@@ -217,7 +217,7 @@ useful to debug network connectivity to the network namespace. For a
 given container the `network/cni` isolator checkpoints its network
 namespace at:
 
-```{.console}
+```console
 /var/run/mesos/isolators/network/cni/<container ID>/ns
 ```
 
@@ -227,7 +227,7 @@ package by creating a symbolic link to the network namespace. Assuming
 the container ID is `5baff64c-d028-47ba-864e-a5ee679fc069` you can
 create the symlink as follows:
 
-```{.console}
+```console
 ln -s /var/run/mesos/isolators/network/cni/5baff64c-d028-47ba-8ff64c64e-a5ee679fc069/ns /var/run/netns/5baff64c
 ```
 
@@ -237,13 +237,13 @@ commands in the new network name space using the
 E.g. you can view all the links in the container network namespace by
 running the command:
 
-```{.console}
+```console
 ip netns exec 5baff64c ip link
 ```
 
 Similarly you can view the container's route table by running:
 
-```{.console}
+```console
 ip netns exec 5baff64c ip route show
 ```
 
@@ -262,7 +262,7 @@ configurations are present at `/var/lib/mesos/cni/config`, and the
 plugins are present at `/var/lib/mesos/cni/plugins`. The Agents
 therefore need to be started with the following command:
 
-```{.console}
+```console
 sudo mesos-slave --master=<master IP> --ip=<Agent IP>
 --work_dir=/var/lib/mesos
 --network_cni_config_dir=/var/lib/mesos/cni/config
@@ -306,7 +306,7 @@ bridge binary to the plugins directory on each agent.
 Next, create the configuration file and copy this to the CNI
 configuration directory on each agent.
 
-```{.json}
+```json
 {
 "name": "cni-test",
 "type": "bridge",
@@ -348,7 +348,7 @@ Below we give an example of launching a `Ubuntu` container and
 attaching it to the `mesos-cni0` bridge. You can launch the `Ubuntu`
 container using the `mesos-execute` framework as follows:
 
-```{.console}
+```console
 sudo mesos-execute --command=/bin/bash
   --docker_image=ubuntu:latest --master=<master IP>:5050 --name=ubuntu
   --networks=cni-test --no-shell
@@ -367,7 +367,7 @@ Assuming we created a reference for the network namespace in
 `/var/run/netns/5baff64c` . The output of the IP address and route table
 in the container network namespace would be as follows:
 
-```{.console}
+```console
 $ sudo ip netns exec 5baff64c ip addr show
 1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN group default
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00

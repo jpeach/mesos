@@ -116,7 +116,7 @@ on each agent.
 In order to configure the `docker/volume` isolator, the operator needs to
 configure two flags at agent startup as follows:
 
-```{.console}
+```console
   sudo mesos-agent \
     --master=<master IP> \
     --ip=<agent IP> \
@@ -143,7 +143,7 @@ a directory which will survive agent restart.
 
 The `Volume` protobuf message has been updated to support Docker volumes.
 
-```{.proto}
+```proto
 message Volume {
   ...
 
@@ -215,7 +215,7 @@ The following table summarizes the above rules for `container_path`:
 
 1. Launch a task with one Docker volume using the default command executor.
 
-   ```{.json}
+   ```json
    TaskInfo {
      ...
      "command" : ...,
@@ -240,7 +240,7 @@ The following table summarizes the above rules for `container_path`:
 2. Launch a task with two Docker volumes using the default command executor.
 
 
-   ```{.json}
+   ```json
    TaskInfo {
      ...
      "command" : ...,
@@ -302,13 +302,13 @@ as the Docker volume driver.
 
 Start the Mesos master.
 
-```{.console}
+```console
   $ sudo mesos-master --work_dir=/tmp/mesos/master
 ```
 
 Start the Mesos agent.
 
-```{.console}
+```console
   $ sudo mesos-agent \
     --master=<MASTER_IP>:5050 \
     --isolation=docker/volume,docker/runtime,filesystem/linux \
@@ -320,7 +320,7 @@ Start the Mesos agent.
 Create a volume named as `myvolume` with
 [convoy](https://github.com/rancher/convoy/).
 
-```{.console}
+```console
   $ convoy create myvolume
 ```
 
@@ -345,7 +345,7 @@ Prepare a volume json file named as `myvolume.json` with following content.
 Now, use Mesos CLI (i.e., mesos-execute) to launch a Docker container with
 `--volumes=<path>/myvolume.json` option.
 
-```{.console}
+```console
   $ sudo mesos-execute \
     --master=<MASTER_IP>:5050 \
     --name=test \
@@ -356,7 +356,7 @@ Now, use Mesos CLI (i.e., mesos-execute) to launch a Docker container with
 
 Create another task to verify the file `myfile` was created successfully.
 
-```{.console}
+```console
   $ sudo mesos-execute \
     --master=<MASTER_IP>:5050 \
     --name=test \
@@ -368,7 +368,7 @@ Create another task to verify the file `myfile` was created successfully.
 Check the [sandbox](sandbox.md#where-is-it)
 for the second task to check the file `myfile` was created successfully.
 
-```{.console}
+```console
   $ cat stdout
     Received SUBSCRIBED event
     Subscribed executor on mesos002

@@ -123,7 +123,7 @@ instructions for building and loading a module).
 
 A new NetworkInfo message has been introduced:
 
-```{.proto}
+```proto
 message NetworkInfo {
   enum Protocol {
     IPv4 = 1;
@@ -311,7 +311,7 @@ checks, or any other out-of-band communication.
 
 This is accomplished by adding a new field to the TaskStatus message.
 
-```{.proto}
+```proto
 message ContainerStatus {
    repeated NetworkInfo network_infos;
 }

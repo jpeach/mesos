@@ -78,7 +78,7 @@ QoS controller needs to be able to kill or throttle running revocable tasks.
 Frameworks planning to use oversubscribed resources need to register with the
 `REVOCABLE_RESOURCES` capability set:
 
-~~~{.cpp}
+~~~cpp
 FrameworkInfo framework;
 framework.set_name("Revocable framework");
 
@@ -99,7 +99,7 @@ Launching tasks using revocable resources is done through the existing
 `launchTasks` API. Revocable resources will have the `revocable` field set. See
 below for an example offer with regular and revocable resources.
 
-~~~{.json}
+~~~json
 {
   "id": "20150618-112946-201330860-5050-2210-0000",
   "framework_id": "20141119-101031-201330860-5050-3757-0000",
@@ -146,7 +146,7 @@ via a command line flag).
 
 The interface is defined below:
 
-~~~{.cpp}
+~~~cpp
 class ResourceEstimator
 {
 public:
@@ -172,7 +172,7 @@ public:
 
 The interface for implementing custom QoS Controllers is defined below:
 
-~~~{.cpp}
+~~~cpp
 class QoSController
 {
 public:
@@ -208,7 +208,7 @@ parameters `load_threshold_5min` and `load_threshold_15min`. They represent
 standard unix load averages in the system. 1 minute system load is ignored,
 since for oversubscription use case it can be a misleading signal.
 
-~~~{.proto}
+~~~proto
 message QoSCorrection {
   enum Type {
     KILL = 1; // Terminate an executor.
