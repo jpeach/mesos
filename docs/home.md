@@ -14,7 +14,7 @@
 * [Agent Recovery](agent-recovery.html) for doing seamless agent upgrades and allowing executors to survive `mesos-agent` crashes.
 * [Authentication](authentication.html)
 * [Authorization](authorization.html)
-* [Configuration](configuration.html) and [CMake configuration](configuration-cmake.md) for command-line arguments.
+* [Configuration](configuration.html) and [CMake configuration](configuration-cmake.html) for command-line arguments.
 * [Container Image](container-image.html) for supporting container images in Mesos containerizer.
 * [Containerizers](containerizers.html) for containerizer overview and use cases.
   * [Containerizer Internals](containerizer-internals.html) for implementation details of containerizers.

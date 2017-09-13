@@ -8,7 +8,7 @@ Mesos 1.0.0 added **experimental** support for v1 Operator HTTP API.
 
 Both masters and agents provide the `/api/v1` endpoint as the base URL for performing operator-related operations.
 
-Similar to the [Scheduler](scheduler-http-api.html) and [Executor](executor-http-api.md) HTTP APIs, the operator endpoints only accept HTTP POST requests. The request body should be encoded in JSON (**Content-Type: application/json**) or Protobuf (**Content-Type: application/x-protobuf**).
+Similar to the [Scheduler](scheduler-http-api.html) and [Executor](executor-http-api.html) HTTP APIs, the operator endpoints only accept HTTP POST requests. The request body should be encoded in JSON (**Content-Type: application/json**) or Protobuf (**Content-Type: application/x-protobuf**).
 
 For requests that Mesos can answer synchronously and immediately, an HTTP response will be sent with status **200 OK**, possibly including a response body encoded in JSON or Protobuf. The encoding depends on the **Accept** header present in the request (the default encoding is JSON). Responses will be gzip compressed if the **Accept-Encoding** header is set to "gzip".
 

@@ -75,7 +75,7 @@ launches a Mesos framework and then attempts to destroy a persistent volume:
   `payroll-framework` to register with the `accounting` role. It does find such
   an ACL, the framework registers successfully. Now that the framework is
   subscribed to the `accounting` role, any [weights](weights.html),
-  [reservations](reservation.html), [persistent volumes](persistent-volume.md),
+  [reservations](reservation.html), [persistent volumes](persistent-volume.html),
   or [quota](quota.html) associated with the accounting department's role will
   apply when allocating resources to this role within the framework. This
   allows operators to control the resource consumption of this department.

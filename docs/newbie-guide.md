@@ -55,7 +55,7 @@ There is a set of tooling listed below that is required to be installed for the 
 
 ## Core Libraries
 
-There are two core libraries in Mesos: *stout* and *libprocess*. *stout* is the low level operating system abstraction tooling that should be used in place of writing your own low level tools. *libprocess* is a library used to support building compatible concurrent components (see [video](https://www.youtube.com/watch?v=5EIiU6R_6KE) for an introduction to the *libprocess* library). New contributors to Mesos should become familiar with these libraries and utilize them where appropriate.  Additional documentation can be found in the following two README files: 3rdparty/libprocess/README.html and 3rdparty/stout/README.md.
+There are two core libraries in Mesos: *stout* and *libprocess*. *stout* is the low level operating system abstraction tooling that should be used in place of writing your own low level tools. *libprocess* is a library used to support building compatible concurrent components (see [video](https://www.youtube.com/watch?v=5EIiU6R_6KE) for an introduction to the *libprocess* library). New contributors to Mesos should become familiar with these libraries and utilize them where appropriate.  Additional documentation can be found in the following two README files: 3rdparty/libprocess/README.html and 3rdparty/stout/README.html.
 
 ## Download and Build Mesos
 
@@ -97,7 +97,7 @@ Guidelines to consider when designing a solution can be found in the [effective-
 
 ## Making Changes
 
-After completing the solution review make the source code changes, build and successfully run relevant test cases. Guidelines for these processes can be found in the [submitting-a-patch](submitting-a-patch.html) and [mesos-c++style-guide](c++-style-guide.md).
+After completing the solution review make the source code changes, build and successfully run relevant test cases. Guidelines for these processes can be found in the [submitting-a-patch](submitting-a-patch.html) and [mesos-c++style-guide](c++-style-guide.html).
 
 When creating and running test cases pay particular attention to race conditions. One recommendation is to run system tests multiple times.  Below is a sample command to repeat the test 100 times.
 
