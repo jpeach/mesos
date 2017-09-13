@@ -47,7 +47,7 @@ source_parsers = {
 master_doc = 'index'
 
 # General information about the project.
-project = u'mesos'
+project = u'Apache Mesos'
 copyright = u'2017, dev@mesos.apache.org'
 author = u'dev@mesos.apache.org'
 
