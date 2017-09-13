@@ -14,7 +14,7 @@ Mesos 1.0 contains a [/weights](endpoints/master/weights.html) operator endpoint
 that allows weights to be changed at runtime. The `--weights` command-line flag
 is deprecated.
 
-# Operator HTTP Endpoint
+## Operator HTTP Endpoint
 
 The master `/weights` HTTP endpoint enables operators to configure weights. The
 endpoint currently offers a REST-like interface and supports the following operations:

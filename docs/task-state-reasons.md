@@ -11,7 +11,7 @@ more detailed, human-readable error description.
 Not all status updates will contain a reason.
 
 
-# Guidelines for Framework Authors
+## Guidelines for Framework Authors
 
 Frameworks that implement their own executors are free to set the reason field
 on any status messages they produce.
@@ -69,22 +69,22 @@ use a non-default reason in their status updates.
 
 
 
-# Reference of Reasons Currently Used in Mesos
+## Reference of Reasons Currently Used in Mesos
 
-## Deprecated Reasons
+### Deprecated Reasons
 
 The reason `REASON_COMMAND_EXECUTOR_FAILED` is deprecated and will be removed
 in the future. It should not be referenced by newly written code.
 
 
-## Unused Reasons
+### Unused Reasons
 
 The reasons `REASON_CONTAINER_LIMITATION`, `REASON_INVALID_FRAMEWORKID`,
 `REASON_SLAVE_UNKNOWN`, `REASON_TASK_UNKNOWN` and
 `REASON_EXECUTOR_UNREGISTERED` are not used as of Mesos 1.4.
 
 
-## Reasons for Terminal Status Updates
+### Reasons for Terminal Status Updates
 
 For these status updates, the reason indicates *why* the task state changed.
 Typically, a given reason will always appear together

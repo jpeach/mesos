@@ -5,7 +5,7 @@ By default, all the messages that flow through the Mesos cluster are unencrypted
 
 SSL/TLS support was added to libprocess in Mesos 0.23.0, which encypts the low-level communication that Mesos uses for network communication between Mesos components.  Additionally, HTTPS support was added to the Mesos WebUI.
 
-# Configuration
+## Configuration
 There is currently only one implementation of the [libprocess socket interface](https://github.com/apache/mesos/blob/master/3rdparty/libprocess/include/process/socket.hpp) that supports SSL. This implementation uses [libevent](https://github.com/libevent/libevent). Specifically it relies on the `libevent-openssl` library that wraps `openssl`.
 
 Before building Mesos 0.23.0 from source, assuming you have installed the required [Dependencies](#Dependencies), you can modify your configure line to enable SSL as follows:
@@ -14,7 +14,7 @@ Before building Mesos 0.23.0 from source, assuming you have installed the requir
 ../configure --enable-libevent --enable-ssl
 ~~~
 
-# Running
+## Running
 Once you have successfully built and installed your new binaries, here are the environment variables that are applicable to the `Master`, `Agent`, `Framework Scheduler/Executor`, or any `libprocess process`:
 
 **NOTE:** Prior to 1.0, the SSL related environment variables used to be prefixed by `SSL_`. However, we found that they may collide with other programs and lead to unexpected results (e.g., openssl, see [MESOS-5863](https://issues.apache.org/jira/browse/MESOS-5863) for details). To be backward compatible, we accept environment variables prefixed by both `SSL_` or `LIBPROCESS_SSL_`. New users should use the `LIBPROCESS_SSL_` version.
@@ -91,7 +91,7 @@ Please ensure the `event2` and `openssl` headers are available for building Meso
 brew install openssl
 ~~~
 
-# <a name="Upgrading"></a>Upgrading Your Cluster
+## Upgrading Your Cluster
 _There is no SSL specific requirement for upgrading different components in a specific order._
 
 The recommended strategy is to restart all your components to enable SSL with downgrades support enabled. Once all components have SSL enabled, then do a second restart of all your components to disable downgrades. This strategy will allow each component to be restarted independently at your own convenience with no time restrictions. It will also allow you to try SSL in a subset of your cluster.
@@ -111,7 +111,7 @@ The end state is a cluster that is only communicating with SSL.
 
 **NOTE:** Any tools you may use that communicate with your components must be able to speak SSL, or they will be denied. You may choose to maintain `LIBPROCESS_SSL_SUPPORT_DOWNGRADE=true` for some time as you upgrade your internal tooling. The advantage of `LIBPROCESS_SSL_SUPPORT_DOWNGRADE=true` is that all components that speak SSL will do so, while other components may still communicate over insecure channels.
 
-# <a name="WebUI"></a>WebUI
+## WebUI
 The default Mesos WebUI uses relative links. Some of these links transition between endpoints served by the master and agents. The WebUI currently does not have enough information to change the 'http' vs 'https' links based on whether the target endpoint is currently being served by an SSL-enabled binary. This may cause certain links in the WebUI to be broken when a cluster is in a transition state between SSL and non-SSL. Any tools that hit these endpoints will still be able to access them as long as they hit the endpoint using the right protocol, or the `LIBPROCESS_SSL_SUPPORT_DOWNGRADE` option is set to true.
 
 **NOTE:** Frameworks with their own WebUI will need to add HTTPS support separately.
