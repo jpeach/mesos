@@ -28,7 +28,7 @@ Running Mesos
     configuration
     configuration-cmake
     container-image
-    containerizers
+    containers/containerizers
     framework-rate-limiting
     task-state-reasons
     high-availability

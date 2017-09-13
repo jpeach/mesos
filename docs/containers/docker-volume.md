@@ -211,72 +211,72 @@ The following table summarizes the above rules for `container_path`:
 
 1. Launch a task with one Docker volume using the default command executor.
 
-   ```json
-   TaskInfo {
-     ...
-     "command" : ...,
-     "container" : {
-       "volumes" : [
-         {
-           "container_path" : "/mnt/volume",
-           "mode" : "RW",
-           "source" : {
-             "type" : "DOCKER_VOLUME",
-             "docker_volume" : {
-               "driver" : "rexray",
-               "name" : "myvolume"
-             }
-           }
-         }
-       ]
-     }
-   }
-   ```
+~~~json
+TaskInfo {
+    ...
+    "command" : ...,
+    "container" : {
+    "volumes" : [
+        {
+        "container_path" : "/mnt/volume",
+        "mode" : "RW",
+        "source" : {
+            "type" : "DOCKER_VOLUME",
+            "docker_volume" : {
+            "driver" : "rexray",
+            "name" : "myvolume"
+            }
+        }
+        }
+    ]
+    }
+}
+~~~
 
 2. Launch a task with two Docker volumes using the default command executor.
 
 
-   ```json
-   TaskInfo {
-     ...
-     "command" : ...,
-     "container" : {
-       "volumes" : [
-         {
-           "container_path" : "volume1",
-           "mode" : "RW",
-           "source" : {
-             "type" : "DOCKER_VOLUME",
-             "docker_volume" : {
-               "driver" : "rexray",
-               "name" : "volume1"
-             }
-           }
-         },
-         {
-           "container_path" : "volume2",
-           "mode" : "RW",
-           "source" : {
-             "type" : "DOCKER_VOLUME",
-             "docker_volume" : {
-               "driver" : "rexray",
-               "name" : "volume2",
-               "driver_options" : {
-                 "parameter" : [{
-                   "key" : <key>,
-                   "value" : <value>
-                 }, {
-                   "key" : <key>,
-                   "value" : <value>
-                 }]
-               }
-             }
-           }
-         }
-       ]
-     }
-   }
-   ```
+~~~json
+TaskInfo {
+    ...
+    "command" : ...,
+    "container" : {
+    "volumes" : [
+        {
+        "container_path" : "volume1",
+        "mode" : "RW",
+        "source" : {
+            "type" : "DOCKER_VOLUME",
+            "docker_volume" : {
+            "driver" : "rexray",
+            "name" : "volume1"
+            }
+        }
+        },
+        {
+        "container_path" : "volume2",
+        "mode" : "RW",
+        "source" : {
+            "type" : "DOCKER_VOLUME",
+            "docker_volume" : {
+            "driver" : "rexray",
+            "name" : "volume2",
+            "driver_options" : {
+                "parameter" : [{
+                "key" : <key>,
+                "value" : <value>
+                }, {
+                "key" : <key>,
+                "value" : <value>
+                }]
+            }
+            }
+        }
+        }
+    ]
+    }
+}
+~~~
 
 **NOTE**: The task launch will be failed if one container uses multiple Docker
 volumes with the same `driver` and `name`.
