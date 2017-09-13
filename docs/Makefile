@@ -18,6 +18,7 @@ prep:
 	find . -type f -name "*.md" -exec sed -i.bak -E 's/~~~\{\.([a-z]+)\}/~~~\1/' {} \;
 	find . -type f -name "*.md" -exec sed -i.bak -E 's/```\{\.([a-z]+)\}/```\1/' {} \;
 	find . -type f -name "*.md" -exec sed -i.bak -E 's/~~~protoc/~~~proto/' {} \;
+	find . -type f -name "*.md" -exec sed -i.bak -E 's/\.md/\.html/' {} \;
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
