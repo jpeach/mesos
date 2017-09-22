@@ -334,6 +334,18 @@ message Response {
   // Returns termination information about the nested container.
   message WaitNestedContainer {
     optional int32 exit_status = 1;
+
+    optional TaskState state = 2;
+    optional TaskStatus.Reason reason = 3;
+
+    // If the container was terminated due to a resource limitation,
+    // this is the resource that caused the termination.
+    //
+    // NOTE: 'Resources' is used here because the resource may span
+    // multiple roles (e.g. `"mem(*):1;mem(role):2"`).
+    repeated Resource resources = 4;
+
+    optional string message = 5;
   }
 
   optional Type type = 1;
