@@ -6902,9 +6902,10 @@ void Slave::sendExecutorTerminatedStatusUpdate(
   TaskStatus::Reason reason;
   string message;
 
+  const bool haveTermination = termination.isReady() && termination->isSome();
+
   // Determine the task state for the status update.
-  if (termination.isReady() &&
-      termination->isSome() && termination->get().has_state()) {
+  if (haveTermination && termination->get().has_state()) {
     state = termination->get().state();
   } else if (executor->pendingTermination.isSome() &&
              executor->pendingTermination->has_state()) {
@@ -6914,8 +6915,7 @@ void Slave::sendExecutorTerminatedStatusUpdate(
   }
 
   // Determine the task reason for the status update.
-  if (termination.isReady() &&
-      termination->isSome() && termination->get().has_reason()) {
+  if (haveTermination && termination->get().has_reason()) {
     reason = termination->get().reason();
   } else if (executor->pendingTermination.isSome() &&
              executor->pendingTermination->has_reason()) {
@@ -6948,7 +6948,7 @@ void Slave::sendExecutorTerminatedStatusUpdate(
     message = strings::join("; ", messages);
   }
 
-  statusUpdate(protobuf::createStatusUpdate(
+  StatusUpdate status = protobuf::createStatusUpdate(
       frameworkId,
       info.id(),
       taskId,
@@ -6957,8 +6957,14 @@ void Slave::sendExecutorTerminatedStatusUpdate(
       UUID::random(),
       message,
       reason,
-      executor->id),
-      UPID());
+      executor->id);
+
+  if (haveTermination && !termination->get().resources().empty()) {
+      status.mutable_status()->mutable_limited_resources()->CopyFrom(
+          termination->get().resources());
+  }
+
+  statusUpdate(status, UPID());
 }
 
 
