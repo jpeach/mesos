@@ -798,6 +798,7 @@ protected:
     }
 
     TaskState taskState;
+    Option<TaskStatus::Reason> reason = None();
     Option<string> message;
 
     Option<int> status = waitResponse->wait_nested_container().exit_status();
@@ -821,10 +822,22 @@ protected:
       message = "Command " + WSTRINGIFY(status.get());
     }
 
+    if (waitResponse->wait_nested_container().has_state()) {
+      taskState = waitResponse->wait_nested_container().state();
+    }
+
+    if (waitResponse->wait_nested_container().has_reason()) {
+      reason = waitResponse->wait_nested_container().reason();
+    }
+
+    if (waitResponse->wait_nested_container().has_message()) {
+      message->append(waitResponse->wait_nested_container().message());
+    }
+
     TaskStatus taskStatus = createTaskStatus(
         taskId,
         taskState,
-        None(),
+        reason,
         message);
 
     // Indicate that a task has been unhealthy upon termination.
@@ -832,6 +845,11 @@ protected:
       // TODO(abudnik): Consider specifying appropriate status update reason,
       // saying that the task was killed due to a failing health check.
       taskStatus.set_healthy(false);
+    }
+
+    if (!waitResponse->wait_nested_container().resources().empty()) {
+      taskStatus.mutable_limited_resources()->CopyFrom(
+          waitResponse->wait_nested_container().resources());
     }
 
     forward(taskStatus);
