@@ -228,6 +228,8 @@ public:
       authenticationToken = value.get();
     }
 
+    os::unsetenv("MESOS_EXECUTOR_AUTHENTICATION_TOKEN");
+
     // Get checkpointing status from environment.
     value = os::getenv("MESOS_CHECKPOINT");
     checkpoint = value.isSome() && value.get() == "1";

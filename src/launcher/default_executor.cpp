@@ -1601,6 +1601,8 @@ int main(int argc, char** argv)
     authorizationHeader = "Bearer " + value.get();
   }
 
+  os::unsetenv("MESOS_EXECUTOR_AUTHENTICATION_TOKEN");
+
   Owned<mesos::internal::DefaultExecutor> executor(
       new mesos::internal::DefaultExecutor(
           frameworkId,
