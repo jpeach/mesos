@@ -1297,6 +1297,7 @@ MESOS_LINUX_FILES =									\
   slave/containerizer/mesos/isolators/linux/capabilities.cpp				\
   slave/containerizer/mesos/isolators/namespaces/ipc.cpp				\
   slave/containerizer/mesos/isolators/namespaces/pid.cpp				\
+  slave/containerizer/mesos/isolators/namespaces/user.cpp				\
   slave/containerizer/mesos/isolators/network/cni/cni.cpp				\
   slave/containerizer/mesos/isolators/network/cni/plugins/port_mapper/port_mapper.cpp	\
   slave/containerizer/mesos/isolators/volume/host_path.cpp				\
@@ -1345,6 +1346,7 @@ MESOS_LINUX_FILES +=									\
   slave/containerizer/mesos/isolators/linux/capabilities.hpp				\
   slave/containerizer/mesos/isolators/namespaces/ipc.hpp				\
   slave/containerizer/mesos/isolators/namespaces/pid.hpp				\
+  slave/containerizer/mesos/isolators/namespaces/user.hpp				\
   slave/containerizer/mesos/isolators/network/cni/cni.hpp				\
   slave/containerizer/mesos/isolators/network/cni/plugins/port_mapper/port_mapper.hpp	\
   slave/containerizer/mesos/isolators/volume/host_path.hpp				\
