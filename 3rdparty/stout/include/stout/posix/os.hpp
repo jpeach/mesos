@@ -167,6 +167,14 @@ inline void setenv(const std::string& key,
 // environment variables.
 inline void unsetenv(const std::string& key)
 {
+  char * value = ::getenv(key.c_str());
+
+  // Erase the old value so that on Linux it can't be inspected through
+  // /proc/$pid/environ.
+  if (value) {
+    ::memset(value, '\0', ::strlen(value));
+  }
+
   ::unsetenv(key.c_str());
 }
 
