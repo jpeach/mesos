@@ -58,16 +58,17 @@ TEST_F(OsSendfileTest, Sendfile)
   ASSERT_SOME(fd);
 
   // Construct a socket pair and use sendfile to transmit the text.
-  int s[2];
-  ASSERT_NE(-1, socketpair(AF_UNIX, SOCK_STREAM, 0, s)) << os::strerror(errno);
+  Try<std::array<int_fd, 2>> s = net::socketpair(AF_UNIX, SOCK_STREAM, 0);
+  ASSERT_SOME(s);
+
   Try<ssize_t, SocketError> length =
-    os::sendfile(s[0], fd.get(), 0, LOREM_IPSUM.size());
+    os::sendfile(s->at(0), fd.get(), 0, LOREM_IPSUM.size());
   ASSERT_TRUE(length.isSome());
   ASSERT_EQ(static_cast<ssize_t>(LOREM_IPSUM.size()), length.get());
 
   char* buffer = new char[LOREM_IPSUM.size()];
   ASSERT_EQ(static_cast<ssize_t>(LOREM_IPSUM.size()),
-            read(s[1], buffer, LOREM_IPSUM.size()));
+            read(s->at(1), buffer, LOREM_IPSUM.size()));
   ASSERT_EQ(LOREM_IPSUM, string(buffer, LOREM_IPSUM.size()));
   ASSERT_SOME(os::close(fd.get()));
   delete[] buffer;
@@ -75,10 +76,10 @@ TEST_F(OsSendfileTest, Sendfile)
   // Now test with a closed socket, the SIGPIPE should be suppressed!
   fd = os::open(filename, O_RDONLY | O_CLOEXEC);
   ASSERT_SOME(fd);
-  ASSERT_SOME(os::close(s[1]));
+  ASSERT_SOME(os::close(s->at(1)));
 
   Try<ssize_t, SocketError> result =
-    os::sendfile(s[0], fd.get(), 0, LOREM_IPSUM.size());
+    os::sendfile(s->at(0), fd.get(), 0, LOREM_IPSUM.size());
   int _errno = result.error().code;
   ASSERT_ERROR(result);
 
@@ -89,5 +90,5 @@ TEST_F(OsSendfileTest, Sendfile)
 #endif
 
   ASSERT_SOME(os::close(fd.get()));
-  ASSERT_SOME(os::close(s[0]));
+  ASSERT_SOME(os::close(s->at(0)));
 }
