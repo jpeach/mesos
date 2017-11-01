@@ -40,6 +40,7 @@
 
 #include <stout/os/exists.hpp>
 #include <stout/os/ls.hpp>
+#include <stout/os/socket.hpp>
 
 #include "common/status_utils.hpp"
 
@@ -273,10 +274,11 @@ Try<pid_t> clone(
   // `sockets[0]` and the child socket is `sockets[1]`. Note that both
   // sockets are both read/write but currently only the parent reads
   // and the child writes.
-  int sockets[2] = {-1, -1};
-  if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) != 0) {
+  Try<std::array<int_fd, 2>> sockets =
+    net::socketpair(AF_UNIX, SOCK_STREAM, 0);
+  if (sockets.isError()) {
     close(fds.values());
-    return ErrnoError("Failed to create Unix domain socket");
+    return Error("Failed to create Unix domain socket: " + sockets.error());
   }
 
   // Need to set SO_PASSCRED option in order to receive credentials
@@ -285,11 +287,10 @@ Try<pid_t> clone(
   // receiving, not also for sending.
   const int value = 1;
   const socklen_t size = sizeof(value);
-  if (setsockopt(sockets[0], SOL_SOCKET, SO_PASSCRED, &value, size) == -1) {
+  if (setsockopt(sockets->first, SOL_SOCKET, SO_PASSCRED, &value, size) == -1) {
     Error error = ErrnoError("Failed to set socket option SO_PASSCRED");
     close(fds.values());
-    ::close(sockets[0]);
-    ::close(sockets[1]);
+    net::close(sockets.get());
     return error;
   }
 
@@ -345,17 +346,16 @@ Try<pid_t> clone(
   if (child < 0) {
     stack->deallocate();
     close(fds.values());
-    ::close(sockets[0]);
-    ::close(sockets[1]);
+    net::close(sockets.get());
     return ErrnoError();
   } else if (child > 0) {
     // Parent.
     stack->deallocate();
 
     close(fds.values());
-    ::close(sockets[1]);
+    ::close(sockets->at(1));
 
-    ssize_t length = recvmsg(sockets[0], &message, 0);
+    ssize_t length = recvmsg(sockets->at(0), &message, 0);
 
     // TODO(benh): Note that whenever we 'kill(child, SIGKILL)' below
     // we don't guarantee cleanup! It's possible that the
@@ -368,17 +368,17 @@ Try<pid_t> clone(
       // (which might die on it's own trying to write to the
       // socket).
       Error error = ErrnoError("Failed to receive");
-      ::close(sockets[0]);
+      ::close(sockets->at(0));
       kill(child, SIGKILL);
       return error;
     } else if (length == 0) {
       // Socket closed, child must have died, but kill anyway.
-      ::close(sockets[0]);
+      ::close(sockets->at(0));
       kill(child, SIGKILL);
       return Error("Failed to receive: Socket closed");
     }
 
-    ::close(sockets[0]);
+    ::close(sockets->at(0));
 
     // Extract pid.
     if (CMSG_FIRSTHDR(&message) == nullptr ||
@@ -419,7 +419,7 @@ Try<pid_t> clone(
     return pid;
   } else {
     // Child.
-    ::close(sockets[0]);
+    ::close(sockets->first);
 
     // Loop through and 'setns' into all of the parent namespaces that
     // have been requested.
@@ -429,7 +429,7 @@ Try<pid_t> clone(
         ASSERT(namespaces[i].nstype & nstypes);
         if (::setns(fd.get(), namespaces[i].nstype) < 0) {
           close(fds.values());
-          ::close(sockets[1]);
+          ::close(sockets->at(1));
           _exit(EXIT_FAILURE);
         }
       }
@@ -453,19 +453,19 @@ Try<pid_t> clone(
         ((struct ucred*) CMSG_DATA(CMSG_FIRSTHDR(&message)))->uid = ::getuid();
         ((struct ucred*) CMSG_DATA(CMSG_FIRSTHDR(&message)))->gid = ::getgid();
 
-        if (sendmsg(sockets[1], &message, 0) == -1) {
+        if (sendmsg(sockets->at(1), &message, 0) == -1) {
           // Failed to send the pid back to the parent!
           _exit(EXIT_FAILURE);
         }
 
-        ::close(sockets[1]);
+        ::close(sockets->at(1));
 
         return f();
       },
       flags,
       stack.get());
 
-      ::close(sockets[1]);
+      ::close(sockets->at(1));
 
       // TODO(benh): Kill ourselves with an exit status that we can
       // decode above to determine why `clone` failed.
@@ -493,11 +493,11 @@ Try<pid_t> clone(
 
     if (grandchild < 0) {
       // TODO(benh): Exit with `errno` in order to capture `fork` error?
-      ::close(sockets[1]);
+      ::close(sockets->at(1));
       _exit(EXIT_FAILURE);
     } else if (grandchild > 0) {
       // Still the (first) child.
-      ::close(sockets[1]);
+      ::close(sockets->at(1));
 
       // Need to reap the grandchild and then just exit since we're no
       // longer necessary. Technically when the grandchild exits it'll
