@@ -200,14 +200,32 @@ Try<pid_t> clone(
     const lambda::function<int()>& f,
     int flags)
 {
-  // NOTE: the order in which we 'setns' is significant, so we use an
-  // array here rather than something like a map.
+  // NOTE: User namespace handling.
   //
-  // The user namespace needs to be entered first if we need to
-  // increase the privilege and last if we want to decrease the
-  // privilege. Said another way, entering the user namespace first
-  // gives an unprivileged user the potential to enter the other
-  // namespaces.
+  // The order in which we 'setns' is significant because user namespaces
+  // can be used to both increase and decrease privilege.
+  //
+  // If we wanted to decrease privilege, we would have created the
+  // other namespaces first, then created the user namespace. This
+  // ensures that any privilege granted in the user namespace does
+  // not grant any privileges over the other namespaces. In this case,
+  // if we enter the user namespace first, we would not have enough
+  // privilege to then enter the other namespaces.
+  //
+  // If we wanted to increase privilege, then we would have created
+  // the user namespace first, then used our increased privilege within
+  // that namespace to create the other namespaces. In this case,
+  // we want to enter the user namespace first, since that will let
+  // us enter its child namespaces.
+  //
+  // The problem here is that the order depends on how the namespace
+  // hierarchy was constructed, and we don't have that information
+  // any more. Currently, we assume that we have always created the
+  // user namespace first, so we always enter first.
+  //
+  // Support for user namespaces in all filesystems is incomplete until
+  // version 3.12 (see 'Availability' in man page of 'user_namespaces').
+  // The caller is responsible for verifying the running kernel version.
   const size_t NAMESPACES = 7;
   const struct
   {
@@ -222,24 +240,6 @@ Try<pid_t> clone(
     {CLONE_NEWPID, "pid"},
     {CLONE_NEWNS, "mnt"}
   };
-
-  // Support for user namespaces in all filesystems is incomplete
-  // until version 3.12 (see 'Availability' in man page of
-  // 'user_namespaces'), so for now we don't support entering them.
-  //
-  // TODO(benh): Support user namespaces if the current system can
-  // support it, e.g., check the kernel version number or try and do a
-  // clone with CLONE_NEWUSER to see if it works. NOTE: before we can
-  // fully support user namespaces, however, we must take care to
-  // either enter the user namespace first or last. We'll want to
-  // enter it first if we need to increase the privilege and last if
-  // we want to decrease the privilege. Currently nsenter.c from
-  // utils-linux does this via doing two passes to make sure we either
-  // enter first or last. We'll need to do something similar here once
-  // we support user namespaces as well.
-  if (nstypes & CLONE_NEWUSER) {
-    return Error("User namespaces are not supported");
-  }
 
   // File descriptors keyed by the (parent) namespace we are entering.
   hashmap<int, int> fds = {};

@@ -453,6 +453,35 @@ Try<pid_t> LinuxLauncherProcess::fork(
   // descendants) using a systemd slice.
   vector<Subprocess::ParentHook> parentHooks;
 
+  if (cloneFlags & CLONE_NEWUSER) {
+    Try<string> uidmap = os::read("/proc/self/uid_map");
+    Try<string> gidmap = os::read("/proc/self/gid_map");
+    Try<string> prjmap = os::read("/proc/self/projid_map");
+
+    // We should always be able to read our own ID maps.
+    CHECK_SOME(uidmap);
+    CHECK_SOME(gidmap);
+    CHECK_SOME(prjmap);
+
+    uidmap = strings::trim(uidmap.get());
+    gidmap = strings::trim(gidmap.get());
+    prjmap = strings::trim(prjmap.get());
+
+    parentHooks.emplace_back(Subprocess::ParentHook([=](pid_t child) {
+      os::write(
+          path::join("/proc", stringify(child), "uid_map"),
+          uidmap.get());
+      os::write(
+          path::join("/proc", stringify(child), "gid_map"),
+          gidmap.get());
+      os::write(
+          path::join("/proc", stringify(child), "projid_map"),
+          prjmap.get());
+
+      return Nothing();
+    }));
+  }
+
   if (systemdHierarchy.isSome()) {
     parentHooks.emplace_back(Subprocess::ParentHook([](pid_t child) {
       return systemd::mesos::extendLifetime(child);
