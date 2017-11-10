@@ -2906,6 +2906,11 @@ message LinuxInfo {
   // parent container. This field will be ignored if 'namespaces/pid'
   // isolator is not enabled.
   optional bool share_pid_namespace = 4;
+
+  // If set, the `namespaces/user` isolator will launch tasks in a
+  // leaf user namespace to reduce the level of privilege they may
+  // acquire.
+  optional bool private_user_namespace = 5;
 }
 
 

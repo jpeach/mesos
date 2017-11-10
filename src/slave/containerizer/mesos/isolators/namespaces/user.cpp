@@ -119,6 +119,25 @@ Future<Option<ContainerLaunchInfo>> NamespacesUserIsolatorProcess::prepare(
     launchInfo.add_clone_namespaces(CLONE_NEWUSER);
   }
 
+  // TODO(jpeach): Default this from an agent flag.
+  bool private_namespace = false;
+
+  if (containerConfig.has_container_info() &&
+      containerConfig.container_info().has_linux_info()) {
+    const auto& linuxInfo = containerConfig.container_info().linux_info();
+
+    if (linuxInfo.has_private_user_namespace()) {
+      private_namespace = linuxInfo.private_user_namespace();
+    }
+  }
+
+  launchInfo.set_private_user_namespace(private_namespace);
+
+  // TODO(jpeach): Check for command executor and special case private
+  // namespace propagation.
+  if (containerConfig.has_task_info()) {
+  }
+
   return launchInfo;
 }
 

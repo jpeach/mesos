@@ -192,6 +192,10 @@ message ContainerLaunchInfo {
   // The namespaces are created while launching the executor.
   repeated int32 clone_namespaces = 4;
 
+  // (Linux only) Launch the task in a leaf user namespace after
+  // constructing the container.
+  optional bool private_user_namespace = 17;
+
   // (POSIX only) The user to launch the command as.
   optional string user = 10;
 
