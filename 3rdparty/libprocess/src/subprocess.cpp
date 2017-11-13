@@ -116,6 +116,47 @@ Subprocess::ChildHook Subprocess::ChildHook::UNSET_CLOEXEC(int fd)
 #endif // __WINDOWS__
 
 
+Subprocess::ParentHook Subprocess::ParentHook::PROPAGATE_ID_MAPS()
+{
+  Try<string> uidmap = os::read("/proc/self/uid_map");
+  Try<string> gidmap = os::read("/proc/self/gid_map");
+  Try<string> prjmap = os::read("/proc/self/projid_map");
+
+  // We should always be able to read our own ID maps.
+  CHECK_SOME(uidmap);
+  CHECK_SOME(gidmap);
+  CHECK_SOME(prjmap);
+
+  uidmap = strings::trim(uidmap.get());
+  gidmap = strings::trim(gidmap.get());
+  prjmap = strings::trim(prjmap.get());
+
+  return Subprocess::ParentHook([=](pid_t pid) -> Try<Nothing> {
+    Try<Nothing> result = Nothing();
+
+    result = os::write(
+        path::join("/proc", stringify(pid), "uid_map"),
+        uidmap.get());
+    if (result.isError()) {
+      return result;
+    }
+
+    result = os::write(
+        path::join("/proc", stringify(pid), "gid_map"),
+        gidmap.get());
+    if (result.isError()) {
+      return result;
+    }
+
+    result = os::write(
+        path::join("/proc", stringify(pid), "projid_map"),
+        prjmap.get());
+
+    return result;
+  });
+}
+
+
 #ifdef __linux__
 static void signalHandler(int signal)
 {

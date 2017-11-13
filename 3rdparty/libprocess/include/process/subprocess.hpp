@@ -174,6 +174,8 @@ public:
      */
     static ParentHook CREATE_JOB();
 #endif // __WINDOWS__
+
+    static ParentHook PROPAGATE_ID_MAPS();
   };
 
   /**
