@@ -132,6 +132,7 @@ Try<process::Owned<Rootfs>> LinuxRootfs::create(const string& root)
     "/bin/echo",
     "/bin/ls",
     "/bin/ping",
+    "/bin/readlink",
     "/bin/sh",
     "/bin/sleep",
   };
