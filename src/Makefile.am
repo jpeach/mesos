@@ -2671,6 +2671,7 @@ mesos_tests_SOURCES +=						\
   tests/containerizer/runtime_isolator_tests.cpp		\
   tests/containerizer/sched_tests.cpp				\
   tests/containerizer/setns_test_helper.cpp			\
+  tests/containerizer/user_namespace_isolator_tests.cpp		\
   tests/containerizer/volume_host_path_isolator_tests.cpp	\
   tests/containerizer/volume_image_isolator_tests.cpp		\
   tests/containerizer/volume_secret_isolator_tests.cpp
