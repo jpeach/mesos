@@ -506,6 +506,12 @@ Try<pid_t> LinuxLauncherProcess::fork(
   // must be in the freezer cgroup.
   vector<Subprocess::ParentHook> parentHooks;
 
+  // If we are using user namespaces, copy the ID mapping from the current
+  // namespace into the child's namespace.
+  if (cloneFlags & CLONE_NEWUSER) {
+    parentHooks.emplace_back(Subprocess::ParentHook::PROPAGATE_ID_MAPS());
+  }
+
   // Hook for creating and assigning the child into a freezer cgroup.
   parentHooks.emplace_back(Subprocess::ParentHook([=](pid_t child) {
     return cgroups::isolate(

@@ -209,17 +209,12 @@ TEST(NsTest, ROOT_getns)
 
 TEST(NsTest, ROOT_clone)
 {
-  // `ns::clone` does not support user namespaces yet.
-  ASSERT_ERROR(ns::clone(getpid(), CLONE_NEWUSER, []() { return -1; }, 0));
-
   // Determine the namespaces this kernel supports and test them,
   // skipping the user namespace for now because it's not fully
   // supported depending on the filesystem, which we don't check for.
   int nstypes = 0;
   foreach (int nstype, ns::nstypes()) {
-    if (nstype != CLONE_NEWUSER) {
-      nstypes |= nstype;
-    }
+    nstypes |= nstype;
   }
 
   pid_t parent = os::clone([]() {
