@@ -60,6 +60,7 @@
 #ifdef __linux__
 #include "linux/cgroups.hpp"
 #include "linux/fs.hpp"
+#include "linux/ns.hpp"
 #include "linux/perf.hpp"
 #endif
 
@@ -1083,6 +1084,35 @@ private:
 };
 
 
+class UserNamespaceFilter : public TestFilter
+{
+public:
+  UserNamespaceFilter() : supported(false)
+  {
+#if __linux__
+    Try<bool> usernsSupported = ns::supported(CLONE_NEWUSER);
+    supported = usernsSupported.isError() ? false : usernsSupported.get();
+#endif
+    if (!supported) {
+      std::cerr
+        << "-------------------------------------------------------------\n"
+        << "User namespaces are not supported so no user namespace tests\n"
+        << "will be run\n"
+        << "-------------------------------------------------------------"
+        << std::endl;
+    }
+  }
+
+  bool disable(const ::testing::TestInfo* test) const
+  {
+    return matches(test, "USERNS_") && !supported;
+  }
+
+private:
+  bool supported;
+};
+
+
 Environment::Environment(const Flags& _flags)
   : stout::internal::tests::Environment(
         std::vector<std::shared_ptr<TestFilter>>{
@@ -1108,7 +1138,8 @@ Environment::Environment(const Flags& _flags)
             std::make_shared<UnprivilegedUserFilter>(),
             std::make_shared<UnzipFilter>(),
             std::make_shared<VEthFilter>(),
-            std::make_shared<XfsFilter>()}),
+            std::make_shared<XfsFilter>(),
+            std::make_shared<UserNamespaceFilter>()}),
     flags(_flags)
 {
   // Add our test event listeners.
