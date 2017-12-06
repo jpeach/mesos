@@ -108,6 +108,7 @@
 #include "slave/containerizer/mesos/isolators/linux/devices.hpp"
 #include "slave/containerizer/mesos/isolators/namespaces/ipc.hpp"
 #include "slave/containerizer/mesos/isolators/namespaces/pid.hpp"
+#include "slave/containerizer/mesos/isolators/namespaces/user.hpp"
 #include "slave/containerizer/mesos/isolators/network/cni/cni.hpp"
 #include "slave/containerizer/mesos/isolators/volume/host_path.hpp"
 #include "slave/containerizer/mesos/isolators/volume/image.hpp"
@@ -433,6 +434,7 @@ Try<MesosContainerizer*> MesosContainerizer::create(
 
     {"namespaces/ipc", &NamespacesIPCIsolatorProcess::create},
     {"namespaces/pid", &NamespacesPidIsolatorProcess::create},
+    {"namespaces/user", &NamespacesUserIsolatorProcess::create},
 #endif // __linux__
 
     // Volume isolators.

@@ -307,6 +307,7 @@ set(LINUX_SRC
   slave/containerizer/mesos/isolators/linux/devices.cpp
   slave/containerizer/mesos/isolators/namespaces/ipc.cpp
   slave/containerizer/mesos/isolators/namespaces/pid.cpp
+  slave/containerizer/mesos/isolators/namespaces/user.cpp
   slave/containerizer/mesos/isolators/network/cni/cni.cpp
   slave/containerizer/mesos/isolators/volume/host_path.cpp
   slave/containerizer/mesos/isolators/volume/image.cpp
