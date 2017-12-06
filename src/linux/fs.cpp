@@ -840,7 +840,13 @@ Try<Nothing> mountSpecialFilesystems(const string& root)
         mount.options);
 
     if (mnt.isError()) {
-      return Error("Failed to mount '" + target + "': " + mnt.error());
+      Error error("Failed to mount '" + target + "': " + mnt.error());
+
+      if (mount.type.getOrElse("") == "sysfs") {
+        LOG(WARNING) << error.message;
+      } else {
+        return Error(error.message);
+      }
     }
   }
 
