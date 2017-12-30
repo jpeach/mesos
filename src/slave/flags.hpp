@@ -181,6 +181,7 @@ public:
   std::string xfs_project_range;
 #endif
   bool http_command_executor;
+  bool disable_command_executor;
   Option<SlaveCapabilities> agent_features;
   Option<DomainInfo> domain;
 

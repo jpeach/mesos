@@ -1313,6 +1313,13 @@ mesos::internal::slave::Flags::Flags()
       "production yet.",
       false);
 
+  add(&Flags::disable_command_executor,
+      "disable_command_executor",
+      "Disable the command executor. If set to `true`, the Mesos default\n"
+      "executor will be used for tasks that would have previously been\n"
+      "launched with the command executor.\n",
+      false);
+
   add(&Flags::ip,
       "ip",
       "IP address to listen on. This cannot be used in conjunction\n"

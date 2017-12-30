@@ -5462,11 +5462,8 @@ ExecutorInfo Slave::getExecutorInfo(
   executor.mutable_executor_id()->set_value(task.task_id().value());
   executor.mutable_framework_id()->CopyFrom(frameworkInfo.id());
 
-  if (task.has_container()) {
-    // Store the container info in the executor info so it will
-    // be checkpointed. This allows the correct containerizer to
-    // recover this task on restart.
-    executor.mutable_container()->CopyFrom(task.container());
+  if (flags.disable_command_executor) {
+    executor.set_type(ExecutorInfo::DEFAULT);
   }
 
   // Prepare an executor name which includes information on the
@@ -5503,29 +5500,87 @@ ExecutorInfo Slave::getExecutorInfo(
   executor.set_name("Command Executor " + name);
   executor.set_source(task.task_id().value());
 
-  // Copy the [uris, environment, container, user] fields from the
-  // CommandInfo to get the URIs we need to download, the
-  // environment variables that should get set, the necessary
-  // container information, and the user to run the executor as but
-  // nothing else because we need to set up the rest of the executor
-  // command ourselves in order to invoke 'mesos-executor'.
-  executor.mutable_command()->mutable_uris()->MergeFrom(
-      task.command().uris());
+  if (!flags.disable_command_executor) {
+    if (task.has_container()) {
+      // Store the container info in the executor info so it will
+      // be checkpointed. This allows the correct containerizer to
+      // recover this task on restart.
+      executor.mutable_container()->CopyFrom(task.container());
+    }
 
-  if (task.command().has_environment()) {
-    executor.mutable_command()->mutable_environment()->MergeFrom(
-        task.command().environment());
-  }
+    // Copy the [uris, environment, container, user] fields from the
+    // CommandInfo to get the URIs we need to download, the
+    // environment variables that should get set, the necessary
+    // container information, and the user to run the executor as but
+    // nothing else because we need to set up the rest of the executor
+    // command ourselves in order to invoke 'mesos-executor'.
+    executor.mutable_command()->mutable_uris()->MergeFrom(
+        task.command().uris());
 
-  // Add fields which can be relevant (depending on Authorizer) for
-  // authorization.
+    if (task.command().has_environment()) {
+      executor.mutable_command()->mutable_environment()->MergeFrom(
+          task.command().environment());
+    }
 
-  if (task.has_labels()) {
-    executor.mutable_labels()->MergeFrom(task.labels());
-  }
+    // Add fields which can be relevant (depending on Authorizer) for
+    // authorization.
 
-  if (task.has_discovery()) {
-    executor.mutable_discovery()->MergeFrom(task.discovery());
+    if (task.has_labels()) {
+      executor.mutable_labels()->MergeFrom(task.labels());
+    }
+
+    if (task.has_discovery()) {
+      executor.mutable_discovery()->MergeFrom(task.discovery());
+    }
+
+    if (task.command().has_user()) {
+      executor.mutable_command()->set_user(task.command().user());
+    }
+
+    Result<string> path = os::realpath(
+        path::join(flags.launcher_dir, MESOS_EXECUTOR));
+
+    if (path.isSome()) {
+      executor.mutable_command()->set_shell(false);
+      executor.mutable_command()->set_value(path.get());
+      executor.mutable_command()->add_arguments(MESOS_EXECUTOR);
+      executor.mutable_command()->add_arguments(
+          "--launcher_dir=" + flags.launcher_dir);
+
+      // TODO(jieyu): We should move those Mesos containerizer specific
+      // logic (e.g., 'hasRootfs') to Mesos containerizer.
+      bool hasRootfs = task.has_container() &&
+                      task.container().type() == ContainerInfo::MESOS &&
+                      task.container().mesos().has_image();
+
+      if (hasRootfs) {
+        executor.mutable_command()->add_arguments(
+            "--sandbox_directory=" + flags.sandbox_directory);
+
+#ifndef __WINDOWS__
+        // NOTE: if switch_user flag is false and the slave runs under
+        // a non-root user, the task will be rejected by the Posix
+        // filesystem isolator. Linux filesystem isolator requires slave
+        // to have root permission.
+        if (flags.switch_user) {
+          string user;
+          if (task.command().has_user()) {
+            user = task.command().user();
+          } else {
+            user = frameworkInfo.user();
+          }
+
+          executor.mutable_command()->add_arguments("--user=" + user);
+        }
+#endif // __WINDOWS__
+      }
+    } else {
+      executor.mutable_command()->set_shell(true);
+      executor.mutable_command()->set_value(
+          "echo '" +
+          (path.isError() ? path.error() : "No such file or directory") +
+          "'; exit 1");
+    }
   }
 
   // Adjust the executor shutdown grace period if the kill policy is
@@ -5543,55 +5598,6 @@ ExecutorInfo Slave::getExecutorInfo(
 
     executor.mutable_shutdown_grace_period()->set_nanoseconds(
         gracePeriod.ns());
-  }
-
-  if (task.command().has_user()) {
-    executor.mutable_command()->set_user(task.command().user());
-  }
-
-  Result<string> path = os::realpath(
-      path::join(flags.launcher_dir, MESOS_EXECUTOR));
-
-  if (path.isSome()) {
-    executor.mutable_command()->set_shell(false);
-    executor.mutable_command()->set_value(path.get());
-    executor.mutable_command()->add_arguments(MESOS_EXECUTOR);
-    executor.mutable_command()->add_arguments(
-        "--launcher_dir=" + flags.launcher_dir);
-
-    // TODO(jieyu): We should move those Mesos containerizer specific
-    // logic (e.g., 'hasRootfs') to Mesos containerizer.
-    bool hasRootfs = task.has_container() &&
-                     task.container().type() == ContainerInfo::MESOS &&
-                     task.container().mesos().has_image();
-
-    if (hasRootfs) {
-      executor.mutable_command()->add_arguments(
-          "--sandbox_directory=" + flags.sandbox_directory);
-
-#ifndef __WINDOWS__
-      // NOTE: if switch_user flag is false and the slave runs under
-      // a non-root user, the task will be rejected by the Posix
-      // filesystem isolator. Linux filesystem isolator requires slave
-      // to have root permission.
-      if (flags.switch_user) {
-        string user;
-        if (task.command().has_user()) {
-          user = task.command().user();
-        } else {
-          user = frameworkInfo.user();
-        }
-
-        executor.mutable_command()->add_arguments("--user=" + user);
-      }
-#endif // __WINDOWS__
-    }
-  } else {
-    executor.mutable_command()->set_shell(true);
-    executor.mutable_command()->set_value(
-        "echo '" +
-        (path.isError() ? path.error() : "No such file or directory") +
-        "'; exit 1");
   }
 
   // Add an allowance for the command (or docker) executor. This does
