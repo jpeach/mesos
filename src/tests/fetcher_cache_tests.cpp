@@ -55,6 +55,8 @@
 
 #include "slave/containerizer/fetcher.hpp"
 
+#include "slave/containerizer/mesos/paths.hpp"
+
 #include "tests/containerizer.hpp"
 #include "tests/flags.hpp"
 #include "tests/mesos.hpp"
@@ -386,35 +388,50 @@ static string taskName(int taskIndex)
 
 
 // TODO(bernd-mesos): Use Path, not string, create Path::executable().
-static bool isExecutable(const string& path)
+static Try<bool> isExecutable(const string& path)
 {
   Try<bool> access = os::access(path, X_OK);
-  EXPECT_SOME(access);
-  return access.isSome() && access.get();
+
+  if (access.isError()) {
+    return Error(access.error());
+  }
+
+  return access.get();
+}
+
+
+// Create a future that indicates that the task observed by the given
+// status queue has reached the desired state.
+static Future<TaskStatus> awaitStatusUpdate(
+    FetcherCacheTest::Task task,
+    TaskState state)
+{
+  return task.statusQueue.get()
+    .then([=](const TaskStatus& status) -> Future<TaskStatus> {
+      if (status.state() == state) {
+        return status;
+      }
+
+      return awaitStatusUpdate(task, state);
+  });
 }
 
 
 // Create a future that indicates that the task observed by the given
 // status queue is finished.
-static Future<Nothing> awaitFinished(FetcherCacheTest::Task task)
+static Future<TaskStatus> awaitFinished(FetcherCacheTest::Task task)
 {
-  return task.statusQueue.get()
-    .then([=](const TaskStatus& status) -> Future<Nothing> {
-      if (status.state() == TASK_FINISHED) {
-        return Nothing();
-      }
-      return awaitFinished(task);
-  });
+  return awaitStatusUpdate(task, TASK_FINISHED);
 }
 
 
 // Create a future that indicates that all tasks are finished.
 // TODO(bernd-mesos): Make this abstractions as generic and generally
 // available for all testing as possible.
-static Future<list<Nothing>> awaitFinished(
+static Future<list<TaskStatus>> awaitFinished(
     vector<FetcherCacheTest::Task> tasks)
 {
-  list<Future<Nothing>> futures;
+  list<Future<TaskStatus>> futures;
 
   foreach (FetcherCacheTest::Task task, tasks) {
     futures.push_back(awaitFinished(task));
@@ -484,25 +501,32 @@ Try<FetcherCacheTest::Task> FetcherCacheTest::launchTask(
   ExecutorID executorId;
   executorId.set_value(task.task_id().value());
 
-  vector<TaskInfo> tasks;
-  tasks.push_back(task);
-
-  Queue<TaskStatus> taskStatusQueue;
+  Task _task;
 
   EXPECT_CALL(scheduler, statusUpdate(driver.get(), _))
-    .WillRepeatedly(PushTaskStatus(taskStatusQueue));
+    .WillRepeatedly(PushTaskStatus(_task.statusQueue));
 
-  driver->launchTasks(offer.id(), tasks);
+  driver->launchTasks(offer.id(), {task});
 
-  const Path sandboxPath = Path(slave::paths::getExecutorLatestRunPath(
+  // Wait for the TASK_STARTING so that we can get the ContainerID.
+  // Once we know the ContainerID we can reliably determine the sandbox
+  // path for both the command and default executors.
+  TaskStatus status = awaitStatusUpdate(_task, TASK_STARTING).get();
+
+  _task.runDirectory = Path(slave::paths::getExecutorRunPath(
       flags.work_dir,
       slaveId,
       offer.framework_id(),
-      executorId));
+      executorId,
+      status.container_status().container_id()));
 
-  sandboxes.push_back(sandboxPath);
+  _task.runDirectory = Path(slave::containerizer::paths::getSandboxPath(
+      _task.runDirectory,
+      status.container_status().container_id()));
 
-  return Task{sandboxPath, taskStatusQueue};
+  sandboxes.push_back(_task.runDirectory);
+
+  return _task;
 }
 
 
@@ -662,7 +686,7 @@ TEST_F(FetcherCacheTest, LocalUncached)
   EXPECT_TRUE(fetcherProcess->cacheFiles()->empty());
 
   const string path = path::join(task->runDirectory.string(), COMMAND_NAME);
-  EXPECT_TRUE(isExecutable(path));
+  EXPECT_SOME_TRUE(isExecutable(path));
   EXPECT_TRUE(os::exists(path + taskName(index)));
 }
 
@@ -691,7 +715,7 @@ TEST_F(FetcherCacheTest, LocalCached)
     AWAIT_READY(awaitFinished(task.get()));
 
     const string path = path::join(task->runDirectory.string(), COMMAND_NAME);
-    EXPECT_TRUE(isExecutable(path));
+    EXPECT_SOME_TRUE(isExecutable(path));
     EXPECT_TRUE(os::exists(path + taskName(i)));
 
     EXPECT_EQ(1u, fetcherProcess->cacheSize());
@@ -735,7 +759,7 @@ TEST_F(FetcherCacheTest, CachedCustomFilename)
   const string executablePath = path::join(
     task->runDirectory.string(), customOutputFile);
 
-  EXPECT_TRUE(isExecutable(executablePath));
+  EXPECT_SOME_TRUE(isExecutable(executablePath));
 
   // The script specified by COMMAND_SCRIPT just statically touches a file
   // named $COMMAND_NAME + $1, so if we want to verify that it ran here we have
@@ -780,7 +804,7 @@ TEST_F(FetcherCacheTest, CachedCustomOutputFileWithSubdirectory)
   const string executablePath = path::join(
       task->runDirectory.string(), customOutputFile);
 
-  EXPECT_TRUE(isExecutable(executablePath));
+  EXPECT_SOME_TRUE(isExecutable(executablePath));
 
   // The script specified by COMMAND_SCRIPT just statically touches a file
   // named $COMMAND_NAME + $1, so if we want to verify that it ran here we have
@@ -813,12 +837,21 @@ TEST_F(FetcherCacheTest, CachedFallback)
 
   // Bring back the asset just before running mesos-fetcher to fetch it.
   Future<FetcherInfo> fetcherInfo;
-  EXPECT_CALL(*fetcherProcess, run(_, _, _, _))
-    .WillOnce(DoAll(FutureArg<3>(&fetcherInfo),
-                    InvokeWithoutArgs(this,
-                                      &FetcherCacheTest::setupCommandFileAsset),
-                    Invoke(fetcherProcess,
-                           &MockFetcherProcess::unmocked_run)));
+
+  if (flags.disable_command_executor) {
+    EXPECT_CALL(*fetcherProcess, run(_, _, _, _))
+      .WillOnce(Return(Nothing()))
+      .WillOnce(DoAll(
+            FutureArg<3>(&fetcherInfo),
+            InvokeWithoutArgs(this, &FetcherCacheTest::setupCommandFileAsset),
+            Invoke(fetcherProcess, &MockFetcherProcess::unmocked_run)));
+  } else {
+    EXPECT_CALL(*fetcherProcess, run(_, _, _, _))
+      .WillOnce(DoAll(
+            FutureArg<3>(&fetcherInfo),
+            InvokeWithoutArgs(this, &FetcherCacheTest::setupCommandFileAsset),
+            Invoke(fetcherProcess, &MockFetcherProcess::unmocked_run)));
+  }
 
   const Try<Task> task = launchTask(commandInfo, 0);
   ASSERT_SOME(task);
@@ -826,7 +859,7 @@ TEST_F(FetcherCacheTest, CachedFallback)
   AWAIT_READY(awaitFinished(task.get()));
 
   const string path = path::join(task->runDirectory.string(), COMMAND_NAME);
-  EXPECT_TRUE(isExecutable(path));
+  EXPECT_SOME_TRUE(isExecutable(path));
   EXPECT_TRUE(os::exists(path + taskName(0)));
 
   AWAIT_READY(fetcherInfo);
@@ -864,15 +897,15 @@ TEST_F(FetcherCacheTest, LocalUncachedExtract)
 
   AWAIT_READY(awaitFinished(task.get()));
 
-  EXPECT_TRUE(os::exists(
-      path::join(task->runDirectory.string(), ARCHIVE_NAME)));
-  EXPECT_FALSE(isExecutable(
-      path::join(task->runDirectory.string(), ARCHIVE_NAME)));
+  const string archivePath =
+    path::join(task->runDirectory.string(), ARCHIVE_NAME);
+  EXPECT_TRUE(os::exists(archivePath)) << archivePath;
+  EXPECT_SOME_FALSE(isExecutable(archivePath));
 
   const string path =
     path::join(task->runDirectory.string(), ARCHIVED_COMMAND_NAME);
-  EXPECT_TRUE(isExecutable(path));
-  EXPECT_TRUE(os::exists(path + taskName(index)));
+  EXPECT_SOME_TRUE(isExecutable(path));
+  EXPECT_TRUE(os::exists(path + taskName(index))) << path + taskName(index);
 
   EXPECT_EQ(0u, fetcherProcess->cacheSize());
   ASSERT_SOME(fetcherProcess->cacheFiles());
@@ -903,13 +936,14 @@ TEST_F(FetcherCacheTest, LocalCachedExtract)
 
     AWAIT_READY(awaitFinished(task.get()));
 
-    EXPECT_FALSE(os::exists(
-        path::join(task->runDirectory.string(), ARCHIVE_NAME)));
+    const string archive =
+        path::join(task->runDirectory.string(), ARCHIVE_NAME);
+    EXPECT_FALSE(os::exists(archive)) << archive;
 
     const string path =
       path::join(task->runDirectory.string(), ARCHIVED_COMMAND_NAME);
-    EXPECT_TRUE(isExecutable(path));
-    EXPECT_TRUE(os::exists(path + taskName(i)));
+    EXPECT_SOME_TRUE(isExecutable(path));
+    EXPECT_TRUE(os::exists(path + taskName(i))) << path + taskName(i);
 
     EXPECT_EQ(1u, fetcherProcess->cacheSize());
     ASSERT_SOME(fetcherProcess->cacheFiles());
@@ -1059,8 +1093,8 @@ TEST_F(FetcherCacheHttpTest, HttpCachedSerialized)
 
     const string path =
       path::join(task->runDirectory.string(), COMMAND_NAME);
-    EXPECT_TRUE(isExecutable(path));
-    EXPECT_TRUE(os::exists(path + taskName(i)));
+    EXPECT_SOME_TRUE(isExecutable(path));
+    EXPECT_TRUE(os::exists(path + taskName(i))) << path + taskName(i);
 
     EXPECT_EQ(1u, fetcherProcess->cacheSize());
     ASSERT_SOME(fetcherProcess->cacheFiles());
@@ -1146,7 +1180,7 @@ TEST_F(FetcherCacheHttpTest, HttpCachedConcurrent)
   for (size_t i = 0; i < countTasks; i++) {
     EXPECT_EQ(i % 2 == 1, os::exists(
         path::join(tasks->at(i).runDirectory.string(), ARCHIVE_NAME)));
-    EXPECT_TRUE(isExecutable(
+    EXPECT_SOME_TRUE(isExecutable(
         path::join(tasks->at(i).runDirectory.string(), COMMAND_NAME)));
     EXPECT_TRUE(os::exists(
         path::join(tasks->at(i).runDirectory.string(),
@@ -1256,12 +1290,12 @@ TEST_F(FetcherCacheHttpTest, HttpMixed)
 
   // Task 0.
 
-  EXPECT_FALSE(isExecutable(
+  EXPECT_SOME_FALSE(isExecutable(
       path::join(tasks->at(0).runDirectory.string(), ARCHIVE_NAME)));
   EXPECT_FALSE(os::exists(
       path::join(tasks->at(0).runDirectory.string(), ARCHIVED_COMMAND_NAME)));
 
-  EXPECT_TRUE(isExecutable(
+  EXPECT_SOME_TRUE(isExecutable(
       path::join(tasks->at(0).runDirectory.string(), COMMAND_NAME)));
   EXPECT_TRUE(os::exists(
       path::join(tasks->at(0).runDirectory.string(),
@@ -1269,17 +1303,17 @@ TEST_F(FetcherCacheHttpTest, HttpMixed)
 
   // Task 1.
 
-  EXPECT_FALSE(isExecutable(path::join(
+  EXPECT_SOME_FALSE(isExecutable(path::join(
       tasks->at(1).runDirectory.string(),
       ARCHIVE_NAME)));
-  EXPECT_TRUE(isExecutable(path::join(
+  EXPECT_SOME_TRUE(isExecutable(path::join(
       tasks->at(1).runDirectory.string(),
       ARCHIVED_COMMAND_NAME)));
   EXPECT_TRUE(os::exists(path::join(
       tasks->at(1).runDirectory.string(),
       ARCHIVED_COMMAND_NAME + taskName(1))));
 
-  EXPECT_FALSE(isExecutable(path::join(
+  EXPECT_SOME_FALSE(isExecutable(path::join(
       tasks->at(1).runDirectory.string(),
       COMMAND_NAME)));
 
@@ -1288,14 +1322,14 @@ TEST_F(FetcherCacheHttpTest, HttpMixed)
   EXPECT_FALSE(os::exists(path::join(
       tasks->at(2).runDirectory.string(),
       ARCHIVE_NAME)));
-  EXPECT_TRUE(isExecutable(path::join(
+  EXPECT_SOME_TRUE(isExecutable(path::join(
       tasks->at(2).runDirectory.string(),
       ARCHIVED_COMMAND_NAME)));
   EXPECT_TRUE(os::exists(path::join(
       tasks->at(2).runDirectory.string(),
       ARCHIVED_COMMAND_NAME + taskName(2))));
 
-  EXPECT_FALSE(isExecutable(path::join(
+  EXPECT_SOME_FALSE(isExecutable(path::join(
       tasks->at(2).runDirectory.string(),
       COMMAND_NAME)));
 }
@@ -1326,7 +1360,7 @@ TEST_F(FetcherCacheHttpTest, DISABLED_HttpCachedRecovery)
     AWAIT_READY(awaitFinished(task.get()));
 
     const string path = path::join(task->runDirectory.string(), COMMAND_NAME);
-    EXPECT_TRUE(isExecutable(path));
+    EXPECT_SOME_TRUE(isExecutable(path));
     EXPECT_TRUE(os::exists(path + taskName(i)));
 
     EXPECT_EQ(1u, fetcherProcess->cacheSize());
@@ -1385,7 +1419,7 @@ TEST_F(FetcherCacheHttpTest, DISABLED_HttpCachedRecovery)
 
     const string path =
       path::join(task->runDirectory.string(), COMMAND_NAME);
-    EXPECT_TRUE(isExecutable(path));
+    EXPECT_SOME_TRUE(isExecutable(path));
     EXPECT_TRUE(os::exists(path + taskName(i)));
 
     EXPECT_EQ(1u, fetcherProcess->cacheSize());
@@ -1436,7 +1470,7 @@ TEST_F(FetcherCacheTest, SimpleEviction)
     AWAIT_READY(awaitFinished(task.get()));
 
     // Check that the task succeeded.
-    EXPECT_TRUE(isExecutable(
+    EXPECT_SOME_TRUE(isExecutable(
         path::join(task->runDirectory.string(), commandFilename)));
     EXPECT_TRUE(os::exists(
         path::join(task->runDirectory.string(), COMMAND_NAME + taskName(i))));
@@ -1479,17 +1513,33 @@ TEST_F(FetcherCacheTest, FallbackFromEviction)
   Future<FetcherInfo> fetcherInfo0;
   Future<FetcherInfo> fetcherInfo1;
   Future<FetcherInfo> fetcherInfo2;
-  EXPECT_CALL(*fetcherProcess, run(_, _, _, _))
-    .WillOnce(DoAll(FutureArg<3>(&fetcherInfo0),
-                    Invoke(fetcherProcess,
-                           &MockFetcherProcess::unmocked_run)))
-    .WillOnce(DoAll(FutureArg<3>(&fetcherInfo1),
-                    Invoke(fetcherProcess,
-                           &MockFetcherProcess::unmocked_run)))
-    .WillOnce(DoAll(FutureArg<3>(&fetcherInfo2),
-                    Invoke(fetcherProcess,
-                           &MockFetcherProcess::unmocked_run)));
 
+  if (flags.disable_command_executor) {
+    EXPECT_CALL(*fetcherProcess, run(_, _, _, _))
+      .WillOnce(Return(Nothing()))
+      .WillOnce(DoAll(
+          FutureArg<3>(&fetcherInfo0),
+          Invoke(fetcherProcess, &MockFetcherProcess::unmocked_run)))
+      .WillOnce(Return(Nothing()))
+      .WillOnce(DoAll(
+          FutureArg<3>(&fetcherInfo1),
+          Invoke(fetcherProcess, &MockFetcherProcess::unmocked_run)))
+      .WillOnce(Return(Nothing()))
+      .WillOnce(DoAll(
+          FutureArg<3>(&fetcherInfo2),
+          Invoke(fetcherProcess, &MockFetcherProcess::unmocked_run)));
+  } else {
+    EXPECT_CALL(*fetcherProcess, run(_, _, _, _))
+      .WillOnce(DoAll(
+          FutureArg<3>(&fetcherInfo0),
+          Invoke(fetcherProcess, &MockFetcherProcess::unmocked_run)))
+      .WillOnce(DoAll(
+          FutureArg<3>(&fetcherInfo1),
+          Invoke(fetcherProcess, &MockFetcherProcess::unmocked_run)))
+      .WillOnce(DoAll(
+          FutureArg<3>(&fetcherInfo2),
+          Invoke(fetcherProcess, &MockFetcherProcess::unmocked_run)));
+  }
 
   // Task 0:
 
@@ -1516,7 +1566,7 @@ TEST_F(FetcherCacheTest, FallbackFromEviction)
   AWAIT_READY(awaitFinished(task0.get()));
 
   // Check that the task succeeded.
-  EXPECT_TRUE(isExecutable(
+  EXPECT_SOME_TRUE(isExecutable(
       path::join(task0->runDirectory.string(), commandFilename0)));
   EXPECT_TRUE(os::exists(
       path::join(task0->runDirectory.string(), COMMAND_NAME + taskName(0))));
@@ -1566,7 +1616,7 @@ TEST_F(FetcherCacheTest, FallbackFromEviction)
   AWAIT_READY(awaitFinished(task1.get()));
 
   // Check that the task succeeded.
-  EXPECT_TRUE(isExecutable(
+  EXPECT_SOME_TRUE(isExecutable(
       path::join(task1->runDirectory.string(), commandFilename1)));
   EXPECT_TRUE(os::exists(
       path::join(task1->runDirectory.string(), COMMAND_NAME + taskName(1))));
@@ -1615,7 +1665,7 @@ TEST_F(FetcherCacheTest, FallbackFromEviction)
   AWAIT_READY(awaitFinished(task2.get()));
 
   // Check that the task succeeded.
-  EXPECT_TRUE(isExecutable(
+  EXPECT_SOME_TRUE(isExecutable(
       path::join(task2->runDirectory.string(), commandFilename2)));
   EXPECT_TRUE(os::exists(
       path::join(task2->runDirectory.string(), COMMAND_NAME + taskName(2))));
@@ -1677,7 +1727,7 @@ TEST_F(FetcherCacheTest, RemoveLRUCacheEntries)
     AWAIT_READY(awaitFinished(task.get()));
 
     // Check that the task succeeded.
-    EXPECT_TRUE(isExecutable(
+    EXPECT_SOME_TRUE(isExecutable(
         path::join(task->runDirectory.string(), commandFilename)));
     EXPECT_TRUE(os::exists(path::join(task->runDirectory.string(),
                                       COMMAND_NAME + taskName(taskIndex))));
