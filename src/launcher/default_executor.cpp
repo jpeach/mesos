@@ -223,10 +223,9 @@ public:
       }
 
       case Event::LAUNCH: {
-        LOG(ERROR) << "LAUNCH event is not supported";
-        // Shut down because this is unexpected; `LAUNCH` event
-        // should never go to the default executor.
-        shutdown();
+        TaskGroupInfo group;
+        group.add_tasks()->CopyFrom(event.launch().task());
+        launchGroup(group);
         break;
       }
 
