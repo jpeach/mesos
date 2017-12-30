@@ -837,7 +837,9 @@ TEST_F(NetworkPortsIsolatorTest, ROOT_NC_RecoverBadTask)
 
   Owned<MasterDetector> detector = master.get()->createDetector();
 
-  Try<Owned<cluster::Slave>> slave = StartSlave(detector.get(), flags);
+  Try<Owned<cluster::Slave>> slave =
+    StartSlave(detector.get(), __func__, flags);
+
   ASSERT_SOME(slave);
 
   FrameworkInfo frameworkInfo = DEFAULT_FRAMEWORK_INFO;
@@ -921,7 +923,7 @@ TEST_F(NetworkPortsIsolatorTest, ROOT_NC_RecoverBadTask)
   flags.isolation = "network/ports";
   flags.check_agent_port_range_only = true;
 
-  slave = StartSlave(detector.get(), flags);
+  slave = StartSlave(detector.get(), __func__, flags);
   ASSERT_SOME(slave);
 
   // Wait for the slave to re-register.
@@ -947,7 +949,7 @@ TEST_F(NetworkPortsIsolatorTest, ROOT_NC_RecoverBadTask)
   AWAIT_READY(failedStatus);
   EXPECT_EQ(task.task_id(), failedStatus->task_id());
   EXPECT_EQ(TASK_FAILED, failedStatus->state());
-  EXPECT_EQ(TaskStatus::SOURCE_SLAVE, failedStatus->source());
+  EXPECT_EQ(TaskStatus::SOURCE_EXECUTOR, failedStatus->source());
   expectPortsLimitation(failedStatus.get(), usedPort);
 
   driver.stop();
@@ -966,7 +968,9 @@ TEST_F(NetworkPortsIsolatorTest, ROOT_NC_RecoverGoodTask)
 
   Owned<MasterDetector> detector = master.get()->createDetector();
 
-  Try<Owned<cluster::Slave>> slave = StartSlave(detector.get(), flags);
+  Try<Owned<cluster::Slave>> slave =
+    StartSlave(detector.get(), __func__, flags);
+
   ASSERT_SOME(slave);
 
   FrameworkInfo frameworkInfo = DEFAULT_FRAMEWORK_INFO;
@@ -1048,7 +1052,7 @@ TEST_F(NetworkPortsIsolatorTest, ROOT_NC_RecoverGoodTask)
   Future<SlaveReregisteredMessage> slaveReregisteredMessage =
     FUTURE_PROTOBUF(SlaveReregisteredMessage(), _, _);
 
-  slave = StartSlave(detector.get(), flags);
+  slave = StartSlave(detector.get(), __func__, flags);
   ASSERT_SOME(slave);
 
   // Wait for the slave to re-register.
@@ -1245,14 +1249,12 @@ TEST_F(NetworkPortsIsolatorTest, ROOT_NC_RecoverNestedBadTask)
   Try<Owned<cluster::Master>> master = StartMaster();
   ASSERT_SOME(master);
 
-  const string slaveId = "RecoverNestedBadTask";
-
   slave::Flags flags = CreateSlaveFlags();
   flags.launcher = "linux";
 
   Owned<MasterDetector> detector = master.get()->createDetector();
   Try<Owned<cluster::Slave>> slave =
-    StartSlave(detector.get(), slaveId, flags);
+    StartSlave(detector.get(), __func__, flags);
 
   ASSERT_SOME(slave);
 
@@ -1360,10 +1362,8 @@ TEST_F(NetworkPortsIsolatorTest, ROOT_NC_RecoverNestedBadTask)
   flags.isolation = "network/ports";
   flags.check_agent_port_range_only = true;
 
-  slave = cluster::Slave::create(detector.get(), flags, slaveId);
+  slave = StartSlave(detector.get(), __func__, flags);
   ASSERT_SOME(slave);
-
-  slave.get()->start();
 
   // Wait for the slave to re-register.
   AWAIT_READY(slaveReregisteredMessage);
@@ -1424,14 +1424,12 @@ TEST_F(NetworkPortsIsolatorTest, ROOT_NC_RecoverNestedGoodTask)
   Try<Owned<cluster::Master>> master = StartMaster();
   ASSERT_SOME(master);
 
-  const string slaveId = "RecoverNestedGoodTask";
-
   slave::Flags flags = CreateSlaveFlags();
   flags.launcher = "linux";
 
   Owned<MasterDetector> detector = master.get()->createDetector();
   Try<Owned<cluster::Slave>> slave =
-    StartSlave(detector.get(), slaveId, flags);
+    StartSlave(detector.get(), __func__, flags);
 
   ASSERT_SOME(slave);
 
@@ -1537,10 +1535,8 @@ TEST_F(NetworkPortsIsolatorTest, ROOT_NC_RecoverNestedGoodTask)
   flags.isolation = "network/ports";
   flags.check_agent_port_range_only = true;
 
-  slave = cluster::Slave::create(detector.get(), flags, slaveId);
+  slave = StartSlave(detector.get(), __func__, flags);
   ASSERT_SOME(slave);
-
-  slave.get()->start();
 
   // Wait for the slave to re-register.
   AWAIT_READY(slaveReregisteredMessage);
