@@ -34,6 +34,7 @@
 
 #include <glog/logging.h>
 
+#include "common/protobuf_utils.hpp"
 #include "common/validation.hpp"
 
 #include "messages/messages.hpp"
@@ -291,7 +292,7 @@ string getExecutorRunPath(
   return path::join(
       getExecutorPath(rootDir, slaveId, frameworkId, executorId),
       EXECUTOR_RUNS_DIR,
-      stringify(containerId));
+      stringify(protobuf::getRootContainerId(containerId)));
 }
 
 
