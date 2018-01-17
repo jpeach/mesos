@@ -2,6 +2,8 @@
 
 set -xe
 
+env
+
 # This is the script used by ASF Jenkins to build and check Mesos for
 # a given OS and compiler combination.
 
