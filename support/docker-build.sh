@@ -137,7 +137,7 @@ append_dockerfile "RUN chown -R mesos /mesos"
 append_dockerfile "USER mesos"
 
 # Generate xml reports to be displayed by jenkins xUnit plugin.
-append_dockerfile "ENV GTEST_OUTPUT xml:/results/
+append_dockerfile "ENV GTEST_OUTPUT xml:/results/"
 
 # Ensure `make distcheck` inherits configure flags.
 append_dockerfile "ENV DISTCHECK_CONFIGURE_FLAGS $CONFIGURATION"
