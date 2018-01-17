@@ -159,7 +159,7 @@ else
     # Build and check Mesos.
     case $BUILDTOOL in
       autotools)
-	append_dockerfile "CMD ./bootstrap && ./configure $CONFIGURATION && make -j$JOBS distcheck 2>&1"
+        append_dockerfile "CMD (./bootstrap && ./configure $CONFIGURATION && make -j$JOBS distcheck) > /results/build.log 2>&1; echo \$? > /results/status"
 	;;
       cmake)
 	# Transform autotools-like parameters to cmake-like.
@@ -183,7 +183,7 @@ else
 
 	# MESOS-5433: `distcheck` is not supported.
 	# MESOS-5624: In source build is not supported.
-	append_dockerfile "CMD mkdir build && cd build && cmake $CONFIGURATION .. && make -j$JOBS check"
+	append_dockerfile "CMD mkdir build && cd build && cmake $CONFIGURATION .. && make -j$JOBS check; echo \$? > /results/status"
 	;;
       *)
 	echo "Unknown build tool $BUILDTOOL"
@@ -211,4 +211,8 @@ mkdir results
 # Now run the image.
 # NOTE: We run in 'privileged' mode to circumvent permission issues
 # with AppArmor. See https://github.com/docker/docker/issues/7276.
-docker run --privileged --rm --volume $(pwd)/results:/results $TAG
+docker run --privileged --rm --detached --cidfile $(pwd)/results/cid --volume $(pwd)/results:/results $TAG
+
+# Tail the build log until the container exits
+docker exec $(pwd)/results/build.log tail -f /results/build.log
+exit $(cat $(pwd)/results/status)
