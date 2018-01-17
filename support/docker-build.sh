@@ -207,6 +207,7 @@ trap "docker rmi $TAG" EXIT
 # trap "dmesg" ERR
 
 mkdir -p results
+touch results/build.log
 
 # Now run the image.
 # NOTE: We run in 'privileged' mode to circumvent permission issues
@@ -214,5 +215,5 @@ mkdir -p results
 docker run --privileged --rm --detach --cidfile $(pwd)/results/cid --volume $(pwd)/results:/results $TAG
 
 # Tail the build log until the container exits
-docker exec $(pwd)/results/build.log tail -f /results/build.log
+docker exec $(cat $(pwd)/results/cid) tail -f /results/build.log
 exit $(cat $(pwd)/results/status)
