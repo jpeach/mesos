@@ -211,7 +211,7 @@ mkdir -p results
 # Now run the image.
 # NOTE: We run in 'privileged' mode to circumvent permission issues
 # with AppArmor. See https://github.com/docker/docker/issues/7276.
-docker run --privileged --rm --detached --cidfile $(pwd)/results/cid --volume $(pwd)/results:/results $TAG
+docker run --privileged --rm --detach --cidfile $(pwd)/results/cid --volume $(pwd)/results:/results $TAG
 
 # Tail the build log until the container exits
 docker exec $(pwd)/results/build.log tail -f /results/build.log
