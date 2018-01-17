@@ -135,7 +135,7 @@ append_dockerfile "RUN chown -R mesos /mesos"
 append_dockerfile "USER mesos"
 
 # Generate xml reports to be displayed by jenkins xUnit plugin.
-append_dockerfile "ENV GTEST_OUTPUT xml:report.xml"
+append_dockerfile "ENV GTEST_OUTPUT xml:/results/
 
 # Ensure `make distcheck` inherits configure flags.
 append_dockerfile "ENV DISTCHECK_CONFIGURE_FLAGS $CONFIGURATION"
@@ -204,7 +204,9 @@ trap "docker rmi $TAG" EXIT
 # Uncomment below to print kernel log incase of failures.
 # trap "dmesg" ERR
 
+mkdir results
+
 # Now run the image.
 # NOTE: We run in 'privileged' mode to circumvent permission issues
 # with AppArmor. See https://github.com/docker/docker/issues/7276.
-docker run --privileged --rm $TAG
+docker run --privileged --rm --volume $(pwd)/results:/results $TAG
