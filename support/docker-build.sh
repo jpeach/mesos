@@ -201,16 +201,17 @@ TAG=mesos-`date +%s`-$RANDOM
 docker build --no-cache=true -t $TAG .
 
 # Set a trap to delete the image on exit.
-trap "kill -- -$$ TERM ; docker rmi --force $TAG" EXIT
+trap "docker rmi --force $TAG; kill -- -$$ TERM " EXIT
 
 # Uncomment below to print kernel log incase of failures.
 # trap "dmesg" ERR
 
 mkdir -p results
+chmod 777 results
 touch results/build.log
 
 # Tail the build log until the container exits
-tail -f /results/build.log &
+tail -f $(pwd)/results/build.log &
 
 # Now run the image.
 # NOTE: We run in 'privileged' mode to circumvent permission issues
