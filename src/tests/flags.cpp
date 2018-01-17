@@ -16,6 +16,8 @@
 
 #include <mesos/type_utils.hpp>
 
+#include <process/gtest.hpp>
+
 #include <stout/check.hpp>
 #include <stout/result.hpp>
 
@@ -161,6 +163,11 @@ Flags::Flags()
       string(master::DEFAULT_AUTHENTICATOR) + "', or\n"
       "load an alternate authenticator module using --modules.",
       master::DEFAULT_AUTHENTICATOR);
+
+  add(&Flags::default_await_timeout,
+      "default_await_timeout",
+      "The default timeout for awaiting test events.",
+      process::DEFAULT_TEST_TIMEOUT);
 }
 
 } // namespace tests {

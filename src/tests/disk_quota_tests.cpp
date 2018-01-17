@@ -756,7 +756,7 @@ TEST_F(DiskQuotaTest, SlaveRecovery)
       }
     }
 
-    ASSERT_LT(elapsed, Seconds(15));
+    ASSERT_LT(elapsed, process::DEFAULT_TEST_TIMEOUT);
 
     os::sleep(Milliseconds(1));
     elapsed += Milliseconds(1);

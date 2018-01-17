@@ -176,7 +176,7 @@ protected:
     state = new State(storage);
 
     // Compensate for slow CI machines / VMs.
-    flags.registry_store_timeout = Seconds(15);
+    flags.registry_store_timeout = process::DEFAULT_TEST_TIMEOUT;
 
     master.CopyFrom(protobuf::createMasterInfo(UPID("master@127.0.0.1:5050")));
 

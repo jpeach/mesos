@@ -18,6 +18,7 @@
 
 #include <gtest/gtest.h>
 
+#include <process/gtest.hpp>
 #include <process/process.hpp>
 
 #include <stout/flags.hpp>
@@ -103,6 +104,8 @@ int main(int argc, char** argv)
   if (!flags.verbose) {
     flags.quiet = true;
   }
+
+  process::DEFAULT_TEST_TIMEOUT = flags.default_await_timeout;
 
   // Initialize logging.
   logging::initialize(argv[0], true, flags);

@@ -40,6 +40,7 @@
 #include <process/collect.hpp>
 #include <process/future.hpp>
 #include <process/gmock.hpp>
+#include <process/gtest.hpp>
 #include <process/http.hpp>
 #include <process/owned.hpp>
 #include <process/pid.hpp>
@@ -8270,7 +8271,7 @@ TEST_F_TEMP_DISABLED_ON_WINDOWS(SlaveTest, ExecutorReregistrationTimeoutFlag)
 
   // Set the executor re-register timeout to a value greater than the default.
   slave::Flags slaveFlags = CreateSlaveFlags();
-  slaveFlags.executor_reregistration_timeout = Seconds(15);
+  slaveFlags.executor_reregistration_timeout = process::DEFAULT_TEST_TIMEOUT;
 
   Fetcher fetcher(slaveFlags);
 
