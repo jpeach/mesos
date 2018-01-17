@@ -206,7 +206,7 @@ trap "docker rmi $TAG" EXIT
 # Uncomment below to print kernel log incase of failures.
 # trap "dmesg" ERR
 
-mkdir results
+mkdir -p results
 
 # Now run the image.
 # NOTE: We run in 'privileged' mode to circumvent permission issues
