@@ -52,6 +52,12 @@ inline Try<Bytes> size(const std::string& path = "/")
 }
 
 
+inline Try<Bytes> used(const std::string& path = "/")
+{
+  return Error("not implemented");
+}
+
+
 // Returns relative disk usage of the file system that the given path
 // is mounted at.
 inline Try<double> usage(const std::string& path = "/")

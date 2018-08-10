@@ -39,6 +39,17 @@ inline Try<Bytes> size(const std::string& path = "/")
 }
 
 
+// Returns the amount of disk space used in bytes.
+inline Try<Bytes> used(const std::string& path = "/")
+{
+  struct statvfs buf;
+  if (::statvfs(path.c_str(), &buf) < 0) {
+    return ErrnoError();
+  }
+  return Bytes((buf.f_blocks -buf.f_bfree) * buf.f_frsize);
+}
+
+
 // Returns relative disk usage of the file system that the given path
 // is mounted at.
 inline Try<double> usage(const std::string& path = "/")

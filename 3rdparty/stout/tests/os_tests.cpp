@@ -1149,3 +1149,26 @@ TEST_F(OsTest, Which)
   which = os::which("bar");
   EXPECT_NONE(which);
 }
+
+
+TEST_F(OsTest, FsUsed)
+{
+    Try<Bytes> used = fs::used(".");
+#ifdef __WINDOWS__
+    EXPECT_ERROR(used);
+#else
+    ASSERT_SOME(used);
+
+    struct statvfs b;
+    ASSERT_EQ(0, ::statvfs("/", &b));
+
+    // Check that the block counts match.
+    EXPECT_EQ(used.get() / b.f_bsize, b.f_blocks - b.f_bfree);
+#endif
+
+#ifdef __linux__
+    // On Linux, devtmpfs always reports a used size of 0.
+    used = fs::used("/dev");
+    EXPECT_SOME_EQ(Bytes(0), used);
+#endif
+}
