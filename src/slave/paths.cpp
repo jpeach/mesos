@@ -54,31 +54,32 @@ namespace paths {
 
 // File names.
 const char BOOT_ID_FILE[] = "boot_id";
-const char SLAVE_INFO_FILE[] = "slave.info";
-const char FRAMEWORK_PID_FILE[] = "framework.pid";
-const char FRAMEWORK_INFO_FILE[] = "framework.info";
-const char LIBPROCESS_PID_FILE[] = "libprocess.pid";
 const char EXECUTOR_INFO_FILE[] = "executor.info";
 const char EXECUTOR_SENTINEL_FILE[] = "executor.sentinel";
-const char HTTP_MARKER_FILE[] = "http.marker";
 const char FORKED_PID_FILE[] = "forked.pid";
-const char TASK_INFO_FILE[] = "task.info";
-const char TASK_UPDATES_FILE[] = "task.updates";
+const char FRAMEWORK_INFO_FILE[] = "framework.info";
+const char FRAMEWORK_PID_FILE[] = "framework.pid";
+const char HTTP_MARKER_FILE[] = "http.marker";
+const char LIBPROCESS_PID_FILE[] = "libprocess.pid";
+const char OPERATION_UPDATES_FILE[] = "operation.updates";
+const char RESOURCE_PROVIDER_STATE_FILE[] = "resource_provider.state";
 const char RESOURCES_INFO_FILE[] = "resources.info";
 const char RESOURCES_TARGET_FILE[] = "resources.target";
-const char RESOURCE_PROVIDER_STATE_FILE[] = "resource_provider.state";
-const char OPERATION_UPDATES_FILE[] = "operation.updates";
+const char SLAVE_INFO_FILE[] = "slave.info";
+const char TASK_INFO_FILE[] = "task.info";
+const char TASK_UPDATES_FILE[] = "task.updates";
 
 
 const char CONTAINERS_DIR[] = "containers";
 const char CSI_DIR[] = "csi";
-const char SLAVES_DIR[] = "slaves";
-const char FRAMEWORKS_DIR[] = "frameworks";
-const char EXECUTORS_DIR[] = "executors";
 const char EXECUTOR_RUNS_DIR[] = "runs";
+const char EXECUTORS_DIR[] = "executors";
+const char FRAMEWORKS_DIR[] = "frameworks";
+const char OPERATIONS_DIR[] = "operations";
 const char RESOURCE_PROVIDER_REGISTRY[] = "resource_provider_registry";
 const char RESOURCE_PROVIDERS_DIR[] = "resource_providers";
-const char OPERATIONS_DIR[] = "operations";
+const char SLAVES_DIR[] = "slaves";
+const char VOLUMES_DIR[] = "volumes";
 
 
 Try<ExecutorRunPath> parseExecutorRunPath(
@@ -637,7 +638,7 @@ string getPersistentVolumePath(
   string serializableRole = strings::replace(role, "/", " ");
 
   return path::join(
-      workDir, "volumes", "roles", serializableRole, persistenceId);
+      workDir, VOLUMES_DIR, "roles", serializableRole, persistenceId);
 }
 
 

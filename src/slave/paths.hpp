@@ -421,6 +421,7 @@ std::string createResourceProviderDirectory(
 
 extern const char LIBPROCESS_PID_FILE[];
 extern const char HTTP_MARKER_FILE[];
+extern const char VOLUMES_DIR[];
 
 } // namespace paths {
 } // namespace slave {
