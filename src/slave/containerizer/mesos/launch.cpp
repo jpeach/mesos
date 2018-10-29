@@ -342,6 +342,8 @@ static Try<Nothing> prepareMounts(const ContainerLaunchInfo& launchInfo)
       continue;
     }
 
+    const unsigned mountFlags = mount.has_flags() ? mount.flags() : 0;
+
     // If bidirectional mount exists, we will not mark `/` as
     // recursively slave (otherwise, the bidirectional mount
     // propagation won't work).
@@ -430,7 +432,7 @@ static Try<Nothing> prepareMounts(const ContainerLaunchInfo& launchInfo)
         (mount.has_source() ? Option<string>(mount.source()) : None()),
         mount.target(),
         (mount.has_type() ? Option<string>(mount.type()) : None()),
-        (mount.has_flags() ? mount.flags() : 0),
+        mountFlags & ~MS_SILENT,
         (mount.has_options() ? Option<string>(mount.options()) : None()));
 
     if (mnt.isError()) {
@@ -439,7 +441,12 @@ static Try<Nothing> prepareMounts(const ContainerLaunchInfo& launchInfo)
           "': " + mnt.error());
     }
 
-    cerr << "Prepared mount '" << JSON::protobuf(mount) << "'" << endl;
+    // We never send MS_SILENT to the mount(2) system call, but use it to
+    // avoid logging mounts that are uninteresting to user tasks, e.g the
+    // mounts that construct the container's root filesystem.
+    if (!(mountFlags & MS_SILENT)) {
+      cerr << "Prepared mount '" << JSON::protobuf(mount) << "'" << endl;
+    }
   }
 #endif // __linux__
 

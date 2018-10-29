@@ -186,7 +186,7 @@ static Try<Nothing> makeStandardDevices(
     *launchInfo.add_mounts() = createContainerMount(
         path::join(devicesDir, device),
         path::join(rootDir, "dev", device),
-        MS_BIND);
+        MS_BIND | MS_SILENT);
   }
 
   const vector<pair<string, string>> symlinks = {
@@ -575,7 +575,7 @@ Future<Option<ContainerLaunchInfo>> LinuxFilesystemIsolatorProcess::prepare(
     *launchInfo.add_mounts() = createContainerMount(
         containerConfig.rootfs(),
         containerConfig.rootfs(),
-        MS_REC | MS_BIND);
+        MS_REC | MS_BIND | MS_SILENT);
 
     foreach (const ContainerMountInfo& mnt, ROOTFS_CONTAINER_MOUNTS) {
       // The target for special mounts must always be an absolute path.
@@ -584,6 +584,7 @@ Future<Option<ContainerLaunchInfo>> LinuxFilesystemIsolatorProcess::prepare(
       ContainerMountInfo* info = launchInfo.add_mounts();
 
       *info = mnt;
+      info->set_flags(info->flags() | MS_SILENT);
       info->set_target(path::join(containerConfig.rootfs(), mnt.target()));
 
       // Absolute path mounts are always relative to the container root.
