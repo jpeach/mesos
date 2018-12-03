@@ -432,7 +432,7 @@ Future<Option<ContainerLaunchInfo>> NvidiaGpuIsolatorProcess::_prepare(
     const string devicePath = path::join(devicesDir, device);
 
     Try<Nothing> mknod =
-      fs::chroot::copyDeviceNode(path::join("/", "dev", device), devicePath);
+      fs::chroot::copyDeviceNode(device, devicePath);
     if (mknod.isError()) {
       return Failure(
           "Failed to copy device '" + device + "': " + mknod.error());
