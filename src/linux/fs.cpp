@@ -635,7 +635,7 @@ Try<Nothing> copyDeviceNode(
 {
   Try<mode_t> mode = os::stat::mode(source);
   if (mode.isError()) {
-    return Error("Failed to source mode: " + mode.error());
+    return Error("Failed to get source mode: " + mode.error());
   }
 
   Try<dev_t> dev = os::stat::rdev(source);

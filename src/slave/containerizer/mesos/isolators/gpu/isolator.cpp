@@ -429,7 +429,8 @@ Future<Option<ContainerLaunchInfo>> NvidiaGpuIsolatorProcess::_prepare(
   }
 
   foreach (const string& device, nvidia.get()) {
-    const string devicePath = path::join(devicesDir, device);
+    const string devicePath = path::join(
+        devicesDir, strings::remove(device, "/dev/", strings::PREFIX), device);
 
     Try<Nothing> mknod =
       fs::chroot::copyDeviceNode(device, devicePath);
