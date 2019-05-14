@@ -130,6 +130,18 @@ inline Try<hashmap<std::string, std::string>> parse(const std::string& value)
 }
 
 
+template<>
+inline Try<mesos::IDMapInfo> parse(const std::string& value)
+{
+  Try<JSON::Object> json = parse<JSON::Object>(value);
+  if (json.isError()) {
+    return Error(json.error());
+  }
+
+  return protobuf::parse<mesos::IDMapInfo>(json.get());
+}
+
+
 template <>
 inline Try<mesos::CapabilityInfo> parse(const std::string& value)
 {

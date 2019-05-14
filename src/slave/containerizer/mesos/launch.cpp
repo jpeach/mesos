@@ -993,7 +993,7 @@ int MesosContainerizerLaunch::execute()
     if (setgroups.isError()) {
       cerr << "Failed to set supplementary gids: "
            << setgroups.error() << endl;
-      exitWithStatus(EXIT_FAILURE);
+      // XXX(jpeach) exitWithStatus(EXIT_FAILURE);
     }
 
     Try<Nothing> setuid = os::setuid(uid.get());

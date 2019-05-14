@@ -359,6 +359,10 @@ std::ostream& operator<<(
 
 std::ostream& operator<<(
     std::ostream& stream,
+    const IDMapInfo& map);
+
+std::ostream& operator<<(
+    std::ostream& stream,
     const DeviceWhitelist& deviceWhitelist);
 
 

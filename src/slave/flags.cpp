@@ -765,6 +765,11 @@ mesos::internal::slave::Flags::Flags()
       "pid namespace with agent if the framework requests it. This flag will\n"
       "be ignored if the `namespaces/pid` isolator is not enabled.\n",
       false);
+
+  add(&Flags::userns_id_mapping,
+      "userns_id_mapping",
+      "ID mapping for the user namespaces."
+      );
 #endif
 
   add(&Flags::agent_features,

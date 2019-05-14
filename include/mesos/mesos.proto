@@ -3235,6 +3235,18 @@ message SeccompInfo {
 }
 
 
+message IDMapInfo {
+  message Range {
+    optional uint32 host = 1;
+    optional uint32 container = 2;
+    optional uint32 length = 3;
+  }
+
+  repeated Range user_mapping = 1;
+  repeated Range group_mapping = 2;
+}
+
+
 /**
  * Encapsulation for Linux specific configuration.
  * E.g, capabilities, limits etc.

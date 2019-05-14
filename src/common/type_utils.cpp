@@ -651,6 +651,12 @@ ostream& operator<<(ostream& stream, const CapabilityInfo& capabilityInfo)
 }
 
 
+ostream& operator<<(std::ostream& stream, const IDMapInfo& map)
+{
+  return stream << JSON::protobuf(map);
+}
+
+
 ostream& operator<<(ostream& stream, const DeviceWhitelist& deviceWhitelist)
 {
   return stream << JSON::protobuf(deviceWhitelist);

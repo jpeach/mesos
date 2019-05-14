@@ -26,6 +26,8 @@
 #include <stout/os.hpp>
 #include <stout/path.hpp>
 
+#include "common/parse.hpp"
+
 #include "linux/ns.hpp"
 
 #include "slave/containerizer/mesos/containerizer.hpp"
@@ -57,7 +59,7 @@ class UserNamespaceIsolatorTest
 public:
   slave::Flags CreateSlaveFlags() override
   {
-    slave::Flags flags = MesosTest::CreateSlaveFlags();
+      slave::Flags flags = MesosTest::CreateSlaveFlags();
 
 #ifndef USE_SSL_SOCKET
   // Disable operator API authentication for the default executor. Executor
@@ -67,7 +69,32 @@ public:
   flags.authenticate_http_readwrite = false;
 #endif // USE_SSL_SOCKET
 
-    flags.isolation = "namespaces/user";
+  flags.isolation = "namespaces/user";
+
+  uid_t uid = os::getuid(os::getenv("SUDO_USER")).get();
+
+  flags.userns_id_mapping = flags::parse<IDMapInfo>(
+        strings::format(
+    R"~(
+    {
+      "user_mapping": [
+        {
+          "host": %d,
+          "container": %d,
+          "length": 1
+        }
+      ],
+
+      "group_mapping": [
+        {
+          "host": %d,
+          "container": %d,
+          "length": 1
+        }
+      ]
+    }
+    )~", uid, uid, uid, uid).get()).get();
+
     return flags;
   }
 
@@ -249,11 +276,17 @@ TEST_P(UserNamespaceIsolatorTest, ROOT_USERNS_DockerTask)
     StartSlave(detector.get(), CreateDockerSlaveFlags(dockerRegistry));
   ASSERT_SOME(slave);
 
+  Option<string> user = os::getenv("SUDO_USER");
+  ASSERT_SOME(user);
+
+  FrameworkInfo frameworkInfo = DEFAULT_FRAMEWORK_INFO;
+  frameworkInfo.set_user(user.get());
+
   MockScheduler sched;
 
   MesosSchedulerDriver driver(
       &sched,
-      DEFAULT_FRAMEWORK_INFO,
+      frameworkInfo,
       master.get()->pid,
       DEFAULT_CREDENTIAL);
 
@@ -281,7 +314,11 @@ TEST_P(UserNamespaceIsolatorTest, ROOT_USERNS_DockerTask)
   const Resources resources =
     Resources::parse("cpus:0.1;mem:32;disk:32").get();
 
-  TaskInfo task = createTask(offer.slave_id(), resources, command.get());
+  CommandInfo commandInfo = createCommandInfo(command.get());
+  commandInfo.set_user(user.get());
+
+  LOG(INFO) << "task user is " << user.get();
+  TaskInfo task = createTask(offer.slave_id(), resources, commandInfo);
 
   Image image;
   image.set_type(Image::DOCKER);

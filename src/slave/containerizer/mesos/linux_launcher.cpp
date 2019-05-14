@@ -31,6 +31,7 @@
 #include <stout/strings.hpp>
 #include <stout/stringify.hpp>
 
+#include "linux/capabilities.hpp"
 #include "linux/cgroups.hpp"
 #include "linux/ns.hpp"
 #include "linux/systemd.hpp"
@@ -41,6 +42,9 @@
 #include "slave/containerizer/mesos/linux_launcher.hpp"
 #include "slave/containerizer/mesos/paths.hpp"
 
+using mesos::internal::capabilities::Capabilities;
+using mesos::internal::capabilities::Capability;
+using mesos::internal::capabilities::ProcessCapabilities;
 using namespace process;
 
 using std::map;
@@ -48,11 +52,80 @@ using std::set;
 using std::string;
 using std::vector;
 
+using google::protobuf::RepeatedPtrField;
+
 using mesos::slave::ContainerState;
+
+template<>
+string stringify<RepeatedPtrField<mesos::IDMapInfo_Range>>(
+    const RepeatedPtrField<mesos::IDMapInfo_Range>& map)
+{
+  std::ostringstream out;
+
+  foreach (const mesos::IDMapInfo_Range& range, map) {
+    out << range.container() << ' '
+        << range.host() << ' '
+        << range.length() << '\n';
+  }
+
+  return out.str();
+}
 
 namespace mesos {
 namespace internal {
 namespace slave {
+
+// Experimentally, an exec in a user namespace with a partial ID map counts as
+// an exec from UID 0 to non-0, so the inheritance set is cleared. We need to
+// use ambient caps to propagate.
+static Subprocess::ChildHook INHERIT_EFFECTIVE_CAPS()
+{
+  return Subprocess::ChildHook([]() -> Try<Nothing> {
+    auto mgr = Capabilities::create().get();
+    ProcessCapabilities caps = mgr.get().get();
+
+    // Inherit the effective caps.
+    caps.set(capabilities::INHERITABLE, caps.get(capabilities::EFFECTIVE));
+    caps.set(capabilities::AMBIENT, caps.get(capabilities::EFFECTIVE));
+
+    CHECK_SOME(mgr.setKeepCaps());
+
+    // Apply caps.
+    CHECK_SOME(mgr.set(caps));
+
+    return Nothing();
+  });
+}
+
+
+static Subprocess::ParentHook INSTALL_UID_MAPS(
+    const RepeatedPtrField<::mesos::IDMapInfo_Range>& map)
+{
+  string value = stringify(map);
+
+  return Subprocess::ParentHook([value](pid_t pid) -> Try<Nothing> {
+  LOG(INFO) << "PID " << getpid() << " writing map to "
+            << path::join("/proc", stringify(pid), "uid_map")
+            << "\n" << value;
+    return os::write(
+        path::join("/proc", stringify(pid), "uid_map"),
+        value);
+  });
+}
+
+
+static Subprocess::ParentHook INSTALL_GID_MAPS(
+    const RepeatedPtrField<::mesos::IDMapInfo_Range>& map)
+{
+  string value = stringify(map);
+
+  LOG(INFO) << "gid_map\n" << value;
+  return Subprocess::ParentHook([value](pid_t pid) -> Try<Nothing> {
+    return os::write(
+        path::join("/proc", stringify(pid), "gid_map"),
+        value);
+  });
+}
 
 // Launcher for Linux systems with cgroups. Uses a freezer cgroup to
 // track pids.
@@ -505,11 +578,32 @@ Try<pid_t> LinuxLauncherProcess::fork(
   // we want to make sure that if the pid is in the systemd cgroup, it
   // must be in the freezer cgroup.
   vector<Subprocess::ParentHook> parentHooks;
+  vector<Subprocess::ChildHook> childHooks;
 
   // If we are using user namespaces, copy the ID mapping from the current
   // namespace into the child's namespace.
   if (cloneFlags & CLONE_NEWUSER) {
-    parentHooks.emplace_back(Subprocess::ParentHook::PROPAGATE_ID_MAPS());
+    // parentHooks.emplace_back(Subprocess::ParentHook::PROPAGATE_UID_MAPS());
+    // parentHooks.emplace_back(Subprocess::ParentHook::PROPAGATE_GID_MAPS());
+    // parentHooks.emplace_back(Subprocess::ParentHook::PROPAGATE_PROJID_MAPS());
+
+    if (this->flags.userns_id_mapping.isSome() &&
+        !this->flags.userns_id_mapping->user_mapping().empty()) {
+      parentHooks.emplace_back(
+          INSTALL_UID_MAPS(this->flags.userns_id_mapping->user_mapping()));
+    } else {
+      parentHooks.emplace_back(Subprocess::ParentHook::PROPAGATE_UID_MAPS());
+    }
+
+    if (this->flags.userns_id_mapping.isSome() &&
+        !this->flags.userns_id_mapping->group_mapping().empty()) {
+      parentHooks.emplace_back(
+          INSTALL_GID_MAPS(this->flags.userns_id_mapping->group_mapping()));
+    } else {
+      parentHooks.emplace_back(Subprocess::ParentHook::PROPAGATE_GID_MAPS());
+    }
+
+    parentHooks.emplace_back(Subprocess::ParentHook::PROPAGATE_PROJID_MAPS());
   }
 
   // Hook for creating and assigning the child into a freezer cgroup.
@@ -530,9 +624,9 @@ Try<pid_t> LinuxLauncherProcess::fork(
     }));
   }
 
-  vector<Subprocess::ChildHook> childHooks;
 
-  childHooks.push_back(Subprocess::ChildHook::SETSID());
+  childHooks.emplace_back(Subprocess::ChildHook::SETSID());
+  childHooks.emplace_back(INHERIT_EFFECTIVE_CAPS());
 
   Try<Subprocess> child = subprocess(
       path,
