@@ -151,7 +151,7 @@ public:
    */
   struct ParentHook
   {
-    ParentHook(const lambda::function<Try<Nothing>(pid_t)>& _parent_setup);
+    explicit ParentHook(const lambda::function<Try<Nothing>(pid_t)>&);
 
     /**
      * The callback that must be specified for execution after the
@@ -176,7 +176,9 @@ public:
     static ParentHook CREATE_JOB();
 #endif // __WINDOWS__
 
-    static ParentHook PROPAGATE_ID_MAPS();
+    static ParentHook PROPAGATE_UID_MAPS();
+    static ParentHook PROPAGATE_GID_MAPS();
+    static ParentHook PROPAGATE_PROJID_MAPS();
   };
 
   /**
@@ -192,6 +194,8 @@ public:
   class ChildHook
   {
   public:
+    explicit ChildHook(const lambda::function<Try<Nothing>()>&);
+
     /**
      * `ChildHook` for changing the working directory.
      */
@@ -222,8 +226,6 @@ public:
     Try<Nothing> operator()() const { return child_setup(); }
 
   private:
-    ChildHook(const lambda::function<Try<Nothing>()>& _child_setup);
-
     const lambda::function<Try<Nothing>()> child_setup;
   };
 

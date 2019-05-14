@@ -115,44 +115,38 @@ Subprocess::ChildHook Subprocess::ChildHook::DUP2(int oldFd, int newFd)
 #endif // __WINDOWS__
 
 
-Subprocess::ParentHook Subprocess::ParentHook::PROPAGATE_ID_MAPS()
+static Subprocess::ParentHook propagate(const string& which)
 {
-  Try<string> uidmap = os::read("/proc/self/uid_map");
-  Try<string> gidmap = os::read("/proc/self/gid_map");
-  Try<string> prjmap = os::read("/proc/self/projid_map");
+  Try<string> current = os::read(path::join("/proc", "self", which));
 
   // We should always be able to read our own ID maps.
-  CHECK_SOME(uidmap);
-  CHECK_SOME(gidmap);
-  CHECK_SOME(prjmap);
+  CHECK_SOME(current);
 
-  uidmap = strings::trim(uidmap.get());
-  gidmap = strings::trim(gidmap.get());
-  prjmap = strings::trim(prjmap.get());
+  current = strings::trim(current.get());
 
   return Subprocess::ParentHook([=](pid_t pid) -> Try<Nothing> {
-    Try<Nothing> result = Nothing();
-
-    result = os::write(
-        path::join("/proc", stringify(pid), "uid_map"),
-        uidmap.get());
-    if (result.isError()) {
-      return result;
-    }
-
-    result = os::write(
-        path::join("/proc", stringify(pid), "gid_map"),
-        gidmap.get());
-    if (result.isError()) {
-      return result;
-    }
-
-    result = os::write(
-        path::join("/proc", stringify(pid), "projid_map"),
-        prjmap.get());
-
-    return result;
+    return os::write(
+        path::join("/proc", stringify(pid), which),
+        current.get());
   });
+}
+
+
+Subprocess::ParentHook Subprocess::ParentHook::PROPAGATE_UID_MAPS()
+{
+  return propagate("uid_map");
+}
+
+
+Subprocess::ParentHook Subprocess::ParentHook::PROPAGATE_GID_MAPS()
+{
+  return propagate("gid_map");
+}
+
+
+Subprocess::ParentHook Subprocess::ParentHook::PROPAGATE_PROJID_MAPS()
+{
+  return propagate("projid_map");
 }
 
 
